@@ -1,4 +1,3 @@
 # 513Pictionary
 
- A Pictionary style game.
- 
+A Pictionary style game.
