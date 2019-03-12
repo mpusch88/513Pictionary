@@ -1,13 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './componenets/App';
+import React, {Component} from 'react';
+import logo from './resources/logo.svg';
+import './styles/App.css';
 
-require('./index.html');
+class App extends Component {
+    render() {
+        return (
+            <div className="App">
+                <img src={logo} className="App-logo" alt="logo"/>
+                <p>
+                    Edit
+                    <code>src/App.js</code>
+                    and save to reload.
+                </p>
+                <a
+                    className="App-link"
+                    href="https://reactjs.org"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    Learn React
+                </a>
+                <div>test</div>
+            </div>
+        );
+    }
+}
 
-// Create app
-const container = document.querySelector('#app-container');
-
-// Render app
-ReactDOM.render(
-    <App/>
-);
+export default App;
