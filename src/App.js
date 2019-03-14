@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { simpleAction } from './actions/simpeAction';
-import logo from './logo.svg';
+import logo from './resourcesnod/logo.svg';
 import './App.css';
+
 class App extends Component {
 
     simpleAction = () => {
