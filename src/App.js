@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import { simpleAction } from './actions/simpeAction';
-import logo from './resourcesnod/logo.svg';
+import {simpleAction} from './actions/simpeAction';
+import logo from './resources/logo.svg';
 import './App.css';
 
 class App extends Component {
@@ -24,11 +24,10 @@ class App extends Component {
                         JSON.stringify(this.props)
                     }
                     </pre>
-                    
+
                     <button onClick={this.simpleAction}>Test</button>
 
                 </header>
-
             </div>
         );
     }
