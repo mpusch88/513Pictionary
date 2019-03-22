@@ -1,27 +1,29 @@
 import React from 'react';
 import {Route, Switch, Redirect} from 'react-router-dom';
 import Login from '../components/Login';
-import Landing from '../components/Landing';
+import AppRoot from '../components/AppRoot';
 
 class AppRouter extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+    // constructor(props) {
+    //     super(props);
+    // }
 
     render() {
         return (
             <div>
                 <Switch>
+
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
 
                     <UserRoute
                         path="/:type"
-                        component={Landing}
+                        component={AppRoot}
                         auth={{
-                        userStatus: 'LoggedIn'
-                    }}
-                        exact={true}/>
+                            status: 'LoggedIn'
+                        }}
+                        exact={true} />
+
                 </Switch>
             </div>
         );
@@ -37,7 +39,7 @@ const UserRoute = ({
         <Route
             {...rest}
             render={(props) => {
-            return ((!!auth && (auth.userType === 'Lawyer'))
+            return (!!auth && (auth.status === 'LoggedIn'))
                 ? (<Component {...props}/>)
                 : (<Redirect
                     to={{
@@ -45,7 +47,7 @@ const UserRoute = ({
                     state: {
                         from: props.location
                     }
-                }}/>));
+                }}/>);
         }}/>
     );
 };

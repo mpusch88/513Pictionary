@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {simpleAction} from './actions/simpleAction';
 import logo from './resources/logo.svg';
-import './App.css';
-import Landing from './components/Landing';
 import Login from './components/Login';
+// import Landing from './components/Landing';
 
 class App extends Component {
 
@@ -19,7 +18,7 @@ class App extends Component {
             <div className="App">
                 <header className="App-header">
 
-                    <img src={logo} className="App-logo" alt="logo"/>
+                    <img src={logo} alt="logo"/> 
 
                     <Login/>
 

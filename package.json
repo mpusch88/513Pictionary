@@ -2,11 +2,15 @@
   "name": "513pictionary",
   "version": "0.1.0",
   "private": true,
+  "main": "index.js",
   "dependencies": {
     "axios": "^0.18.0",
+    "promise": "^8.0.3",
     "react": "^16.8.4",
+    "react-bootstrap": "^1.0.0-beta.6",
     "react-dom": "^16.8.4",
     "react-redux": "^6.0.1",
+    "react-router-dom": "^5.0.0",
     "react-scripts": "^2.1.8",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
