@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {setEmail, authenticate} from '../actions/userAction';
+import {setEmail, authenticate} from '../actions/userAction.js';
+import '../styles/login.css';
 
 class Login extends React.Component {
     constructor(props) {
@@ -45,8 +46,8 @@ class Login extends React.Component {
                 this
                     .props
                     .history
-                    .push('/feed');
-			});
+                    .push('/landing');
+            });
     }
 
     handleForgotPassword(e) {
@@ -63,8 +64,8 @@ class Login extends React.Component {
         return (
             <div>
                 <div>
-                    <span>513Pictionary</span>
-                    <span>Sign In Below!</span>
+                    <span className='title'>513Pictionary</span>
+                    <span className='gap'>Sign In Below!</span>
                 </div>
                 <div>
                     <form>
@@ -93,9 +94,7 @@ class Login extends React.Component {
                         </div>
 
                         <div>
-                            <span>
-                                <span onClick={this.handleForgotPassword}>Forgot Password?</span>
-                            </span>
+                            <span onClick={this.handleForgotPassword}>Forgot Password?</span>
                         </div>
                     </form>
                 </div>
