@@ -1,15 +1,11 @@
-// import axios from 'axios';
-// import createElectronStore from 'electron-store-webpack-wrapper';
+import axios from 'axios';
 
-// const store = createElectronStore();
-// export const baseUrl = 'https://young-river-76901.herokuapp.com/';
+// export const dbUrl = 'https://513cluster-qiybs.mongodb.net/';	
+export const backendUrl = 'http://localhost:3001';
 
-// export function webRequest() {
-// 	return axios.create({
-// 		baseURL: baseUrl,
-// 		timeout: 4000,
-// 		headers: {
-// 			'x-auth': store.get('jwt')
-// 		}
-// 	});
-// }
+export function webRequest() {
+	return axios.create({
+		baseURL: backendUrl,
+		timeout: 4000
+	});
+}
