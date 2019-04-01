@@ -20,7 +20,6 @@ class App extends Component {
 
                     <img src={logo} alt="logo"/> 
 
-                    <Login/>
 
                     <h1 className="App-title">Welcome to React</h1>
 

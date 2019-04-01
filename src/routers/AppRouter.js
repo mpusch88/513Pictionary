@@ -2,6 +2,7 @@ import React from 'react';
 import {Route, Switch, Redirect} from 'react-router-dom';
 import Login from '../components/Login';
 import AppRoot from '../components/AppRoot';
+import GameRoom from '../components/GameRoom';
 
 class AppRouter extends React.Component {
     // constructor(props) {
@@ -15,6 +16,7 @@ class AppRouter extends React.Component {
 
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
+                    <Route path='/Game' component={GameRoom} exact={true}/>
 
                     <UserRoute
                         path="/:type"
