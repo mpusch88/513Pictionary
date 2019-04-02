@@ -6,10 +6,14 @@ function subscribeToTimer(cb) { // cb stands for callback function
     socket.emit('subscribeToTimer', 1000);
 }
 
-function addStrokes(cb, data) {
-    socket.on('addStrokes', item => cb(null, item));
-    socket.emit('newStroke', data);
+function rcvStrokes(cb) {
+    socket.on('newStrokeRcv', item => cb(item));
+}
+
+function sndStrokes(item) {
+    socket.emit('newStrokeSnd', item);
 }
 
 export { subscribeToTimer };
-export {addStrokes};
+export {rcvStrokes};
+export {sndStrokes};
