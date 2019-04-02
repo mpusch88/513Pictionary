@@ -9,9 +9,10 @@ io.on('connection', (client) => {
         }, interval);
     });
 
-    client.on('addStrokes', (item) => {
-        io.emit('addStrokes', item);     // probably change to broadcasting to a room, if we still want multiple rooms
-    });
+    client.on('newStrokeSnd', (item) =>{
+        // probably change to broadcasting to a room, if we still want multiple rooms
+        client.broadcast.emit('newStrokeRcv', item);
+    })
 });
 
 const port = 8000;
