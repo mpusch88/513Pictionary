@@ -14,6 +14,10 @@ class Users extends React.Component{
         }
     }
 
+    componentDidMount(){
+        console.log("Users mounted");
+    }
+
     render(){
         return(
             <div className="users">

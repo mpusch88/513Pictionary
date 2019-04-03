@@ -18,6 +18,7 @@ class Messages extends React.Component{
     }
     
     componentDidMount(){
+        console.log("Messages mounted");
     }
 
     render(){

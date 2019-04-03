@@ -32,7 +32,6 @@ class AppRouter extends React.Component {
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
                     <Route path='/Game' component={GameRoom} exact={true}/>
-
                     <UserRoute
                         path="/:type"
                         component={AppRoot}

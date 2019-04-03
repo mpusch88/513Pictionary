@@ -8,6 +8,10 @@ class ChatBox extends React.Component{
         }
     }
 
+    componentDidMount(){
+        console.log("ChatBox mounted");
+    }
+
     onChange(e){
         this.setState({
             message : e.target.value

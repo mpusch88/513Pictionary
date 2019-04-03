@@ -10,7 +10,7 @@ app.use('/assets', express.static(__dirname + '/dist'));
 
 const io = require('socket.io')(server);
 
-//connect to mongo and store all categories w/ answers in categories list
+// connect to mongo and store all categories w/ answers in categories list
 const uri = "mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true";
 const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect(err => {
@@ -41,7 +41,7 @@ let createUser = (user) => {
 		[user.id] : {
 			username : user.username,
 			id : user.id,
-			socket : [user.socket_id]
+			sockets : [user.socket_id]
 		}
 	}, users);
 }
@@ -66,7 +66,7 @@ let removeSocket = (socket_id) => {
 	}
 	else{
 		let cuser = Object.assign({}, users);
-		delete cuser[uid];
+		delete cuser[id];
 		users = cuser;
 	}
 }
@@ -83,12 +83,14 @@ io.on('connection', (socket) => {
 
   	//If incoming user connection is new, create a new user id and username
   	// otherwise, use the fetched data and update the userlist
-  	if(typeof users[user.uid] !== 'undefined'){
-		console.log("Creating socket for user id: "+users[user.id].sockets);
+  	if(users[user.id] !== undefined){
+		console.log("USER ID: "+user.id);
+		console.log("Users list: "+users[user.id]);
   		createSocket(user);
   		socket.emit('updateUsersList', getUsers());
   	}
   	else{
+		console.log("Creating new user: "+user+" with id of: "+user.id);
   		createUser(user);
   		io.emit('updateUsersList',getUsers());
 	  }
@@ -123,7 +125,8 @@ io.on('connection', (socket) => {
   	//emits message to all users in the room
   	//add functionality to verify answer on each message receive
   	socket.on('message', function(msg){
-  		io.in(room).emit('message',msg);
+		  // io.in(room).emit('message',msg);
+		  socket.broadcast.emit('message',msg);
   		//TODO - add function to check message with answer
   	});
 

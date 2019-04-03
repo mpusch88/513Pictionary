@@ -9,8 +9,8 @@ class Chat extends React.Component{
         super(props);
         this.socket = null;
         this.state = {
-            username : localStorage.getItem('username')? localStorage.getItem('username'): '',
-            id : localStorage.getItem('id')? localStorage.getItem('id'):"undefined ID",
+            username : localStorage.getItem('username')? localStorage.getItem('username'): 'defaultName',
+            id : localStorage.getItem('id')? localStorage.getItem('id'):this.generateID(),
             chat_read : false,
             users : [],
             messages : [],
@@ -18,7 +18,22 @@ class Chat extends React.Component{
         }
     }
 
+    generateID(){
+        let text = '';
+        let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i< 15; i++){
+            text += possible.charAt(Math.floor(Math.random()*possible.length));
+        }
+        localStorage.setItem('id',text);
+
+        console.log("ID not found, generating new id: "+text);
+        return text;
+    }
+
     componentDidMount(){
+        console.log("Chat mounted");
+        console.log("Username set as: "+this.username);
+        console.log("User id set as: "+this.id);
         if(this.state.username.length){
             this.initChat();
         }
@@ -62,13 +77,12 @@ class Chat extends React.Component{
             id : localStorage.getItem('id'),
             message : message,
         });
-        this.scrollToBottom();
 }
 
 
     render(){
         return(
-            <div class="chat-container">
+            <div className="chat-container">
                 <React.Fragment>
                     <Users users={this.state.users}/>
                     <Messages
