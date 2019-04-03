@@ -14,6 +14,20 @@ function sndStrokes(item) {
     socket.emit('newStrokeSnd', item);
 }
 
+function getCategories(cb) {
+    socket.on('categories', data => cb(data));
+}
+
+function checkIfCategoryExists(data, cb) {
+    socket.emit('newCategoryCheck', data);
+    socket.on('newCategoryFail', (data) => {
+        cb(data);
+    })
+
+}
+
 export { subscribeToTimer };
 export {rcvStrokes};
 export {sndStrokes};
+export {getCategories};
+export {checkIfCategoryExists};
