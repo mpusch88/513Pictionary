@@ -4,6 +4,7 @@ import Login from '../components/Login';
 import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
 import SketchComponent from '../components/SketchComponent';
+import Chat from '../components/Chat';
 
 // import { subscribeToTimer } from '../api';
 
@@ -24,6 +25,7 @@ class AppRouter extends React.Component {
                     {/*This is the timer value: {this.state.timestamp}*/}
                 {/*</p>*/}
                 <SketchComponent />
+                <Chat />
 
                 <Switch>
 
