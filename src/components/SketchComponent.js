@@ -18,7 +18,7 @@ export default class SketchComponent extends Component
             fill: false,
             fillColor: '#444444',
             items: []
-        }
+        };
     }
 
     componentDidMount() {

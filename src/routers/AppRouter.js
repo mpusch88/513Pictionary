@@ -3,9 +3,9 @@ import {Route, Switch, Redirect} from 'react-router-dom';
 import Login from '../components/Login';
 import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
-import SketchComponent from '../components/SketchComponent'
+import SketchComponent from '../components/SketchComponent';
 
-import { subscribeToTimer } from '../api';
+// import { subscribeToTimer } from '../api';
 
 class AppRouter extends React.Component {
     constructor(props) {

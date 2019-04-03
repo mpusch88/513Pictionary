@@ -6,7 +6,6 @@ import Landing from './Landing';
 // an active user/gameRoom list.
 // import {getUsers} from '../actions/userAction';
 
-
 class AppRoot extends React.Component {
     constructor(props) {
         super(props);
