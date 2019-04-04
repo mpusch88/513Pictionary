@@ -4,7 +4,6 @@
   "private": true,
   "main": "index.js",
   "dependencies": {
-    "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
     "promise": "^8.0.3",
     "prop-types": "^15.7.2",
@@ -14,14 +13,15 @@
     "react-redux": "^6.0.1",
     "react-router-dom": "^5.0.0",
     "react-scripts": "^2.1.8",
+    "react-sketchpad": "^0.0.3",
     "reactstrap": "^7.1.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0",
-    "react-sketchpad": "^0.0.3"
+    "socket.io-client": "^2.2.0"
   },
   "scripts": {
+    "server": "node server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

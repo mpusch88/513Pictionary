@@ -1,7 +1,13 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Nav,Navbar, NavDropdown, Form, FormControl, Button} from 'react-bootstrap';
-
+import {
+    Nav,
+    Navbar,
+    NavDropdown,
+    Form,
+    FormControl,
+    Button
+} from 'react-bootstrap';
 
 class Header extends React.Component {
 
@@ -32,20 +38,21 @@ class Header extends React.Component {
                 </NavDropdown>
             </Nav>
             */
-
+           
             <Navbar bg="light" expand="lg">
                 <Navbar.Brand href="#home">513Pictionary</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Navbar.Text>
-                            Signed in as: <a href="#login">Mark Otto</a>
+                            Signed in as:
+                            <a href="#login">Mark Otto</a>
                         </Navbar.Text>
                     </Nav>
                     <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                         <Form inline>
-                            <FormControl type="text" placeholder="user name to report" className="mr-sm-2" />
-                            <FormControl type="text" placeholder="detailed message" className="mr-sm-2" />
+                            <FormControl type="text" placeholder="user name to report" className="mr-sm-2"/>
+                            <FormControl type="text" placeholder="detailed message" className="mr-sm-2"/>
                             <Button variant="outline-success">Submit</Button>
                             <Button variant="outline-success">Cancel</Button>
                         </Form>
@@ -53,9 +60,8 @@ class Header extends React.Component {
                 </Navbar.Collapse>
             </Navbar>
 
-    );
+        );
     }
 }
-
 
 export default Header;

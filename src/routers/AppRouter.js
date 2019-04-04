@@ -5,14 +5,7 @@ import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
 import SketchComponent from '../components/SketchComponent';
 
-// import { subscribeToTimer } from '../api';
-
 class AppRouter extends React.Component {
-    constructor(props) {
-        super(props);
-        // subscribeToTimer((err, timestamp) => this.setState({ timestamp }));
-    }
-
     state = {
         timestamp: 'no timestamp yet'
     };
@@ -20,13 +13,9 @@ class AppRouter extends React.Component {
     render() {
         return (
             <div>
-                {/*<p className="App-intro">*/}
-                    {/*This is the timer value: {this.state.timestamp}*/}
-                {/*</p>*/}
                 <SketchComponent />
 
                 <Switch>
-
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
                     <Route path='/Game' component={GameRoom} exact={true}/>
