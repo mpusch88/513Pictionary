@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styles/landing.css';
 
 class Landing extends React.Component {
     constructor(props) {
@@ -12,7 +11,7 @@ class Landing extends React.Component {
     }
 
     componentDidMount() {
-        alert('mounted!!!');
+        alert('Signed in!');
     }
 
     handleChange(e) {
@@ -23,7 +22,7 @@ class Landing extends React.Component {
 
     render() {
         return (
-            <div>Landing page!</div>
+            <div>Landing page - Welcome!</div>
         );
     }
 }

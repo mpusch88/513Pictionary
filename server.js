@@ -1,4 +1,3 @@
-
 const io = require('socket.io')();
 
 let users = [];
@@ -14,8 +13,6 @@ io.on('connection', (client) => {
     client.on('newStrokeSnd', (item) =>{
         client.broadcast.emit('newStrokeRcv', item);
     });
-
-
 });
 
 const port = 8000;

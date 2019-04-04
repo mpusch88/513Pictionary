@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {setEmail, authenticate} from '../actions/userAction.js';
+import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
 
 class Login extends React.Component {
@@ -11,9 +11,6 @@ class Login extends React.Component {
             password: 'password'
         };
 
-        this.save = this
-            .save
-            .bind(this);
         this.handleClick = this
             .handleClick
             .bind(this);
@@ -25,14 +22,9 @@ class Login extends React.Component {
             .bind(this);
     }
 
-    save() {
-        this
-            .props
-            .dispatch(setEmail(this.state.email));
-    }
-
     handleClick(e) {
         e.preventDefault();
+        console.log(JSON.stringify(this.state));
 
         let user = {
             email: this.state.email,
@@ -94,7 +86,7 @@ class Login extends React.Component {
                         </div>
 
                         <div>
-                            <span onClick={this.handleForgotPassword}>Forgot Password?</span>
+                            <button onClick={this.handleForgotPassword}>Forgot Password?</button>
                         </div>
                     </form>
                 </div>

@@ -12,9 +12,7 @@ class AppRouter extends React.Component {
     render() {
         return (
             <div>
-
                 <Switch>
-
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
                     <Route path='/Game' component={GameRoom} exact={true}/>

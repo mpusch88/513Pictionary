@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import  {SketchPad, TOOL_PENCIL, TOOL_LINE, TOOL_RECTANGLE, TOOL_ELLIPSE } from '../../node_modules/react-sketchpad/lib';
+import React, {Component} from 'react';
+import {SketchPad, TOOL_PENCIL, TOOL_LINE, TOOL_RECTANGLE, TOOL_ELLIPSE} from '../../node_modules/react-sketchpad/lib';
 import {rcvStrokes} from '../api';
 import {sndStrokes} from '../api';
 
@@ -10,40 +10,67 @@ export default class SketchComponent extends Component
         super(props);
 
         this.state = {
-            tool:TOOL_PENCIL,
+            tool: TOOL_PENCIL,
             size: 2,
             color: '#000000',
             fill: false,
             fillColor: '#444444',
             items: []
-        }
+        };
     }
 
     componentDidMount() {
         rcvStrokes(item => {
-            if(item)this.setState({items: this.state.items.concat([item])});
-        });
+            if (item) 
+                this.setState({
+                    items: this
+                        .state
+                        .items
+                        .concat([item])
+                });
+            }
+        );
     }
 
     render() {
-        const { tool, size, color, fill, fillColor, items } = this.state;
+        const {
+            tool,
+            size,
+            color,
+            fill,
+            fillColor,
+            items
+        } = this.state;
         return (
             <div>
-                <div style={{float:'top', marginBottom:20}}>
+                <div
+                    style={{
+                    float: 'top',
+                    marginBottom: 20
+                }}>
                     <SketchPad
                         width={500}
                         height={500}
                         animate={true}
                         size={size}
                         color={color}
-                        fillColor={fill ? fillColor : ''}
+                        fillColor={fill
+                        ? fillColor
+                        : ''}
                         items={items}
                         tool={tool}
                         onCompleteItem={(i) => sndStrokes(i)}
                     />
+
                 </div>
-                <div style={{float:'left'}}>
-                    <div className="tools" style={{marginBottom:20}}>
+                <div style={{
+                    float: 'left'
+                }}>
+                    <div
+                        className="tools"
+                        style={{
+                        marginBottom: 20
+                    }}>
                         <button
                             style={tool == TOOL_PENCIL ? {fontWeight:'bold'} : undefined}
                             className={tool == TOOL_PENCIL  ? 'item-active' : 'item'}
@@ -64,10 +91,23 @@ export default class SketchComponent extends Component
                             className={tool == TOOL_RECTANGLE  ? 'item-active' : 'item'}
                             onClick={() => this.setState({tool:TOOL_RECTANGLE})}
                         >Rectangle</button>
+
                     </div>
-                    <div className="options" style={{marginBottom:20}}>
-                        <label htmlFor="">size: </label>
-                        <input min="1" max="20" type="range" value={size} onChange={(e) => this.setState({size: parseInt(e.target.value) })} />
+                    <div
+                        className="options"
+                        style={{
+                        marginBottom: 20
+                    }}>
+                        <label htmlFor="">size:
+                        </label>
+                        <input
+                            min="1"
+                            max="20"
+                            type="range"
+                            value={size}
+                            onChange={(e) => this.setState({
+                            size: parseInt(e.target.value)
+                        })}/>
                     </div>
                     {(this.state.tool == TOOL_ELLIPSE || this.state.tool == TOOL_RECTANGLE) ?
                         <div>

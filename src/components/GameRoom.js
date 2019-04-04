@@ -53,4 +53,3 @@ export default class GameRoom extends React.Component {
     }
 
 }
-
