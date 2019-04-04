@@ -1,67 +1,98 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import {
-    Nav,
-    Navbar,
-    NavDropdown,
-    Form,
-    FormControl,
-    Button
-} from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import Home from '@material-ui/icons/HomeOutlined';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+
+
+
+const styles = {
+    root: {
+        flexGrow: 1,
+    },
+    grow: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        marginLeft: -12,
+        marginRight: 20,
+    },
+};
+
 
 class Header extends React.Component {
+    state = {
+        auth: true,
+        anchorEl: null,
+    };
+
+
+    handleMenu = event => {
+        this.setState({anchorEl: event.currentTarget});
+    };
+
+    handleClose = () => {
+        this.setState({anchorEl: null});
+    };
 
     render() {
+        const { classes } = this.props;
+        const {auth, anchorEl} = this.state;
+        const open = Boolean(anchorEl);
 
         return (
-
-            /*
-            <Nav variant="pills" activeKey="1" class="mr-auto" onSelect={k => this.handleSelect(k)}>
-                <Nav.Item>
-                    <Navbar.Brand href="#home">
-                        <img
-                            src="/resources/logo.svg"
-                            width="30"
-                            height="30"
-                            className="d-inline-block align-top"
-                            alt="513Pictionary"
-                        />
-                    </Navbar.Brand>
-                </Nav.Item>
-                <NavDropdown  eventKey="2" title="Dropdown" id="nav-dropdown">
-                    <Form inline>
-                        <FormControl type="text" placeholder="user name to report" className="mr-sm-2" />
-                        <FormControl type="text" placeholder="detailed message" className="mr-sm-2" />
-                        <Button variant="outline-success">Submit</Button>
-                        <Button variant="outline-success">Cancel</Button>
-                    </Form>
-                </NavDropdown>
-            </Nav>
-            */
-           
-            <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="#home">513Pictionary</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Navbar.Text>
-                            Signed in as:
-                            <a href="#login">Mark Otto</a>
-                        </Navbar.Text>
-                    </Nav>
-                    <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                        <Form inline>
-                            <FormControl type="text" placeholder="user name to report" className="mr-sm-2"/>
-                            <FormControl type="text" placeholder="detailed message" className="mr-sm-2"/>
-                            <Button variant="outline-success">Submit</Button>
-                            <Button variant="outline-success">Cancel</Button>
-                        </Form>
-                    </NavDropdown>
-                </Navbar.Collapse>
-            </Navbar>
-
+            <div className={classes.root}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <IconButton className={classes.menuButton} color="inherit" aria-label="Home">
+                            <Home/>
+                        </IconButton>
+                        <Typography variant="h6" color="inherit" className={classes.grow}>
+                            513Pictionary
+                        </Typography>
+                        <div>
+                            <IconButton
+                                aria-owns={open ? 'menu-appbar' : undefined}
+                                aria-haspopup="true"
+                                onClick={this.handleMenu}
+                                color="inherit"
+                            >
+                                <AccountCircle/>
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={open}
+                                onClose={this.handleClose}
+                            >
+                                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                                <MenuItem onClick={this.handleClose}>Log out</MenuItem>
+                            </Menu>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+            </div>
         );
     }
 }
 
-export default Header;
+Header.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+
+export default withStyles(styles)(Header);
