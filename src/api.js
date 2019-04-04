@@ -15,7 +15,10 @@ function sndStrokes(item) {
 }
 
 function getCategories(cb) {
-    socket.on('categories', data => cb(data));
+    socket.emit('categories', data => cb(data));
+    socket.on('categories', (data) => {
+        cb(data);
+    })
 }
 
 function checkIfCategoryExists(data, cb) {
