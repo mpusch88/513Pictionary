@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
+import { withRouter } from 'react-router-dom';
 
 import {send_loginfo} from "../api";
 
@@ -25,6 +26,7 @@ class Login extends React.Component {
     }
 
     handleClick(e) {
+        console.log("hhhh");
         // e.preventDefault();
         // console.log(JSON.stringify(this.state));
         //
@@ -42,9 +44,23 @@ class Login extends React.Component {
         //             .history
         //             .push('/landing');
         //     });
+
         send_loginfo({email: this.state.email, psw: this.state.password}, log_flag => {
-            if(log_flag === true)console.log("log in successful");
-            else console.log("failed to log in");
+            if(log_flag === true){
+                console.log("log in successful");
+                let { history } = this.props;
+                history.push({
+                    pathname: '/Game'
+                });
+            }
+            else {
+                alert("Invalid email or password!");
+                let { history } = this.props;
+                history.push({
+                    pathname: '/'
+                });
+                console.log("failed to log in");
+            }
         });
     }
 
@@ -66,7 +82,7 @@ class Login extends React.Component {
                     <span className='gap'>Sign In Below!</span>
                 </div>
                 <div>
-                    <form>
+                    {/*<form>*/}
                         <div>
                             <span>Email</span>
                             <input
@@ -90,20 +106,19 @@ class Login extends React.Component {
                                 Log In
                             </button>
                         </div>
-
-                        <div>
-                            <button onClick={this.handleForgotPassword}>Forgot Password?</button>
-                        </div>
-                    </form>
+                    {/*</form>*/}
                 </div>
             </div>
         );
     }
 }
 
-const mapStateToProps = state => {
-    console.log(state);
-    return {email: state.email, password: state.password, user: state.user};
-};
+export default withRouter(Login);
 
-export default connect(mapStateToProps)(Login);
+
+// const mapStateToProps = state => {
+//     console.log(state);
+//     return {email: state.email, password: state.password, user: state.user};
+// };
+//
+// export default connect(mapStateToProps)(Login);

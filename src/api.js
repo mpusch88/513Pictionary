@@ -27,7 +27,7 @@ function game_otherReady(cb) {
 
 //----------------- Login -----------------//
 function send_loginfo(info, cb) {
-    socket.on('log_flag', log_flag => cb(log_flag));
+    socket.on('login_flag', log_flag => cb(log_flag));
     socket.emit('new_loginfo', info);
 }
 
@@ -35,14 +35,14 @@ function getCategories(cb) {
     socket.emit('categories', data => cb(data));
     socket.on('categories', (data) => {
         cb(data);
-    })
+    });
 }
 
 function checkIfCategoryExists(data, cb) {
     socket.emit('newCategoryCheck', data);
     socket.on('newCategoryFail', (data) => {
         cb(data);
-    })
+    });
 
 }
 

@@ -20,10 +20,6 @@ class AppRouter extends React.Component {
     render() {
         return (
             <div>
-                {/*<p className="App-intro">*/}
-                    {/*This is the timer value: {this.state.timestamp}*/}
-                {/*</p>*/}
-                {/*<SketchComponent />*/}
                 <Switch>
 
                     <Route path='/' component={Login} exact={true}/>

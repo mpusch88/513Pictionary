@@ -39,12 +39,11 @@ export default class GameRoom extends React.Component {
                     gameProgress === 'ready' ?
                     <div>
                         <TimerProgressBar/>
-                        <SketchComponent size={2}/>
-                        <script>console.log("!!!!");</script>
+                        <SketchComponent gameFlg={'ready'}/>
                     </div> :
                     <div>
                         <TimerProgressBar/>
-                        <SketchComponent size={0}/>
+                        <SketchComponent gameFlg={'notReady'}/>
                         <button onClick={this.gameReady}>Ready</button>
                     </div>
                 }

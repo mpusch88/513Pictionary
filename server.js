@@ -14,6 +14,10 @@ const io = require('socket.io')(server);
 // connect to mongo and store all categories w/ answers in categories list
 const uri = "mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true";
 const client = new MongoClient(uri, {useNewUrlParser: true});
+
+var url1 = "mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true";
+var client1 = new MongoClient(uri, {useNewUrlParser: true});
+
 client.connect(err => {
     const collection = client.db("pictionary").collection("categories");
     categories = collection.find().toArray((err, items) => {
@@ -72,7 +76,6 @@ let removeSocket = (socket_id) => {
 }
 
 io.on('connection', (socket) => {
-    console.log("USER CONNECTED");
 
     //console.log(categories)
     let query = socket.request._query,
@@ -85,12 +88,12 @@ io.on('connection', (socket) => {
     //If incoming user connection is new, create a new user id and username
     // otherwise, use the fetched data and update the userlist
     if (users[user.id] !== undefined) {
-        console.log("USER ID: " + user.id);
-        console.log("Users list: " + users[user.id]);
+        // console.log("USER ID: " + user.id);
+        // console.log("Users list: " + users[user.id]);
         createSocket(user);
         socket.emit('updateUsersList', getUsers());
     } else {
-        console.log("Creating new user: " + user + " with id of: " + user.id);
+        // console.log("Creating new user: " + user + " with id of: " + user.id);
         createUser(user);
         io.emit('updateUsersList', getUsers());
     }
@@ -109,7 +112,7 @@ io.on('connection', (socket) => {
             cats.push(arrayItem.type) ;
         });
 
-        console.log(cats);
+        // console.log(cats);
         socket.emit('categories', cats);
     });
 
@@ -121,24 +124,30 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('newStrokeRcv', item);
     });
 
-    client.on('new_loginfo', (info) => {
-        const collection = client
-            .db('pictionary')
-            .collection('users');
+    socket.on('new_loginfo', (info) => {
+        console.log('login req');
 
-        var myobj = {email: info.email, password: info.psw};
+        var client1 = new MongoClient(uri, {useNewUrlParser: true});
 
-        collection
-            .find(myobj)
-            .toArray(function (err, res) {
-                if (res.length !== 0) {
-                    client.emit('log_flag', true);
-                    return;
-                } else {
-                    client.emit('log_flag', false);
-                    return;
-                }
-            });
+        client1.connect(err =>{
+            const collection = client1
+                .db('pictionary')
+                .collection('users');
+
+            var myobj = {email: info.email, password: info.psw};
+
+            collection
+                .find(myobj)
+                .toArray(function (err, res) {
+                    if (res && res.length !== 0) {
+                        console.log("success");
+                        socket.emit('login_flag', true);
+                    } else {
+                        socket.emit('login_flag', false);
+                        console.log("failure");
+                    }
+                });
+        });
 
     });
 

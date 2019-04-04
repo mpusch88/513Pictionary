@@ -8,7 +8,6 @@ export default class SketchComponent extends Component
 
     constructor(props) {
         super(props);
-
         this.state = {
             tool: TOOL_PENCIL,
             size: 2,
@@ -20,8 +19,15 @@ export default class SketchComponent extends Component
     }
 
     componentDidMount() {
+        let flg = this.props.gameFlg;
+        console.log("!!!!", flg);
+        if(flg === 'notReady'){
+            this.setState({color: '#ffffff'});
+        }else if(flg === 'ready'){
+            this.setState(({color: '#000000'}));
+        }
         rcvStrokes(item => {
-            if (item) 
+            if (item)
                 this.setState({
                     items: this
                         .state
