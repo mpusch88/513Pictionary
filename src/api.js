@@ -31,9 +31,26 @@ function send_loginfo(info, cb) {
     socket.emit('new_loginfo', info);
 }
 
+function getCategories(cb) {
+    socket.emit('categories', data => cb(data));
+    socket.on('categories', (data) => {
+        cb(data);
+    })
+}
+
+function checkIfCategoryExists(data, cb) {
+    socket.emit('newCategoryCheck', data);
+    socket.on('newCategoryFail', (data) => {
+        cb(data);
+    })
+
+}
+
 export { subscribeToTimer };
 export {rcvStrokes};
 export {sndStrokes};
 export {game_myReady};
 export {game_otherReady};
 export {send_loginfo};
+export {getCategories};
+export {checkIfCategoryExists};
