@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
 import { withRouter } from 'react-router-dom';
@@ -27,6 +28,9 @@ class Login extends React.Component {
 
     handleClick(e) {
         send_loginfo({email: this.state.email, psw: this.state.password}, log_flag => {
+
+            let userType = log_flag ? log_flag : '';
+            this.props.authenticate(userType);
             if(log_flag === 'user'){
                 console.log("user logged in successful");
                 let { history } = this.props;
@@ -101,12 +105,22 @@ class Login extends React.Component {
     }
 }
 
-export default withRouter(Login);
+//export default withRouter(Login);
 
 
+const mapStateToProps = (state) => {
+    return {userType: state.userType}
+};
+
+const matchDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        authenticate: authenticate,
+    }, dispatch);
+};
 // const mapStateToProps = state => {
 //     console.log(state);
 //     return {email: state.email, password: state.password, user: state.user};
 // };
 //
-// export default connect(mapStateToProps)(Login);
+
+export default withRouter(connect(mapStateToProps, matchDispatchToProps)(Login));

@@ -5,6 +5,8 @@ let MongoClient = require('mongodb').MongoClient;
 let users = {};
 let rooms = [];
 let categories = [];
+let categoryTypes =[];
+let categoryToWords = {};
 
 
 app.use('/assets', express.static(__dirname + '/dist'));
@@ -18,11 +20,18 @@ const client = new MongoClient(uri, {useNewUrlParser: true});
 var url1 = "mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true";
 var client1 = new MongoClient(uri, {useNewUrlParser: true});
 
+
+
 client.connect(err => {
     const collection = client.db("pictionary").collection("categories");
-    categories = collection.find().toArray((err, items) => {
+    let rawCategories = collection.find().toArray((err, items) => {
         categories = items;
+        items.forEach(function (arrayItem) {
+            categoryTypes.push(arrayItem.type) ;
+            categoryToWords[arrayItem.type] = arrayItem[arrayItem.type];
+        });
     });
+
     client.close();
 });
 
@@ -73,7 +82,52 @@ let removeSocket = (socket_id) => {
         delete cuser[id];
         users = cuser;
     }
+};
+
+
+let storeCategoryAndWord = (data) => {
+    let clientDriver = new MongoClient(uri, {useNewUrlParser: true});
+    clientDriver.connect(err => {
+
+        const collection = clientDriver.db("pictionary").collection("categories");
+        console.log("inside query ")
+        let type = data.category;
+        let word = data.word;
+        var obj = {type: type, [type]: word};
+        console.log(obj.type + obj[type])
+        collection.insertOne(obj, function(err, res) {
+            if (err) throw err;
+            console.log("inserted");
+        });
+    });
+
+    clientDriver.close();
 }
+
+let addWordToExistingCategory = (data) => {
+    let clientDriver = new MongoClient(uri, {useNewUrlParser: true});
+    clientDriver.connect(err => {
+
+        const collection = clientDriver.db("pictionary").collection("categories");
+        let type = data.category;
+        let word = data.word;
+        var obj = {type: type, [type]: word};
+
+        collection.update(
+            { _id: 1 },
+            { $push: { scores: 89 } }
+        )
+
+        console.log(obj.type + obj[type])
+        collection.insertOne(obj, function(err, res) {
+            if (err) throw err;
+            console.log("inserted");
+        });
+    });
+
+    clientDriver.close();
+}
+
 
 io.on('connection', (socket) => {
 
@@ -112,7 +166,6 @@ io.on('connection', (socket) => {
             cats.push(arrayItem.type) ;
         });
 
-        // console.log(cats);
         socket.emit('categories', cats);
     });
 
@@ -161,9 +214,8 @@ io.on('connection', (socket) => {
 
 
     socket.on('newCategoryCheck', (data) => {
-        if (categories.includes(data.toUpperCase())) {
-            console.log("category already exists")
-            client.emit("newCategoryFail", {error: 'Category Already Exists'})
+        if (categoryTypes.includes(data.toLowerCase())) {
+            socket.emit("newCategoryFail", {error: 'Category Already Exists'})
         }
     });
 
@@ -199,6 +251,18 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         removeSocket(socket.id);
         io.emit('updateUsersList', getUsers());
+    });
+
+
+    socket.on('storeNewCategory', (data) => {
+        console.log(data);
+        if(data.existingCategory){
+            if(!categoryToWords[data.existingCategory].includes(data.word)){
+
+            }
+        }else{
+            storeCategoryAndWord({category: data.newCategory, word: data.word});
+        }
     });
 
 

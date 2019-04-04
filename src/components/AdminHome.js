@@ -5,7 +5,8 @@ import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import {getCategories, checkIfCategoryExists} from '../api';
+import {getCategories, checkIfCategoryExists, saveNewCategoryOrWord} from '../api';
+import { withRouter } from 'react-router-dom';
 
 const styles = theme => ({
     container: {
@@ -46,12 +47,13 @@ class AdminHome extends React.Component {
             currentCategory:'',
             isExistingDisabled: false,
             isNewDisabled: false,
+            newCatVal: '',
+            word: '',
         };
 
     }
 
     componentDidMount() {
-        console.log("previous state :" + this.state.categories);
         getCategories(data => {
             if(data) {
                 this.setState({categories: this.state.categories.concat(data)});
@@ -64,8 +66,13 @@ class AdminHome extends React.Component {
     handleNewCategory = event => {
         clearTimeout(this.timer);
         let value = event.target.value;
+        this.setState({newCatVal: value});
         this.timer = setTimeout(() => { this.triggerChange(value) }, 1000);
-        this.setState( {isExistingDisabled: true, isNewDisabled: false} );
+        if(!value) {
+            this.setState({isExistingDisabled: false, isNewDisabled: false});
+        }else{
+            this.setState({isExistingDisabled: true, isNewDisabled: false});
+        }
     }
 
     triggerChange = (targetValue) => {
@@ -80,11 +87,25 @@ class AdminHome extends React.Component {
         });
         console.log("current value " + event.target.value)
         if(!event.target.value) {
-            console.log("inside")
-            this.setState({isExistingDisabled: true, isNewDisabled: false});
+            this.setState({isExistingDisabled: false, isNewDisabled: false});
         }else{
             this.setState({isExistingDisabled: false, isNewDisabled: true});
         }
+
+
+    };
+
+    handleWordChange = event => {
+        this.setState({word: event.target.value});
+    };
+    
+    saveForm = () =>{
+        saveNewCategoryOrWord({existingCategory: this.state.currentCategory,
+        newCategory: this.state.newCatVal, word: this.state.word});
+        let { history } = this.props;
+        history.push({
+            pathname: '/',
+        });
     };
 
 
@@ -92,7 +113,6 @@ class AdminHome extends React.Component {
     render() {
         const { classes } = this.props;
         const categories = this.state.categories;
-        console.log(this.state.categories);
         return (
             <div>
             <Header/>
@@ -128,6 +148,7 @@ class AdminHome extends React.Component {
                 <TextField
                     id="filled-bare-new"
                     label="Enter a new game category"
+                    value={this.state.newCatVal}
                     style={{ margin: 10 }}
                     placeholder="e.g Animal"
                     fullWidth
@@ -144,16 +165,18 @@ class AdminHome extends React.Component {
                 <TextField
                     id="filled-bare"
                     label="Enter a play word"
+                    value={this.state.word}
                     style={{ margin: 10 }}
                     placeholder="e.g Cat"
                     fullWidth
                     margin="normal"
                     variant="filled"
+                    onChange={this.handleWordChange}
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
-                <Button variant="outlined" color="primary" className={classes.button}>
+                <Button variant="outlined" onClick={this.saveForm} color="primary" className={classes.button}>
                    Save
                 </Button>
                 <Button variant="outlined" color="primary" className={classes.button}>
@@ -171,4 +194,4 @@ AdminHome.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AdminHome);
+export default withRouter(withStyles(styles)(AdminHome));

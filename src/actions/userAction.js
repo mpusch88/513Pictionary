@@ -6,6 +6,10 @@ export const setUser = (user) => {
 	return { type: 'SET_USER', user };
 };
 
-export const authenticate = () => {
+export const authenticate = (userType) => {
+	return {
+		type: 'LOGIN_CHECK',
+		userType: userType,
+	}
 	// redo
 };

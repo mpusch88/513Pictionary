@@ -46,6 +46,10 @@ function checkIfCategoryExists(data, cb) {
 
 }
 
+function saveNewCategoryOrWord(data, cb) {
+    socket.emit('storeNewCategory', data);
+}
+
 export { subscribeToTimer };
 export {rcvStrokes};
 export {sndStrokes};
@@ -54,3 +58,4 @@ export {game_otherReady};
 export {send_loginfo};
 export {getCategories};
 export {checkIfCategoryExists};
+export {saveNewCategoryOrWord};

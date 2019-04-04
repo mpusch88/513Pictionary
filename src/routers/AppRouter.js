@@ -4,6 +4,8 @@ import Login from '../components/Login';
 import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
 import AdminHome from '../components/AdminHome';
+import  requireAuth from '../components/requireAuth';
+import {connect} from "react-redux";
 
 
 // import { subscribeToTimer } from '../api';
@@ -13,9 +15,14 @@ class AppRouter extends React.Component {
         super(props);
     }
 
-    state = {
-        timestamp: 'no timestamp yet'
-    };
+    checkIfLoggedIn = () =>{
+
+        console.log(this.props.userType);
+        if(!this.props.userType == 'user'){
+            alert("NOT LOGGED IN");
+        }
+
+    }
 
     render() {
         return (
@@ -24,8 +31,8 @@ class AppRouter extends React.Component {
 
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
-                    <Route path='/Game' component={GameRoom} exact={true}/>
-                    <Route path='/Admin' component={AdminHome} exact={true}/>
+                    <Route path='/Game' component={requireAuth(GameRoom, false)} exact={true}/>
+                    <Route path='/Admin' component={requireAuth(AdminHome, true)} exact={true}/>
 
                     <UserRoute
                         path="/:type"
@@ -40,6 +47,11 @@ class AppRouter extends React.Component {
         );
     }
 }
+
+
+const mapStateToProps = (state) => {
+    return {userType: state.userType}
+};
 
 const UserRoute = ({
     component: Component,
@@ -63,4 +75,4 @@ const UserRoute = ({
     );
 };
 
-export {AppRouter as default};
+export default connect(mapStateToProps)(AppRouter);
