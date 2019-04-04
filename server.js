@@ -140,10 +140,16 @@ io.on('connection', (socket) => {
                 .find(myobj)
                 .toArray(function (err, res) {
                     if (res && res.length !== 0) {
-                        console.log("success");
-                        socket.emit('login_flag', true);
+                        if(res[0].isAdmin === '1'){
+                            console.log("admin logged in");
+                            socket.emit('login_flag', 'admin');
+                        }
+                        else if(res[0].isAdmin === '0'){
+                            socket.emit('login_flag', 'user');
+                            console.log("uesr logged in");
+                        }
                     } else {
-                        socket.emit('login_flag', false);
+                        socket.emit('login_flag', 'fail');
                         console.log("failure");
                     }
                 });

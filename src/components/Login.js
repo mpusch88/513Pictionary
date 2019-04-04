@@ -10,8 +10,8 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: 'example@email.com',
-            password: 'password'
+            email: 'email@email.com',
+            password: '12345'
         };
 
         this.handleClick = this
@@ -26,34 +26,22 @@ class Login extends React.Component {
     }
 
     handleClick(e) {
-        console.log("hhhh");
-        // e.preventDefault();
-        // console.log(JSON.stringify(this.state));
-        //
-        // let user = {
-        //     email: this.state.email,
-        //     password: this.state.password
-        // };
-        //
-        // this
-        //     .props
-        //     .dispatch(authenticate(user))
-        //     .then(() => {
-        //         this
-        //             .props
-        //             .history
-        //             .push('/landing');
-        //     });
-
         send_loginfo({email: this.state.email, psw: this.state.password}, log_flag => {
-            if(log_flag === true){
-                console.log("log in successful");
+            if(log_flag === 'user'){
+                console.log("user logged in successful");
                 let { history } = this.props;
                 history.push({
                     pathname: '/Game'
                 });
             }
-            else {
+            else if(log_flag === 'admin'){
+                console.log("admin logged in successful");
+                let { history } = this.props;
+                history.push({
+                    pathname: '/Admin'
+                });
+            }
+            else if(log_flag === 'fail') {
                 alert("Invalid email or password!");
                 let { history } = this.props;
                 history.push({
