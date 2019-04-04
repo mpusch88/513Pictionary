@@ -3,27 +3,15 @@ import {Route, Switch, Redirect} from 'react-router-dom';
 import Login from '../components/Login';
 import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
-import SketchComponent from '../components/SketchComponent'
-
-import { subscribeToTimer } from '../api';
 
 class AppRouter extends React.Component {
     constructor(props) {
         super(props);
-        // subscribeToTimer((err, timestamp) => this.setState({ timestamp }));
     }
-
-    state = {
-        timestamp: 'no timestamp yet'
-    };
 
     render() {
         return (
             <div>
-                {/*<p className="App-intro">*/}
-                    {/*This is the timer value: {this.state.timestamp}*/}
-                {/*</p>*/}
-                <SketchComponent />
 
                 <Switch>
 

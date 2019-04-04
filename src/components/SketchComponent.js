@@ -5,7 +5,6 @@ import {sndStrokes} from '../api';
 
 export default class SketchComponent extends Component
 {
-    socket = null;
 
     constructor(props) {
         super(props);
@@ -14,7 +13,6 @@ export default class SketchComponent extends Component
             tool:TOOL_PENCIL,
             size: 2,
             color: '#000000',
-            preColor: '#000000',
             fill: false,
             fillColor: '#444444',
             items: []
@@ -42,7 +40,6 @@ export default class SketchComponent extends Component
                         items={items}
                         tool={tool}
                         onCompleteItem={(i) => sndStrokes(i)}
-                        // onCompleteItem={(i) => wsClient.emit('addItem', i)}
                     />
                 </div>
                 <div style={{float:'left'}}>
@@ -50,39 +47,28 @@ export default class SketchComponent extends Component
                         <button
                             style={tool == TOOL_PENCIL ? {fontWeight:'bold'} : undefined}
                             className={tool == TOOL_PENCIL  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_PENCIL, color: this.state.preColor })}
+                            onClick={() => this.setState({tool:TOOL_PENCIL})}
                         >Pencil</button>
                         <button
                             style={tool == TOOL_LINE ? {fontWeight:'bold'} : undefined}
                             className={tool == TOOL_LINE  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_LINE, color: this.state.preColor })}
+                            onClick={() => this.setState({tool:TOOL_LINE})}
                         >Line</button>
                         <button
                             style={tool == TOOL_ELLIPSE ? {fontWeight:'bold'} : undefined}
                             className={tool == TOOL_ELLIPSE  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_ELLIPSE, color: this.state.preColor })}
+                            onClick={() => this.setState({tool:TOOL_ELLIPSE})}
                         >Ellipse</button>
                         <button
                             style={tool == TOOL_RECTANGLE ? {fontWeight:'bold'} : undefined}
                             className={tool == TOOL_RECTANGLE  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_RECTANGLE, color: this.state.preColor })}
+                            onClick={() => this.setState({tool:TOOL_RECTANGLE})}
                         >Rectangle</button>
-                        {/*<button*/}
-                            {/*style={tool == TOOL_ERASER ? {fontWeight:'bold'} : undefined}*/}
-                            {/*className={tool == TOOL_ERASER  ? 'item-active' : 'item'}*/}
-                            {/*onClick={() => this.setState({tool:TOOL_ERASER, preColor: color, color: 'white' })}*/}
-                        {/*>Eraser</button>*/}
                     </div>
                     <div className="options" style={{marginBottom:20}}>
                         <label htmlFor="">size: </label>
                         <input min="1" max="20" type="range" value={size} onChange={(e) => this.setState({size: parseInt(e.target.value) })} />
                     </div>
-                    {/*{this.state.tool == TOOL_ERASER ? '' :*/}
-                        {/*<div className="options" style={{marginBottom:20}}>*/}
-                            {/*<label htmlFor="">color: </label>*/}
-                            {/*<input type="color" value={this.state.color} onChange={(e) => this.setState({color: e.target.value, preColor: this.state.color})} />*/}
-                        {/*</div>*/}
-                    {/*}*/}
                     {(this.state.tool == TOOL_ELLIPSE || this.state.tool == TOOL_RECTANGLE) ?
                         <div>
                             <label htmlFor="">fill in:</label>

@@ -1,6 +1,8 @@
 
 const io = require('socket.io')();
 
+let users = [];
+
 io.on('connection', (client) => {
     client.on('subscribeToTimer', (interval) => {
         console.log('client is subscribing to timer with interval ', interval);
@@ -10,9 +12,10 @@ io.on('connection', (client) => {
     });
 
     client.on('newStrokeSnd', (item) =>{
-        // probably change to broadcasting to a room, if we still want multiple rooms
         client.broadcast.emit('newStrokeRcv', item);
-    })
+    });
+
+
 });
 
 const port = 8000;
