@@ -1,7 +1,5 @@
 import React from 'react';
-import Header from "./Header";
-
-
+import Header from './Header';
 
 class GameRoom extends React.Component {
 
@@ -9,17 +7,11 @@ class GameRoom extends React.Component {
 
         return (
             <div>
-            <Header/>
-            <h1>Hello world!</h1>
+                <Header/>
+                <h1>Hello world!</h1>
             </div>
-
-
-
         );
-
-
     }
 }
-
 
 export default GameRoom;
