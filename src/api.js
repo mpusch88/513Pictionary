@@ -25,8 +25,15 @@ function game_otherReady(cb) {
     socket.on('newReadyPlayer', username => cb(username));
 }
 
+//----------------- Login -----------------//
+function send_loginfo(info, cb) {
+    socket.on('log_flag', log_flag => cb(log_flag));
+    socket.emit('new_loginfo', info);
+}
+
 export { subscribeToTimer };
 export {rcvStrokes};
 export {sndStrokes};
 export {game_myReady};
 export {game_otherReady};
+export {send_loginfo};

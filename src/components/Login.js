@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
 
+import {send_loginfo} from "../api";
+
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -23,23 +25,27 @@ class Login extends React.Component {
     }
 
     handleClick(e) {
-        e.preventDefault();
-        console.log(JSON.stringify(this.state));
-
-        let user = {
-            email: this.state.email,
-            password: this.state.password
-        };
-
-        this
-            .props
-            .dispatch(authenticate(user))
-            .then(() => {
-                this
-                    .props
-                    .history
-                    .push('/landing');
-            });
+        // e.preventDefault();
+        // console.log(JSON.stringify(this.state));
+        //
+        // let user = {
+        //     email: this.state.email,
+        //     password: this.state.password
+        // };
+        //
+        // this
+        //     .props
+        //     .dispatch(authenticate(user))
+        //     .then(() => {
+        //         this
+        //             .props
+        //             .history
+        //             .push('/landing');
+        //     });
+        send_loginfo({email: this.state.email, psw: this.state.password}, log_flag => {
+            if(log_flag === true)console.log("log in successful");
+            else console.log("failed to log in");
+        });
     }
 
     handleForgotPassword(e) {
