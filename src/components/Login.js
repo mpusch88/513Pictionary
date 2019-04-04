@@ -86,7 +86,7 @@ class Login extends React.Component {
                         </div>
 
                         <div>
-                            <span onClick={this.handleForgotPassword}>Forgot Password?</span>
+                            <button onClick={this.handleForgotPassword}>Forgot Password?</button>
                         </div>
                     </form>
                 </div>
