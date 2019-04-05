@@ -35,7 +35,7 @@ class Login extends React.Component {
                 console.log("user logged in successful");
                 let { history } = this.props;
                 history.push({
-                    pathname: '/Game'
+                    pathname: '/Dashboard'
                 });
             }
             else if(log_flag === 'admin'){

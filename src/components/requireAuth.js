@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router';
 import {connect} from "react-redux";
 import Login from '../components/Login';
 
@@ -49,5 +48,5 @@ export default function requireAuth(Component, adminOnly) {
         return {userType: state.userType}
     };
 
-    return connect(mapStateToProps)(withRouter(AuthenticatedComponent));
+    return connect(mapStateToProps)(AuthenticatedComponent);
 }

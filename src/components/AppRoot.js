@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import Landing from './Landing';
+import Dashboard from './Dashboard';
 
 // could add something like the following (and compdidmount) to pre-populate
 // an active user/gameRoom list.
@@ -20,7 +20,7 @@ class AppRoot extends React.Component {
         return (
             <div>
                 <div>
-                    {(type === 'landing') && (<Landing userId={id} />)}
+                    {(type === 'landing') && (<Dashboard userId={id} />)}
                 </div>
             </div>
         );

@@ -31,6 +31,7 @@ function send_loginfo(info, cb) {
     socket.emit('new_loginfo', info);
 }
 
+//------------------ Admin page-----------------//
 function getCategories(cb) {
     socket.emit('categories', data => cb(data));
     socket.on('categories', (data) => {
@@ -50,6 +51,22 @@ function saveNewCategoryOrWord(data, cb) {
     socket.emit('storeNewCategory', data);
 }
 
+
+
+//-------------Dashboard --------------------//
+
+function joinOrcreateRoom(data, cb) {
+    socket.emit('join-create room', data);
+}
+
+
+
+// -------------helper functions --------------//
+function getUniqueId() {
+
+
+}
+
 export { subscribeToTimer };
 export {rcvStrokes};
 export {sndStrokes};
@@ -59,3 +76,5 @@ export {send_loginfo};
 export {getCategories};
 export {checkIfCategoryExists};
 export {saveNewCategoryOrWord};
+export {joinOrcreateRoom};
+
