@@ -4,6 +4,7 @@ let server = require('http').Server(app);
 let MongoClient = require('mongodb').MongoClient;
 let users = {};
 let rooms = [];
+let roomInfo = {};
 let categories = [];
 let categoryTypes =[];
 let categoryToWords = {};
@@ -219,37 +220,68 @@ io.on('connection', (socket) => {
     //------------------------- Cynthis -------------------------//
 
 
+    //---------------------------- creating and join room -------------------------------
+
+
     //lets socket join a room or create one if it doesn't exist
     //keep track of current rooms
     //in socket io, join and create room are a single function
-    socket.on('join-create room', function (room) {
+    socket.on('join-room', function (room) {
         let roomsearch = io.sockets.adapter.rooms[room.id];
-        if(roomsearch) {
-            if (!roomsearch.length > 5) {
+        console.log("inside join room");
+        console.log(roomsearch);
+        if(rooms.includes(room.id)) {
+            if (roomsearch && roomsearch.length < 5) {
                 socket.join(room.id);
-                room.capacity = roomsearch.length + 1;
-            } else {
+                room.capacity = roomsearch.length;
+                console.log("joined successfully in existing room")
+            } else if (!roomsearch){
+                socket.join(room.id);
+                room.capacity =  1;
+                console.log("joined successfully first time")
+            } else{
                 room.capacity = roomsearch.length;
                 socket.emit('full room', "Room is full");
             }
-        }else{
-            let roomId = getUniqueId();
-            if (!rooms.includes(roomId))
-                rooms.push(roomId);
+        }
+        roomInfo[room.id] = room;
+        socket.emit('sendRoomInfo', room)
 
-            room.id = roomId;
-            room.capacity = 0;
-            socket.join(roomId)
-            console.log("created new room " + roomId);
+    });
 
+    socket.on('create-room', function (room) {
+        let roomId = getUniqueId();
+        while (rooms.includes(roomId)) {
+            roomId = getUniqueId();
         }
 
-        socket.leave(room.id);
+        rooms.push(roomId);
 
+        room.id = roomId;
+        room.capacity = 0;
+       // socket.join(roomId)
+        roomInfo[room.id] = room;
+        console.log("created new room " + roomId);
 
         socket.emit('sendRoomInfo', room)
 
     });
+
+
+    //get all the rooms
+    socket.on('room-list', function (data) {
+
+        console.log("inside all room");
+        console.log(roomInfo);
+        let roomList = [];
+        var roomIds = Object.keys(roomInfo);
+        roomIds.forEach(function(key){
+            roomList.concat(roomInfo[key])});
+
+        socket.emit('all-rooms', roomList);
+    });
+
+    //-------------------------------------------------------------------------------------//
 
     //emits message to all users in the room
     //add functionality to verify answer on each message receive
