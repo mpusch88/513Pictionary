@@ -17,6 +17,16 @@ export default (state = initState, action) => {
 			return Object.assign({}, state, {
 				gameState: action.gameState
 			});
+		case 'ADD_CURRENT_ROOM' :
+			return Object.assign({}, state, {
+				currentRoomId: action.currentRoomId,
+				currentRoomName: action.currentRoomName,
+				currentRoomCategory: action.currentRoomCategory
+			});
+		case 'SET_HOST':
+			return Object.assign({}, state,{
+				isCurrentRoomHost: action.isCurrentRoomHost,
+			});
 		default:
 			return state;
 	}
