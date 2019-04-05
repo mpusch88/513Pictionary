@@ -223,11 +223,13 @@ io.on('connection', (socket) => {
     //keep track of current rooms
     //in socket io, join and create room are a single function
     socket.on('join-create room', function (room) {
-        let roomsearch = io.sockets.adapter.rooms[room];
+        let roomsearch = io.sockets.adapter.rooms[room.id];
         if(roomsearch) {
             if (!roomsearch.length > 5) {
                 socket.join(room.id);
+                room.capacity = roomsearch.length + 1;
             } else {
+                room.capacity = roomsearch.length;
                 socket.emit('full room', "Room is full");
             }
         }else{
@@ -235,10 +237,18 @@ io.on('connection', (socket) => {
             if (!rooms.includes(roomId))
                 rooms.push(roomId);
 
+            room.id = roomId;
+            room.capacity = 0;
             socket.join(roomId)
             console.log("created new room " + roomId);
 
         }
+
+        socket.leave(room.id);
+
+
+        socket.emit('sendRoomInfo', room)
+
     });
 
     //emits message to all users in the room

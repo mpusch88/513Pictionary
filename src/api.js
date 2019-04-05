@@ -59,13 +59,15 @@ function joinOrcreateRoom(data, cb) {
     socket.emit('join-create room', data);
 }
 
-
-
-// -------------helper functions --------------//
-function getUniqueId() {
-
-
+function getRoomInfo(data, cb){
+    socket.on('sendRoomInfo', (data) => {
+        cb(data);
+    });
 }
+
+
+
+
 
 export { subscribeToTimer };
 export {rcvStrokes};
@@ -77,4 +79,5 @@ export {getCategories};
 export {checkIfCategoryExists};
 export {saveNewCategoryOrWord};
 export {joinOrcreateRoom};
+export {getRoomInfo};
 

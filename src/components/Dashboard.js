@@ -9,7 +9,7 @@ import Header from "./Header";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import {getCategories,joinOrcreateRoom} from '../api';
+import {getCategories,joinOrcreateRoom, getRoomInfo} from '../api';
 import { withRouter } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -145,7 +145,8 @@ class Dashboard extends React.Component {
             categories: [''],
             roomList: [],
             roomCategory: '',
-            newRoomName: ''
+            newRoomName: '',
+            currentRoomId: '',
         };
 
 
@@ -183,19 +184,25 @@ class Dashboard extends React.Component {
     };
 
     createNewRoom = () => {
+        let roomList = this.state.roomList;
         if(this.state.newRoomName && this.state.roomCategory){
             joinOrcreateRoom({id: '', newRoomName: this.state.newRoomName,
                 roomCategory: this.state.roomCategory});
+
+            getRoomInfo({id: '', newRoomName: this.state.newRoomName,
+                roomCategory: this.state.roomCategory}, info => {
+
+                let nextState = roomList.concat({id: info.id,
+                    name: this.state.newRoomName,
+                    category: this.state.roomCategory,
+                    capacity: info.capacity});
+
+                this.setState({ roomList: nextState});
+
+            })
+
+            this.setState({ dialogOpen: false });
         }
-
-        let roomList = this.state.roomList;
-        console.log("before change" + roomList);
-        const nextState = roomList.concat({id: 1, name: this.state.newRoomName, category: this.state.roomCategory, capacity: 2});
-
-        console.log("after change " + nextState);
-        this.setState({ roomList: nextState, newRoomName: '' });
-
-        this.setState({ dialogOpen: false });
 
     };
 
@@ -235,7 +242,7 @@ class Dashboard extends React.Component {
                     />
                 </div>
                 <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    Open form dialog
+                    Create New Game Room
                 </Button>
             </div>
                 <Dialog
