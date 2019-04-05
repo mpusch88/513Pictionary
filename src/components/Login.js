@@ -30,23 +30,25 @@ class Login extends React.Component {
         send_loginfo({
             email: this.state.email,
             psw: this.state.password
-        }, log_flag => {
+        }, loginInfo => {
 
-            let userType = log_flag
-                ? log_flag
+            let userType = loginInfo.type
+                ? loginInfo.type
                 : '';
+            console.log(loginInfo);
+
             this
                 .props
-                .authenticate(userType);
-            if (log_flag === 'user') {
+                .authenticate(userType, loginInfo.username);
+            if (loginInfo.type === 'user') {
                 console.log('user logged in successful');
                 let {history} = this.props;
                 history.push({pathname: '/Dashboard'});
-            } else if (log_flag === 'admin') {
+            } else if (loginInfo.type === 'admin') {
                 console.log('admin logged in successful');
                 let {history} = this.props;
                 history.push({pathname: '/Admin'});
-            } else if (log_flag === 'fail') {
+            } else if (loginInfo.type === 'fail') {
                 alert('Invalid email or password!');
                 let {history} = this.props;
                 history.push({pathname: '/'});

@@ -196,13 +196,13 @@ io.on('connection', (socket) => {
 					if (res && res.length !== 0) {
 						if (res[0].isAdmin === '1') {
 							console.log('admin logged in');
-							socket.emit('login_flag', 'admin');
+							socket.emit('login_flag', {type:'admin'});
 						} else if (res[0].isAdmin === '0') {
-							socket.emit('login_flag', 'user');
+							socket.emit('login_flag', {type:'user', username: res[0].username});
 							console.log('uesr logged in');
 						}
 					} else {
-						socket.emit('login_flag', 'fail');
+						socket.emit('login_flag', {type:'fail'});
 						console.log('failure');
 					}
 				});
