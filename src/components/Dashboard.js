@@ -18,7 +18,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import {bindActionCreators} from "redux";
+import {addRoomInfo, setRoomHost} from "../actions/dashBoardAction";
+import {connect} from "react-redux";
+
+import compose from 'recompose/compose';
+
 
 
 
@@ -92,7 +97,7 @@ const ListItem = ({ id, name, category, capacity, onClick }) => (
 const List = ({ items, onItemClick }) => (
 
             items.map((item, i) =>
-                <ListItem id={item.id} name={item.name} category={item.category} capacity={item.capacity} onClick={onItemClick} />)
+                <ListItem id={item.id} name={item.roomName} category={item.roomCategory} capacity={item.capacity} onClick={onItemClick} />)
 
 );
 
@@ -125,13 +130,20 @@ class Dashboard extends React.Component {
         getAllExistingRooms(data => {
             if(data) {
 
-                    this.setState({roomList: this.state.roomList.concat(data)});
+                console.log(data)
+                this.setState({roomList: this.state.roomList.concat(data)});
 
+                let map = {}
+
+                for(var key in data){
+                    map[(data[key].id)] = data[key];
+                }
+                this.setState({roomObjMap: map});
 
             }
         });
 
-
+        console.log("INSIDE COMPONENT" + this.state.roomList)
     }
 
     handleCategorySelect =  event => {
@@ -160,17 +172,17 @@ class Dashboard extends React.Component {
     createNewRoom = () => {
         let roomList = this.state.roomList;
         if(this.state.newRoomName && this.state.roomCategory){
-            createRoom({id: '', newRoomName: this.state.newRoomName,
+            createRoom({id: '', roomName: this.state.newRoomName,
                 roomCategory: this.state.roomCategory});
 
-            getRoomInfo({id: '', newRoomName: this.state.newRoomName,
+            getRoomInfo({id: '', roomName: this.state.newRoomName,
                 roomCategory: this.state.roomCategory}, info => {
 
-                let capacity = info.capacity + '/5';
+
                 let newRoom = {id: info.id,
-                    name: this.state.newRoomName,
-                    category: this.state.roomCategory,
-                    capacity: capacity};
+                    roomName: info.roomName,
+                    roomCategory: info.roomCategory,
+                    capacity: info.capacity};
 
                 let nextState = roomList.concat(newRoom);
 
@@ -178,6 +190,8 @@ class Dashboard extends React.Component {
                 map[info.id] = newRoom;
 
                 this.setState({ roomList: nextState, roomObjMap : map});
+
+                this.props.setRoomHost(true);
 
             })
 
@@ -192,13 +206,46 @@ class Dashboard extends React.Component {
 
         let id = e.target.id;
         let room = this.state.roomObjMap[id];
+        let roomList = this.state.roomList;
+
         joinRoom(room);
 
 
-        // let { history } = this.props;
-        // history.push({
-        //     pathname: '/Game'
-        // });
+        getRoomInfo({id: '', roomName: this.state.newRoomName,
+            roomCategory: this.state.roomCategory}, info => {
+
+
+            let newRoom = {id: info.id,
+                roomName: info.roomName,
+                roomCategory: info.roomCategory,
+                capacity: info.capacity};
+
+
+            this.setState( state => {
+                const list = state.roomList.map(item => {
+                    if(item.id === info.id){
+                        console.log("inside same id")
+                        item.capacity = info.capacity;
+                    }
+                });
+            });
+
+
+            let map = this.state.roomObjMap;
+            map[info.id] = newRoom;
+
+            this.setState({ roomObjMap : map});
+
+            this.props.addRoomInfo(newRoom);
+
+        })
+
+
+
+        let { history } = this.props;
+        history.push({
+            pathname: '/Game'
+        });
 
     };
 
@@ -304,8 +351,27 @@ class Dashboard extends React.Component {
 }
 
 
+
+const mapStateToProps = (state) => {
+    return {currentRoomId: state.currentRoomId,
+    currentRoomName: state.currentRoomName,
+     isCurrentRoomHost: state.isCurrentRoomHost,
+    currentRoomCategory: state.currentRoomCategory}
+};
+
+const matchDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        addRoomInfo: addRoomInfo,
+        setRoomHost: setRoomHost,
+    }, dispatch);
+};
+
 Dashboard.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styles)(Dashboard));
+
+export default compose(
+    withStyles(styles),
+    connect(mapStateToProps, matchDispatchToProps)
+)(withRouter(Dashboard))

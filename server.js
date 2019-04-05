@@ -233,19 +233,19 @@ io.on('connection', (socket) => {
         if(rooms.includes(room.id)) {
             if (roomsearch && roomsearch.length < 5) {
                 socket.join(room.id);
-                room.capacity = roomsearch.length;
+                room.capacity = roomsearch.length + '/5';
                 console.log("joined successfully in existing room")
             } else if (!roomsearch){
                 socket.join(room.id);
-                room.capacity =  1;
+                room.capacity =  1 + '/5';
                 console.log("joined successfully first time")
             } else{
-                room.capacity = roomsearch.length;
+                room.capacity = roomsearch.length + '/5';
                 socket.emit('full room', "Room is full");
             }
         }
         roomInfo[room.id] = room;
-        socket.emit('sendRoomInfo', room)
+        io.emit('sendRoomInfo', room)
 
     });
 
@@ -258,12 +258,12 @@ io.on('connection', (socket) => {
         rooms.push(roomId);
 
         room.id = roomId;
-        room.capacity = 0;
+        room.capacity = 0 + '/5';
        // socket.join(roomId)
         roomInfo[room.id] = room;
         console.log("created new room " + roomId);
 
-        socket.emit('sendRoomInfo', room)
+        io.emit('sendRoomInfo', room)
 
     });
 
@@ -271,17 +271,18 @@ io.on('connection', (socket) => {
     //get all the rooms
     socket.on('room-list', function (data) {
 
-        console.log("inside all room");
-        console.log(roomInfo);
         let roomList = [];
-        var roomIds = Object.keys(roomInfo);
-        roomIds.forEach(function(key){
-            roomList.concat(roomInfo[key])});
+        for (var key in roomInfo){
+            roomList.push(roomInfo[key])
+        }
 
         socket.emit('all-rooms', roomList);
     });
 
     //-------------------------------------------------------------------------------------//
+
+
+
 
     //emits message to all users in the room
     //add functionality to verify answer on each message receive
