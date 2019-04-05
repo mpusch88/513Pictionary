@@ -5,46 +5,42 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Header from "./Header";
+import Header from './Header';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import {getCategories,joinRoom, createRoom, getRoomInfo, getAllExistingRooms} from '../api';
-import { withRouter } from 'react-router-dom';
+import {getCategories, joinRoom, createRoom, getRoomInfo, getAllExistingRooms} from '../api';
+import {withRouter} from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import SearchIcon from '@material-ui/icons/Search'
+import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+// import {fade} from '@material-ui/core/styles/colorManipulator';
 
-
-
-const styles = theme =>({
+const styles = () => ({
     button: {
-        width: 100, height: 100,
+        width: 100,
+        height: 100,
         padding: 0
     },
-    icon: {
-
-    },
+    icon: {},
     leftIcon: {
         marginRight: 20,
-        fontSize:50,
-        color:'#fffff'
+        fontSize: 50,
+        color: '#fffff'
     },
-
     textField: {
         marginLeft: 2,
-        marginRight: 2,
+        marginRight: 2
     },
     dense: {
-        marginTop: 50,
+        marginTop: 50
     },
     menu: {
-        width: 200,
+        width: 200
     },
 
     table: {
@@ -53,50 +49,44 @@ const styles = theme =>({
     },
     row: {
         '&:nth-of-type(odd)': {
-            backgroundColor: '#009',
-        },
+            backgroundColor: '#009'
+        }
     }
-
 });
 
 const CustomTableCell = withStyles(theme => ({
     head: {
         backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
+        color: theme.palette.common.white
     },
     body: {
-        fontSize: 16,
-    },
+        fontSize: 16
+    }
 }))(TableCell);
 
-
-
-const ListItem = ({ id, name, category, capacity, onClick }) => (
-
-        <TableRow className={styles.row} key={id}>
-            <CustomTableCell component="th" scope="row">
-                {name}
-            </CustomTableCell>
-            <CustomTableCell align="right">{category}</CustomTableCell>
-            <CustomTableCell align="right">{capacity}</CustomTableCell>
-            <CustomTableCell align="right">
-                <button  id={id} onClick={onClick}>
-                    Join Room
-                </button>
-            </CustomTableCell>
-        </TableRow>
-
-
+const ListItem = ({id, name, category, capacity, onClick}) => (
+    <TableRow className={styles.row} key={id}>
+        <CustomTableCell component="th" scope="row">
+            {name}
+        </CustomTableCell>
+        <CustomTableCell align="right">{category}</CustomTableCell>
+        <CustomTableCell align="right">{capacity}</CustomTableCell>
+        <CustomTableCell align="right">
+            <button id={id} onClick={onClick}>
+                Join Room
+            </button>
+        </CustomTableCell>
+    </TableRow>
 );
 
-const List = ({ items, onItemClick }) => (
-
-            items.map((item, i) =>
-                <ListItem id={item.id} name={item.name} category={item.category} capacity={item.capacity} onClick={onItemClick} />)
-
+const List = ({items, onItemClick}) => (items.map((item, i) => <ListItem
+    id={item.id}
+    name={item.name}
+    category={item.category}
+    capacity={item.capacity}
+    onClick={onItemClick}/>)
+// Missing "key" prop for element in iterator...
 );
-
-
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -109,145 +99,132 @@ class Dashboard extends React.Component {
             roomCategory: '',
             newRoomName: '',
             currentRoomId: '',
-            existingRooms: {},
+            existingRooms: {}
         };
-
-
     }
 
     componentDidMount() {
         getCategories(data => {
-            if(data) {
-                this.setState({categories: this.state.categories.concat(data)});
+            if (data) {
+                this.setState({
+                    categories: this
+                        .state
+                        .categories
+                        .concat(data)
+                });
             }
         });
 
         getAllExistingRooms(data => {
-            if(data) {
+            if (data) {
 
-                    this.setState({roomList: this.state.roomList.concat(data)});
-
+                this.setState({
+                    roomList: this
+                        .state
+                        .roomList
+                        .concat(data)
+                });
 
             }
         });
-
-
     }
 
-    handleCategorySelect =  event => {
-        this.setState({
-            roomCategory: event.target.value,
-        });
-
+    handleCategorySelect = event => {
+        this.setState({roomCategory: event.target.value});
     };
 
-    handleRoomName =  event => {
-        this.setState({
-            newRoomName: event.target.value,
-        });
-
+    handleRoomName = event => {
+        this.setState({newRoomName: event.target.value});
     };
-
 
     handleClickOpen = () => {
-        this.setState({ dialogOpen: true });
+        this.setState({dialogOpen: true});
     };
 
     handleClose = () => {
-        this.setState({ dialogOpen: false });
+        this.setState({dialogOpen: false});
     };
 
     createNewRoom = () => {
         let roomList = this.state.roomList;
-        if(this.state.newRoomName && this.state.roomCategory){
-            createRoom({id: '', newRoomName: this.state.newRoomName,
-                roomCategory: this.state.roomCategory});
+        if (this.state.newRoomName && this.state.roomCategory) {
+            createRoom({id: '', newRoomName: this.state.newRoomName, roomCategory: this.state.roomCategory});
 
-            getRoomInfo({id: '', newRoomName: this.state.newRoomName,
-                roomCategory: this.state.roomCategory}, info => {
+            getRoomInfo({
+                id: '',
+                newRoomName: this.state.newRoomName,
+                roomCategory: this.state.roomCategory
+            }, info => {
 
                 let capacity = info.capacity + '/5';
-                let newRoom = {id: info.id,
+                let newRoom = {
+                    id: info.id,
                     name: this.state.newRoomName,
                     category: this.state.roomCategory,
-                    capacity: capacity};
+                    capacity: capacity
+                };
 
                 let nextState = roomList.concat(newRoom);
 
                 let map = this.state.roomObjMap;
                 map[info.id] = newRoom;
 
-                this.setState({ roomList: nextState, roomObjMap : map});
+                this.setState({roomList: nextState, roomObjMap: map});
+            });
 
-            })
-
-            this.setState({ dialogOpen: false });
+            this.setState({dialogOpen: false});
         }
-
     };
 
-
     handleJoinRoomClick = (e) => {
-
-
         let id = e.target.id;
         let room = this.state.roomObjMap[id];
         joinRoom(room);
 
-
-        // let { history } = this.props;
-        // history.push({
-        //     pathname: '/Game'
-        // });
-
+        // let { history } = this.props; history.push({     pathname: '/Game' });
     };
 
-
-
     render() {
-        const { classes } = this.props;
-        const { roomList} = this.state;
+        const {classes} = this.props;
+        const {roomList} = this.state;
 
         console.log(roomList);
+
         return (
             <div>
                 <Header/>
-            <div>
-
-                <div className={classes.search}>
-                    <div className={classes.searchIcon}>
-                        <SearchIcon />
-                    </div>
-                    <InputBase
-                        placeholder="Search…"
-                        classes={{
+                <div>
+                    <div className={classes.search}>
+                        <div className={classes.searchIcon}>
+                            <SearchIcon/>
+                        </div>
+                        <InputBase
+                            placeholder="Search…"
+                            classes={{
                             root: classes.inputRoot,
-                            input: classes.inputInput,
-                        }}
-                    />
+                            input: classes.inputInput
+                        }}/>
+                    </div>
+                    <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+                        Create New Game Room
+                    </Button>
                 </div>
-                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    Create New Game Room
-                </Button>
-            </div>
                 <Dialog
                     open={this.state.dialogOpen}
                     onClose={this.handleClose}
-                    aria-labelledby="form-dialog-title"
-                >
+                    aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Create New Room</DialogTitle>
                     <DialogContent>
-                        <form  autoComplete="off">
-                        <TextField
-                            value={this.state.newRoomName}
-                            required
-                            autoFocus
-                            margin="dense"
-                            id="roomName"
-                            label="Enter a room name"
-                            onChange={this.handleRoomName}
-                            fullWidth
-                        />
+                        <form autoComplete="off">
+                            <TextField
+                                value={this.state.newRoomName}
+                                required
+                                autoFocus
+                                margin="dense"
+                                id="roomName"
+                                label="Enter a room name"
+                                onChange={this.handleRoomName}
+                                fullWidth/>
                             <TextField
                                 id="filled-select-category"
                                 select
@@ -255,22 +232,25 @@ class Dashboard extends React.Component {
                                 label="Choose a game Category"
                                 className={classes.textField}
                                 value={this.state.roomCategory}
-                                onChange={this.handleCategorySelect.bind(this)}
+                                onChange={this
+                                .handleCategorySelect
+                                .bind(this)}
                                 SelectProps={{
-                                    MenuProps: {
-                                        className: classes.menu,
-                                    },
-                                }}
+                                MenuProps: {
+                                    className: classes.menu
+                                }
+                            }}
                                 margin="normal"
                                 fullWidth
-                                variant="outlined"
-                            >
-                                {this.state.categories.map((option, index) => (
-                                    <MenuItem key={index} value={option}>
-                                        {option}
-                                    </MenuItem>
-                                ))}
-
+                                variant="outlined">
+                                {this
+                                    .state
+                                    .categories
+                                    .map((option, index) => (
+                                        <MenuItem key={index} value={option}>
+                                            {option}
+                                        </MenuItem>
+                                    ))}
                             </TextField>
                         </form>
                     </DialogContent>
@@ -294,7 +274,7 @@ class Dashboard extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <List items={roomList} onItemClick={this.handleJoinRoomClick} />
+                            <List items={roomList} onItemClick={this.handleJoinRoomClick}/>
                         </TableBody>
                     </Table>
                 </div>
@@ -303,9 +283,8 @@ class Dashboard extends React.Component {
     }
 }
 
-
 Dashboard.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 export default withRouter(withStyles(styles)(Dashboard));
