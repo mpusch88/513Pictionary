@@ -64,29 +64,29 @@ const CustomTableCell = withStyles(theme => ({
     }
 }))(TableCell);
 
-// const ListItem = ({id, name, category, capacity, onClick}) => (
-//     <TableRow className={styles.row} key={id}>
-//         <CustomTableCell component="th" scope="row">
-//             {name}
-//         </CustomTableCell>
-//         <CustomTableCell align="right">{category}</CustomTableCell>
-//         <CustomTableCell align="right">{capacity}</CustomTableCell>
-//         <CustomTableCell align="right">
-//             <button id={id} onClick={onClick}>
-//                 Join Room
-//             </button>
-//         </CustomTableCell>
-//     </TableRow>
-// );
+const ListItem = ({id, name, category, capacity, onClick}) => (
+    <TableRow className={styles.row} key={id}>
+        <CustomTableCell component="th" scope="row">
+            {name}
+        </CustomTableCell>
+        <CustomTableCell align="right">{category}</CustomTableCell>
+        <CustomTableCell align="right">{capacity}</CustomTableCell>
+        <CustomTableCell align="right">
+            <button id={id} onClick={onClick}>
+                Join Room
+            </button>
+        </CustomTableCell>
+    </TableRow>
+);
 
-// const List = ({items, onItemClick}) => (items.map((item, i) => <ListItem
-//     id={item.id}
-//     name={item.name}
-//     category={item.category}
-//     capacity={item.capacity}
-//     onClick={onItemClick}/>)
-// // Missing "key" prop for element in iterator...
-// );
+const List = ({items, onItemClick}) => (items.map((item, i) => <ListItem
+    id={item.id}
+    name={item.name}
+    category={item.category}
+    capacity={item.capacity}
+    onClick={onItemClick}/>)
+// Missing "key" prop for element in iterator...
+);
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -275,6 +275,7 @@ class Dashboard extends React.Component {
                         </TableHead>
 
                         <TableBody>
+                            <List items={roomList} onItemClick={this.handleJoinRoomClick}/>
                         </TableBody>
 
                     </Table>
@@ -283,10 +284,6 @@ class Dashboard extends React.Component {
         );
     }
 }
-
-
-// this is from inside table body: <List items={roomList} onItemClick={this.handleJoinRoomClick}/>
-
 
 Dashboard.propTypes = {
     classes: PropTypes.object.isRequired
