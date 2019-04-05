@@ -69,41 +69,35 @@ class Login extends React.Component {
         return (
             <div className='login-outer'>
                 <div className='login-container'>
-
-                    <div className='row login-content-row'>
-                        <div className='col-12 titles'>
-                            <span className='title'>513Pictionary</span>
-                            <span className='subtitle'>Sign In Below!</span>
-                        </div>
+                    <div className='titles'>
+                        <span className='title'>513Pictionary</span>
+                        <span className='subtitle'>Sign In Below!</span>
                     </div>
-                    <div className='row login-content-row'>
-                        <div className='col-12'>
-                            <div className='input-group'>
-                                <span className='input-text-label'>Email</span>
-                                <div className='input-field-container'>
-                                    <input
-                                        type='text'
-                                        name='email'
-                                        onChange={this.handleChange}
-                                        value={this.state.email}/>
-                                </div>
-                            </div>
-                            <div className='input-group'>
-                                <span className='input-text-label'>Password</span>
-                                <div className='input-field-container'>
-                                    <input
-                                        type='password'
-                                        name='password'
-                                        onChange={this.handleChange}
-                                        value={this.state.password}/>
-                                </div>
-                            </div>
-                            <div>
-                                <button className='button-big-primary' onClick={this.handleClick}>
-                                    Log In
-                                </button>
-                            </div>
-                        </div>
+
+                    <div className='input-group'>
+                        <span className='input-text-label'>Email</span>
+                        <input
+                            className='input-field'
+                            type='text'
+                            name='email'
+                            onChange={this.handleChange}
+                            value={this.state.email}/>
+                    </div>
+
+                    <div className='input-group'>
+                        <span className='input-text-label'>Password</span>
+                        <input
+                            className='input-field'
+                            type='password'
+                            name='password'
+                            onChange={this.handleChange}
+                            value={this.state.password}/>
+                    </div>
+
+                    <div>
+                        <button className='login-button' onClick={this.handleClick}>
+                            Log In
+                        </button>
                     </div>
                 </div>
             </div>
