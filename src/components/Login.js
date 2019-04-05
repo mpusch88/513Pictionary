@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
-import { withRouter } from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
-import {send_loginfo} from "../api";
+import {send_loginfo} from '../api';
 
 class Login extends React.Component {
     constructor(props) {
@@ -26,32 +26,31 @@ class Login extends React.Component {
             .bind(this);
     }
 
-    handleClick(e) {
-        send_loginfo({email: this.state.email, psw: this.state.password}, log_flag => {
+    handleClick() {
+        send_loginfo({
+            email: this.state.email,
+            psw: this.state.password
+        }, log_flag => {
 
-            let userType = log_flag ? log_flag : '';
-            this.props.authenticate(userType);
-            if(log_flag === 'user'){
-                console.log("user logged in successful");
-                let { history } = this.props;
-                history.push({
-                    pathname: '/Dashboard'
-                });
-            }
-            else if(log_flag === 'admin'){
-                console.log("admin logged in successful");
-                let { history } = this.props;
-                history.push({
-                    pathname: '/Admin'
-                });
-            }
-            else if(log_flag === 'fail') {
-                alert("Invalid email or password!");
-                let { history } = this.props;
-                history.push({
-                    pathname: '/'
-                });
-                console.log("failed to log in");
+            let userType = log_flag
+                ? log_flag
+                : '';
+            this
+                .props
+                .authenticate(userType);
+            if (log_flag === 'user') {
+                console.log('user logged in successful');
+                let {history} = this.props;
+                history.push({pathname: '/Dashboard'});
+            } else if (log_flag === 'admin') {
+                console.log('admin logged in successful');
+                let {history} = this.props;
+                history.push({pathname: '/Admin'});
+            } else if (log_flag === 'fail') {
+                alert('Invalid email or password!');
+                let {history} = this.props;
+                history.push({pathname: '/'});
+                console.log('failed to log in');
             }
         });
     }
@@ -68,34 +67,43 @@ class Login extends React.Component {
 
     render() {
         return (
-            <div>
-                <div>
-                    <span className='title'>513Pictionary</span>
-                    <span className='gap'>Sign In Below!</span>
-                </div>
-                <div>
-                    <div>
-                        <span>Email</span>
-                        <input
-                            type='text'
-                            name='email'
-                            onChange={this.handleChange}
-                            value={this.state.email}/>
-                    </div>
+            <div className='login-outer'>
+                <div className='login-container'>
 
-                    <div>
-                        <span>Password</span>
-                        <input
-                            type='password'
-                            name='password'
-                            onChange={this.handleChange}
-                            value={this.state.password}/>
+                    <div className='row login-content-row'>
+                        <div className='col-12 titles'>
+                            <span className='title'>513Pictionary</span>
+                            <span className='subtitle'>Sign In Below!</span>
+                        </div>
                     </div>
-
-                    <div>
-                        <button onClick={this.handleClick}>
-                            Log In
-                        </button>
+                    <div className='row login-content-row'>
+                        <div className='col-12'>
+                            <div className='input-group'>
+                                <span className='input-text-label'>Email</span>
+                                <div className='input-field-container'>
+                                    <input
+                                        type='text'
+                                        name='email'
+                                        onChange={this.handleChange}
+                                        value={this.state.email}/>
+                                </div>
+                            </div>
+                            <div className='input-group'>
+                                <span className='input-text-label'>Password</span>
+                                <div className='input-field-container'>
+                                    <input
+                                        type='password'
+                                        name='password'
+                                        onChange={this.handleChange}
+                                        value={this.state.password}/>
+                                </div>
+                            </div>
+                            <div>
+                                <button className='button-big-primary' onClick={this.handleClick}>
+                                    Log In
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -109,7 +117,7 @@ const mapStateToProps = (state) => {
 
 const matchDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        authenticate: authenticate,
+        authenticate: authenticate
     }, dispatch);
 };
 
