@@ -22,6 +22,7 @@ var client1 = new MongoClient(uri, {useNewUrlParser: true});
 
 
 
+// getting all categories from database
 client.connect(err => {
     const collection = client.db("pictionary").collection("categories");
     let rawCategories = collection.find().toArray((err, items) => {
@@ -35,13 +36,16 @@ client.connect(err => {
     client.close();
 });
 
+
+
 let getUsers = () => {
     return Object.keys(users).map(function (key) {
         return users[key].username;
     });
 }
 
-// Helper functions for chat message
+
+// --------- Helper functions for chat message -------------------//
 let createSocket = (user) => {
     let current_user = users[user.id],
         updated_user = {
@@ -85,6 +89,8 @@ let removeSocket = (socket_id) => {
 };
 
 
+
+// ------------------- helper function for admin page -----------------//
 let storeCategoryAndWord = (data) => {
     let clientDriver = new MongoClient(uri, {useNewUrlParser: true});
     clientDriver.connect(err => {
@@ -128,10 +134,19 @@ let addWordToExistingCategory = (data) => {
     clientDriver.close();
 }
 
+//---------------- general helper functions -------------------------//
+let getUniqueId = function () {
+    // Math.random should be unique because of its seeding algorithm.
+    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+    // after the decimal.
+    return '_' + Math.random().toString(36).substr(2, 9);
+};
 
+
+//########----------- on socket connection --------------------###########/
 io.on('connection', (socket) => {
 
-    //console.log(categories)
+
     let query = socket.request._query,
         user = {
             username: query.username,
@@ -159,15 +174,6 @@ io.on('connection', (socket) => {
         }, interval);
     });
 
-    //this is for testing right now, need to fetch from DB
-    socket.on("categories", (data) =>{
-        let cats = []
-        categories.forEach(function (arrayItem) {
-            cats.push(arrayItem.type) ;
-        });
-
-        socket.emit('categories', cats);
-    });
 
 
 
@@ -213,23 +219,25 @@ io.on('connection', (socket) => {
     //------------------------- Cynthis -------------------------//
 
 
-    socket.on('newCategoryCheck', (data) => {
-        if (categoryTypes.includes(data.toLowerCase())) {
-            socket.emit("newCategoryFail", {error: 'Category Already Exists'})
-        }
-    });
-
     //lets socket join a room or create one if it doesn't exist
     //keep track of current rooms
     //in socket io, join and create room are a single function
     socket.on('join-create room', function (room) {
         let roomsearch = io.sockets.adapter.rooms[room];
-        if (!roomsearch.length > 5) {
-            if (!rooms.includes(room))
-                rooms.push(room);
-            socket.join(room);
-        } else {
-            socket.emit('full room', "Room is full");
+        if(roomsearch) {
+            if (!roomsearch.length > 5) {
+                socket.join(room.id);
+            } else {
+                socket.emit('full room', "Room is full");
+            }
+        }else{
+            let roomId = getUniqueId();
+            if (!rooms.includes(roomId))
+                rooms.push(roomId);
+
+            socket.join(roomId)
+            console.log("created new room " + roomId);
+
         }
     });
 
@@ -253,6 +261,25 @@ io.on('connection', (socket) => {
         io.emit('updateUsersList', getUsers());
     });
 
+    //---------------- Admin page --------------------//
+
+    //this is for testing right now, need to fetch from DB
+    socket.on("categories", (data) =>{
+        let cats = []
+        categories.forEach(function (arrayItem) {
+            cats.push(arrayItem.type) ;
+        });
+
+        socket.emit('categories', cats);
+    });
+
+    socket.on('newCategoryCheck', (data) => {
+        if (categoryTypes.includes(data.toLowerCase())) {
+            socket.emit("newCategoryFail", {error: 'Category Already Exists'})
+        }
+    });
+
+
 
     socket.on('storeNewCategory', (data) => {
         console.log(data);
@@ -264,6 +291,9 @@ io.on('connection', (socket) => {
             storeCategoryAndWord({category: data.newCategory, word: data.word});
         }
     });
+
+    // -----------------  Dashboard ---------------------------//
+
 
 
 });

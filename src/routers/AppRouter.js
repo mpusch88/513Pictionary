@@ -4,6 +4,7 @@ import Login from '../components/Login';
 import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
 import AdminHome from '../components/AdminHome';
+import Dashboard from '../components/Dashboard';
 import  requireAuth from '../components/requireAuth';
 import {connect} from "react-redux";
 
@@ -30,6 +31,7 @@ class AppRouter extends React.Component {
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
                     <Route path='/Game' component={requireAuth(GameRoom, false)} exact={true}/>
+                    <Route path='/Dashboard' component={requireAuth(Dashboard, false)} exact={true}/>
                     <Route path='/Admin' component={requireAuth(AdminHome, true)} exact={true}/>
 
                     <UserRoute
