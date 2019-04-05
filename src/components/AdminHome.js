@@ -1,41 +1,41 @@
 import React from 'react';
-import Header from "./Header";
+import Header from './Header';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import {getCategories, checkIfCategoryExists, saveNewCategoryOrWord} from '../api';
-import { withRouter } from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 const styles = theme => ({
     container: {
         display: 'flex',
         flexWrap: 'wrap',
         marginTop: 100,
-        justifyContent: 'center', /*centers items on the line (the x-axis by default)*/
-        alignItems: 'center',
+        justifyContent: 'center',
+        /*centers items on the line (the x-axis by default)*/
+        alignItems: 'center'
     },
     textField: {
         marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginRight: theme.spacing.unit
     },
     dense: {
-        marginTop: 50,
+        marginTop: 50
     },
     menu: {
-        width: 200,
+        width: 200
     },
 
     button: {
-        justifySelf:'center',
-        margin: 25,
+        justifySelf: 'center',
+        margin: 25
     },
     input: {
-        display: 'none',
-    },
+        display: 'none'
+    }
 });
-
 
 class AdminHome extends React.Component {
 
@@ -44,19 +44,24 @@ class AdminHome extends React.Component {
 
         this.state = {
             categories: [''],
-            currentCategory:'',
+            currentCategory: '',
             isExistingDisabled: false,
             isNewDisabled: false,
             newCatVal: '',
-            word: '',
+            word: ''
         };
 
     }
 
     componentDidMount() {
         getCategories(data => {
-            if(data) {
-                this.setState({categories: this.state.categories.concat(data)});
+            if (data) {
+                this.setState({
+                    categories: this
+                        .state
+                        .categories
+                        .concat(data)
+                });
             }
         });
     }
@@ -67,131 +72,124 @@ class AdminHome extends React.Component {
         clearTimeout(this.timer);
         let value = event.target.value;
         this.setState({newCatVal: value});
-        this.timer = setTimeout(() => { this.triggerChange(value) }, 1000);
-        if(!value) {
+        this.timer = setTimeout(() => {
+            this.triggerChange(value);
+        }, 1000);
+        if (!value) {
             this.setState({isExistingDisabled: false, isNewDisabled: false});
-        }else{
+        } else {
             this.setState({isExistingDisabled: true, isNewDisabled: false});
         }
     }
 
     triggerChange = (targetValue) => {
-        checkIfCategoryExists(targetValue, data =>{
-            console.log(data)
+        checkIfCategoryExists(targetValue, data => {
+            console.log(data);
         });
     }
 
-    handleCategoryChange =  event => {
-        this.setState({
-            currentCategory: event.target.value,
-        });
-        console.log("current value " + event.target.value)
-        if(!event.target.value) {
+    handleCategoryChange = event => {
+        this.setState({currentCategory: event.target.value});
+        console.log('current value ' + event.target.value);
+        if (!event.target.value) {
             this.setState({isExistingDisabled: false, isNewDisabled: false});
-        }else{
+        } else {
             this.setState({isExistingDisabled: false, isNewDisabled: true});
         }
-
 
     };
 
     handleWordChange = event => {
         this.setState({word: event.target.value});
     };
-    
-    saveForm = () =>{
-        saveNewCategoryOrWord({existingCategory: this.state.currentCategory,
-        newCategory: this.state.newCatVal, word: this.state.word});
-        let { history } = this.props;
-        history.push({
-            pathname: '/',
-        });
+
+    saveForm = () => {
+        saveNewCategoryOrWord({existingCategory: this.state.currentCategory, newCategory: this.state.newCatVal, word: this.state.word});
+        let {history} = this.props;
+        history.push({pathname: '/'});
     };
 
-
-
     render() {
-        const { classes } = this.props;
+        const {classes} = this.props;
         const categories = this.state.categories;
         return (
             <div>
-            <Header/>
-
-            <form className={classes.container} noValidate autoComplete="off">
-
-                <TextField
-                    id="filled-select-category"
-                    select
-                    label="Select an existing game category"
-                    className={classes.textField}
-                    value={this.state.currentCategory}
-                    disabled = {(this.state.isExistingDisabled)}
-                    onChange={this.handleCategoryChange.bind(this)}
-                    SelectProps={{
+                <Header/>
+                <form className={classes.container} noValidate autoComplete="off">
+                    <TextField
+                        id="filled-select-category"
+                        select
+                        label="Select an existing game category"
+                        className={classes.textField}
+                        value={this.state.currentCategory}
+                        disabled={(this.state.isExistingDisabled)}
+                        onChange={this
+                        .handleCategoryChange
+                        .bind(this)}
+                        SelectProps={{
                         MenuProps: {
-                            className: classes.menu,
-                        },
+                            className: classes.menu
+                        }
                     }}
-                    helperText="Please select an existing category or enter a new one below"
-                    margin="normal"
-                    fullWidth
-                    variant="filled"
-                >
-                    {categories.map((option, index) => (
-                        <MenuItem key={index} value={option}>
-                            {option}
-                        </MenuItem>
-                    ))}
-
-                </TextField>
-
-                <TextField
-                    id="filled-bare-new"
-                    label="Enter a new game category"
-                    value={this.state.newCatVal}
-                    style={{ margin: 10 }}
-                    placeholder="e.g Animal"
-                    fullWidth
-                    margin="normal"
-                    variant="filled"
-                    disabled = {(this.state.isNewDisabled)}
-                    onChange={this.handleNewCategory}
-                    InputLabelProps={{
-                        shrink: true,
+                        helperText="Please select an existing category or enter a new one below"
+                        margin="normal"
+                        fullWidth
+                        variant="filled">
+                        {categories.map((option, index) => (
+                            <MenuItem key={index} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="filled-bare-new"
+                        label="Enter a new game category"
+                        value={this.state.newCatVal}
+                        style={{
+                        margin: 10
                     }}
-                />
-
-
-                <TextField
-                    id="filled-bare"
-                    label="Enter a play word"
-                    value={this.state.word}
-                    style={{ margin: 10 }}
-                    placeholder="e.g Cat"
-                    fullWidth
-                    margin="normal"
-                    variant="filled"
-                    onChange={this.handleWordChange}
-                    InputLabelProps={{
-                        shrink: true,
+                        placeholder="e.g Animal"
+                        fullWidth
+                        margin="normal"
+                        variant="filled"
+                        disabled={(this.state.isNewDisabled)}
+                        onChange={this.handleNewCategory}
+                        InputLabelProps={{
+                        shrink: true
+                    }}/>
+                    <TextField
+                        id="filled-bare"
+                        label="Enter a play word"
+                        value={this.state.word}
+                        style={{
+                        margin: 10
                     }}
-                />
-                <Button variant="outlined" onClick={this.saveForm} color="primary" className={classes.button}>
-                   Save
-                </Button>
-                <Button variant="outlined" color="primary" className={classes.button}>
-                    Clear
-                </Button>
-
-
-            </form>
+                        placeholder="e.g Cat"
+                        fullWidth
+                        margin="normal"
+                        variant="filled"
+                        onChange={this.handleWordChange}
+                        InputLabelProps={{
+                        shrink: true
+                    }}/>
+                    <Button
+                        variant="outlined"
+                        onClick={this.saveForm}
+                        color="primary"
+                        className={classes.button}>
+                        Save
+                    </Button>
+                    <Button variant="outlined" color="primary" className={classes.button}>
+                        Clear
+                    </Button>
+                </form>
             </div>
         );
     }
 }
 
 AdminHome.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 export default withRouter(withStyles(styles)(AdminHome));

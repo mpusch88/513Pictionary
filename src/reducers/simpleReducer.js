@@ -3,7 +3,7 @@ const initState = {
 	username: '',
 	gameState: 'notReady',
 	PlayerList: []
-}
+};
 
 export default (state = initState, action) => {
 	switch (action.type) {
