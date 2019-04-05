@@ -51,8 +51,6 @@ function saveNewCategoryOrWord(data, cb) {
     socket.emit('storeNewCategory', data);
 }
 
-
-
 //-------------Dashboard --------------------//
 
 function createRoom(data, cb) {
@@ -69,7 +67,6 @@ function getRoomInfo(data, cb){
     });
 }
 
-
 function getAllExistingRooms(cb) {
     socket.emit('room-list');
     socket.on('all-rooms', (data) => {
@@ -77,9 +74,6 @@ function getAllExistingRooms(cb) {
     });
 
 }
-
-
-
 
 
 export { subscribeToTimer };
@@ -92,7 +86,6 @@ export {getCategories};
 export {checkIfCategoryExists};
 export {saveNewCategoryOrWord};
 export {joinRoom};
-export {createRoom}
+export {createRoom};
 export {getRoomInfo};
-export {getAllExistingRooms}
-
+export {getAllExistingRooms};

@@ -1,17 +1,16 @@
 import React from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
 import Login from '../components/Login';
-
 
 export default function requireAuth(Component, adminOnly) {
 
     class AuthenticatedComponent extends React.Component {
 
-        constructor(){
+        constructor() {
             super();
-            this.state ={
-                showComponent: false,
-            }
+            this.state = {
+                showComponent: false
+            };
 
         }
 
@@ -20,16 +19,16 @@ export default function requireAuth(Component, adminOnly) {
         }
 
         checkAuth() {
-            console.log("inside" + this.props.userType);
+            console.log('inside' + this.props.userType);
             if (this.props.userType === 'user' && !adminOnly) {
-                // const location = this.props.location;
-                // const redirect = location.pathname + location.search;
+                // const location = this.props.location; const redirect = location.pathname +
+                // location.search;
                 //
                 // this.props.router.push(`/login?redirect=${redirect}`);
 
-               this.setState({showComponent: true});
+                this.setState({showComponent: true});
 
-            }else if (this.props.userType === 'admin' && adminOnly){
+            } else if (this.props.userType === 'admin' && adminOnly) {
                 this.setState({showComponent: true});
             }
         }
@@ -37,15 +36,14 @@ export default function requireAuth(Component, adminOnly) {
         render() {
             var bool = this.state.showComponent;
             return bool
-                ? <Component />
-                : <Login />;
+                ? <Component/>
+                : <Login/>;
         }
-
 
     }
 
     const mapStateToProps = (state) => {
-        return {userType: state.userType}
+        return {userType: state.userType};
     };
 
     return connect(mapStateToProps)(AuthenticatedComponent);
