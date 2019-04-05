@@ -55,17 +55,32 @@ function saveNewCategoryOrWord(data, cb) {
 
 //-------------Dashboard --------------------//
 
-function joinOrcreateRoom(data, cb) {
-    socket.emit('join-create room', data);
+function createRoom(data, cb) {
+    socket.emit('create-room', data);
+}
+
+function joinRoom(data, cb) {
+    socket.emit('join-room', data);
+}
+
+function getRoomInfo(data, cb){
+    socket.on('sendRoomInfo', (data) => {
+        cb(data);
+    });
+}
+
+
+function getAllExistingRooms(cb) {
+    socket.emit('room-list');
+    socket.on('all-rooms', (data) => {
+        cb(data);
+    });
+
 }
 
 
 
-// -------------helper functions --------------//
-function getUniqueId() {
 
-
-}
 
 export { subscribeToTimer };
 export {rcvStrokes};
@@ -76,5 +91,8 @@ export {send_loginfo};
 export {getCategories};
 export {checkIfCategoryExists};
 export {saveNewCategoryOrWord};
-export {joinOrcreateRoom};
+export {joinRoom};
+export {createRoom}
+export {getRoomInfo};
+export {getAllExistingRooms}
 

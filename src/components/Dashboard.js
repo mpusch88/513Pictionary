@@ -9,7 +9,7 @@ import Header from "./Header";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import {getCategories,joinOrcreateRoom} from '../api';
+import {getCategories,joinRoom, createRoom, getRoomInfo, getAllExistingRooms} from '../api';
 import { withRouter } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -55,47 +55,8 @@ const styles = theme =>({
         '&:nth-of-type(odd)': {
             backgroundColor: '#009',
         },
-    },
+    }
 
-    search: {
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.white, 0.15),
-        '&:hover': {
-            backgroundColor: fade(theme.palette.common.white, 0.25),
-        },
-        marginRight: theme.spacing.unit * 2,
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing.unit * 3,
-            width: 'auto',
-        },
-    },
-    searchIcon: {
-        width: theme.spacing.unit * 9,
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inputRoot: {
-        color: 'inherit',
-        width: '100%',
-    },
-    inputInput: {
-        paddingTop: theme.spacing.unit,
-        paddingRight: theme.spacing.unit,
-        paddingBottom: theme.spacing.unit,
-        paddingLeft: theme.spacing.unit * 10,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: 200,
-        },
-    },
 });
 
 const CustomTableCell = withStyles(theme => ({
@@ -119,9 +80,9 @@ const ListItem = ({ id, name, category, capacity, onClick }) => (
             <CustomTableCell align="right">{category}</CustomTableCell>
             <CustomTableCell align="right">{capacity}</CustomTableCell>
             <CustomTableCell align="right">
-                <Button variant="outlined" color="primary" onClick={onClick}>
+                <button  id={id} onClick={onClick}>
                     Join Room
-                </Button>
+                </button>
             </CustomTableCell>
         </TableRow>
 
@@ -144,8 +105,11 @@ class Dashboard extends React.Component {
             dialogOpen: false,
             categories: [''],
             roomList: [],
+            roomObjMap: {},
             roomCategory: '',
-            newRoomName: ''
+            newRoomName: '',
+            currentRoomId: '',
+            existingRooms: {},
         };
 
 
@@ -157,6 +121,17 @@ class Dashboard extends React.Component {
                 this.setState({categories: this.state.categories.concat(data)});
             }
         });
+
+        getAllExistingRooms(data => {
+            if(data) {
+
+                    this.setState({roomList: this.state.roomList.concat(data)});
+
+
+            }
+        });
+
+
     }
 
     handleCategorySelect =  event => {
@@ -183,30 +158,47 @@ class Dashboard extends React.Component {
     };
 
     createNewRoom = () => {
-        if(this.state.newRoomName && this.state.roomCategory){
-            joinOrcreateRoom({id: '', newRoomName: this.state.newRoomName,
-                roomCategory: this.state.roomCategory});
-        }
-
         let roomList = this.state.roomList;
-        console.log("before change" + roomList);
-        const nextState = roomList.concat({id: 1, name: this.state.newRoomName, category: this.state.roomCategory, capacity: 2});
+        if(this.state.newRoomName && this.state.roomCategory){
+            createRoom({id: '', newRoomName: this.state.newRoomName,
+                roomCategory: this.state.roomCategory});
 
-        console.log("after change " + nextState);
-        this.setState({ roomList: nextState, newRoomName: '' });
+            getRoomInfo({id: '', newRoomName: this.state.newRoomName,
+                roomCategory: this.state.roomCategory}, info => {
 
-        this.setState({ dialogOpen: false });
+                let capacity = info.capacity + '/5';
+                let newRoom = {id: info.id,
+                    name: this.state.newRoomName,
+                    category: this.state.roomCategory,
+                    capacity: capacity};
+
+                let nextState = roomList.concat(newRoom);
+
+                let map = this.state.roomObjMap;
+                map[info.id] = newRoom;
+
+                this.setState({ roomList: nextState, roomObjMap : map});
+
+            })
+
+            this.setState({ dialogOpen: false });
+        }
 
     };
 
 
     handleJoinRoomClick = (e) => {
 
-        console.log(e.target.innerHTML)
-        let { history } = this.props;
-        history.push({
-            pathname: '/Game'
-        });
+
+        let id = e.target.id;
+        let room = this.state.roomObjMap[id];
+        joinRoom(room);
+
+
+        // let { history } = this.props;
+        // history.push({
+        //     pathname: '/Game'
+        // });
 
     };
 
@@ -235,7 +227,7 @@ class Dashboard extends React.Component {
                     />
                 </div>
                 <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    Open form dialog
+                    Create New Game Room
                 </Button>
             </div>
                 <Dialog
