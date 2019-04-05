@@ -215,66 +215,75 @@ io.on('connection', (socket) => {
 
 	//---------------------------- creating and join room -------------------------------
 
-	//lets socket join a room or create one if it doesn't exist
-	//keep track of current rooms
-	//in socket io, join and create room are a single function
-	socket.on('join-room', function(room) {
-		let roomsearch = io.sockets.adapter.rooms[room.id];
-		console.log('inside join room');
-		console.log(roomsearch);
-		if (rooms.includes(room.id)) {
-			if (roomsearch && roomsearch.length < 5) {
-				socket.join(room.id);
-				room.capacity = roomsearch.length;
-				console.log('joined successfully in existing room');
-			} else if (!roomsearch) {
-				socket.join(room.id);
-				room.capacity = 1;
-				console.log('joined successfully first time');
-			} else {
-				room.capacity = roomsearch.length;
-				socket.emit('full room', 'Room is full');
-			}
-		}
-		roomInfo[room.id] = room;
-		socket.emit('sendRoomInfo', room);
 
-	});
+    //lets socket join a room or create one if it doesn't exist
+    //keep track of current rooms
+    //in socket io, join and create room are a single function
+    socket.on('join-room', function (room) {
+        let roomsearch = io.sockets.adapter.rooms[room.id];
+        console.log("inside join room");
+        console.log(roomsearch);
+        if(rooms.includes(room.id)) {
+            if (roomsearch && roomsearch.length < 5) {
+                socket.join(room.id);
+                room.capacity = roomsearch.length + '/5';
+                console.log("joined successfully in existing room")
+            } else if (!roomsearch){
+                socket.join(room.id);
+                room.capacity =  1 + '/5';
+                console.log("joined successfully first time")
+            } else{
+                room.capacity = roomsearch.length + '/5';
+                socket.emit('full room', "Room is full");
+            }
+        }
+        roomInfo[room.id] = room;
+        io.emit('sendRoomInfo', room)
 
-	socket.on('create-room', function(room) {
-		let roomId = getUniqueId();
-		while (rooms.includes(roomId)) {
-			roomId = getUniqueId();
-		}
+    });
 
-		rooms.push(roomId);
+    socket.on('create-room', function (room) {
+        let roomId = getUniqueId();
+        while (rooms.includes(roomId)) {
+            roomId = getUniqueId();
+        }
 
-		room.id = roomId;
-		room.capacity = 0;
-		// socket.join(roomId)
-		roomInfo[room.id] = room;
-		console.log('created new room ' + roomId);
+        rooms.push(roomId);
 
-		socket.emit('sendRoomInfo', room);
+        room.id = roomId;
+        room.capacity = 0 + '/5';
+       // socket.join(roomId)
+        roomInfo[room.id] = room;
+        console.log("created new room " + roomId);
 
-	});
+        io.emit('sendRoomInfo', room)
 
-	//get all the rooms
-	socket.on('room-list', function(data) {
+    });
 
-		console.log('inside all room');
-		console.log(roomInfo);
-		let roomList = [];
-		var roomIds = Object.keys(roomInfo);
-		roomIds.forEach(function(key) {
-			roomList.concat(roomInfo[key]);
-		});
 
-		socket.emit('all-rooms', roomList);
-	});
+    //get all the rooms
+    socket.on('room-list', function (data) {
 
-	//-------------------------------------------------------------------------------------//
+        let roomList = [];
+        for (var key in roomInfo){
+            roomList.push(roomInfo[key])
+        }
 
+        socket.emit('all-rooms', roomList);
+    });
+
+    //-------------------------------------------------------------------------------------//
+
+
+
+
+    //emits message to all users in the room
+    //add functionality to verify answer on each message receive
+    socket.on('message', function (msg) {
+        // io.in(room).emit('message',msg);
+        socket.broadcast.emit('message', msg);
+        //TODO - add function to check message with answer
+    });
 	//emits message to all users in the room
 	//add functionality to verify answer on each message receive
 	socket.on('message', function(msg) {
