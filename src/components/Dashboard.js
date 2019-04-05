@@ -11,10 +11,18 @@ import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import {getCategories,joinOrcreateRoom} from '../api';
 import { withRouter } from 'react-router-dom';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import SearchIcon from '@material-ui/icons/Search'
+import InputBase from '@material-ui/core/InputBase';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 
 
-const styles = {
+const styles = theme =>({
     button: {
         width: 100, height: 100,
         padding: 0
@@ -39,26 +47,92 @@ const styles = {
         width: 200,
     },
 
-    listItem:{
+    table: {
+        minWidth: 600,
+        marginTop: 200
+    },
+    row: {
+        '&:nth-of-type(odd)': {
+            backgroundColor: '#009',
+        },
+    },
 
-    }
-};
+    search: {
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: fade(theme.palette.common.white, 0.15),
+        '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 0.25),
+        },
+        marginRight: theme.spacing.unit * 2,
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing.unit * 3,
+            width: 'auto',
+        },
+    },
+    searchIcon: {
+        width: theme.spacing.unit * 9,
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    inputRoot: {
+        color: 'inherit',
+        width: '100%',
+    },
+    inputInput: {
+        paddingTop: theme.spacing.unit,
+        paddingRight: theme.spacing.unit,
+        paddingBottom: theme.spacing.unit,
+        paddingLeft: theme.spacing.unit * 10,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: 200,
+        },
+    },
+});
 
-const ListItem = ({ value, onClick }) => (
-    <li className={styles.listItem}>{value}
-        <Button variant="outlined" onClick={onClick} color="primary">
-           Join Room
-        </Button>
+const CustomTableCell = withStyles(theme => ({
+    head: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+    },
+    body: {
+        fontSize: 16,
+    },
+}))(TableCell);
 
-    </li>
+
+
+const ListItem = ({ id, name, category, capacity, onClick }) => (
+
+        <TableRow className={styles.row} key={id}>
+            <CustomTableCell component="th" scope="row">
+                {name}
+            </CustomTableCell>
+            <CustomTableCell align="right">{category}</CustomTableCell>
+            <CustomTableCell align="right">{capacity}</CustomTableCell>
+            <CustomTableCell align="right">
+                <Button variant="outlined" color="primary" onClick={onClick}>
+                    Join Room
+                </Button>
+            </CustomTableCell>
+        </TableRow>
+
+
 );
 
 const List = ({ items, onItemClick }) => (
-    <ul>
-        {
-            items.map((item, i) => <ListItem key={i} value={item} onClick={onItemClick} />)
-        }
-    </ul>
+
+            items.map((item, i) =>
+                <ListItem id={item.id} name={item.name} category={item.category} capacity={item.capacity} onClick={onItemClick} />)
+
 );
 
 
@@ -115,7 +189,10 @@ class Dashboard extends React.Component {
         }
 
         let roomList = this.state.roomList;
-        const nextState = [...roomList, this.state.newRoomName];
+        console.log("before change" + roomList);
+        const nextState = roomList.concat({id: 1, name: this.state.newRoomName, category: this.state.roomCategory, capacity: 2});
+
+        console.log("after change " + nextState);
         this.setState({ roomList: nextState, newRoomName: '' });
 
         this.setState({ dialogOpen: false });
@@ -139,14 +216,28 @@ class Dashboard extends React.Component {
         const { classes } = this.props;
         const { roomList} = this.state;
 
+        console.log(roomList);
         return (
             <div>
                 <Header/>
-            <div>Landing page - Welcome!</div>
+            <div>
 
+                <div className={classes.search}>
+                    <div className={classes.searchIcon}>
+                        <SearchIcon />
+                    </div>
+                    <InputBase
+                        placeholder="Search…"
+                        classes={{
+                            root: classes.inputRoot,
+                            input: classes.inputInput,
+                        }}
+                    />
+                </div>
                 <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
                     Open form dialog
                 </Button>
+            </div>
                 <Dialog
                     open={this.state.dialogOpen}
                     onClose={this.handleClose}
@@ -201,7 +292,19 @@ class Dashboard extends React.Component {
                     </DialogActions>
                 </Dialog>
                 <div>
-                    <List items={roomList} onItemClick={this.handleJoinRoomClick} />
+                    <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow>
+                                <CustomTableCell>Room Name</CustomTableCell>
+                                <CustomTableCell align="right">Game Category</CustomTableCell>
+                                <CustomTableCell align="right">Capacity</CustomTableCell>
+                                <CustomTableCell align="right"></CustomTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <List items={roomList} onItemClick={this.handleJoinRoomClick} />
+                        </TableBody>
+                    </Table>
                 </div>
             </div>
         );
