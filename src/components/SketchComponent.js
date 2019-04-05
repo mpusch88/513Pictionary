@@ -2,8 +2,11 @@ import React, {Component} from 'react';
 import {SketchPad, TOOL_PENCIL, TOOL_LINE, TOOL_RECTANGLE, TOOL_ELLIPSE} from '../../node_modules/react-sketchpad/lib';
 import {rcvStrokes} from '../api';
 import {sndStrokes} from '../api';
+import {bindActionCreators} from "redux";
+import {changeGameState} from "../actions/userAction";
+import {connect} from "react-redux";
 
-export default class SketchComponent extends Component
+class SketchComponent extends Component
 {
 
     constructor(props) {
@@ -19,8 +22,9 @@ export default class SketchComponent extends Component
     }
 
     componentDidMount() {
-        let flg = this.props.gameFlg;
-        console.log("!!!!", flg);
+        // let flg = this.props.gameFlg;
+        let flg = this.props.gameState;
+
         if(flg === 'notReady'){
             this.setState({color: '#ffffff'});
         }else if(flg === 'ready'){
@@ -130,3 +134,15 @@ export default class SketchComponent extends Component
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return {gameState: state.gameState};
+};
+
+const matchDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        changeGameState: changeGameState,
+    }, dispatch);
+};
+
+export default connect(mapStateToProps, matchDispatchToProps)(SketchComponent);

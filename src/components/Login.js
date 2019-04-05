@@ -74,42 +74,37 @@ class Login extends React.Component {
                     <span className='gap'>Sign In Below!</span>
                 </div>
                 <div>
-                    {/*<form>*/}
-                        <div>
-                            <span>Email</span>
-                            <input
-                                type='text'
-                                name='email'
-                                onChange={this.handleChange}
-                                value={this.state.email}/>
-                        </div>
+                    <div>
+                        <span>Email</span>
+                        <input
+                            type='text'
+                            name='email'
+                            onChange={this.handleChange}
+                            value={this.state.email}/>
+                    </div>
 
-                        <div>
-                            <span>Password</span>
-                            <input
-                                type='password'
-                                name='password'
-                                onChange={this.handleChange}
-                                value={this.state.password}/>
-                        </div>
+                    <div>
+                        <span>Password</span>
+                        <input
+                            type='password'
+                            name='password'
+                            onChange={this.handleChange}
+                            value={this.state.password}/>
+                    </div>
 
-                        <div>
-                            <button onClick={this.handleClick}>
-                                Log In
-                            </button>
-                        </div>
-                    {/*</form>*/}
+                    <div>
+                        <button onClick={this.handleClick}>
+                            Log In
+                        </button>
+                    </div>
                 </div>
             </div>
         );
     }
 }
 
-//export default withRouter(Login);
-
-
 const mapStateToProps = (state) => {
-    return {userType: state.userType}
+    return {userType: state.userType};
 };
 
 const matchDispatchToProps = (dispatch) => {
@@ -117,10 +112,5 @@ const matchDispatchToProps = (dispatch) => {
         authenticate: authenticate,
     }, dispatch);
 };
-// const mapStateToProps = state => {
-//     console.log(state);
-//     return {email: state.email, password: state.password, user: state.user};
-// };
-//
 
 export default withRouter(connect(mapStateToProps, matchDispatchToProps)(Login));
