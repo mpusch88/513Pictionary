@@ -6,15 +6,14 @@ import TimerProgressBar from './TimerProgressBar';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {changeGameState} from '../actions/userAction.js';
-import {removeCurrentRoom} from "../actions/dashBoardAction";
-import { withRouter } from 'react-router-dom';
 
+import {game_myReady} from '../api';
 import {game_myReady, leaveRoom} from '../api';
 import compose from "recompose/compose";
 
 
 
-export default class GameRoom extends React.Component {
+class GameRoom extends React.Component {
     constructor(props) {
         super(props);
 
@@ -34,6 +33,7 @@ export default class GameRoom extends React.Component {
 
     gameReady() {
         this.setState({gameProgress: 'ready'});
+        this.props.changeGameState('ready');
         game_myReady(this.state.myUserInfo.username);
     }
 

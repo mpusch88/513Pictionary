@@ -51,8 +51,6 @@ function saveNewCategoryOrWord(data, cb) {
     socket.emit('storeNewCategory', data);
 }
 
-
-
 //-------------Dashboard --------------------//
 
 function createRoom(data, cb) {

@@ -9,8 +9,6 @@ import  requireAuth from '../components/requireAuth';
 import {connect} from "react-redux";
 
 
-// import { subscribeToTimer } from '../api';
-
 class AppRouter extends React.Component {
     constructor(props) {
         super(props);
@@ -52,7 +50,7 @@ class AppRouter extends React.Component {
 
 
 const mapStateToProps = (state) => {
-    return {userType: state.userType}
+    return {userType: state.userType};
 };
 
 const UserRoute = ({

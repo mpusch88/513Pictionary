@@ -97,11 +97,7 @@ const ListItem = ({ id, name, category, capacity, onClick }) => (
 const List = ({ items, onItemClick }) => (
 
             items.map((item, i) =>
-                <ListItem id={item.id}
-                          name={item.roomName}
-                          category={item.roomCategory}
-                          capacity={item.capacity}
-                          onClick={onItemClick} />)
+                <ListItem id={item.id} name={item.roomName} category={item.roomCategory} capacity={item.capacity} onClick={onItemClick} />)
 
 );
 
@@ -126,8 +122,13 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         getCategories(data => {
-            if(data) {
-                this.setState({categories: this.state.categories.concat(data)});
+            if (data) {
+                this.setState({
+                    categories: this
+                        .state
+                        .categories
+                        .concat(data)
+                });
             }
         });
 
@@ -147,7 +148,6 @@ class Dashboard extends React.Component {
             }
         });
 
-        console.log("INSIDE COMPONENT" + this.state.roomList)
     }
 
     handleCategorySelect =  event => {
@@ -177,16 +177,18 @@ class Dashboard extends React.Component {
         let roomList = this.state.roomList;
         if(this.state.newRoomName && this.state.roomCategory){
             createRoom({id: '', roomName: this.state.newRoomName,
-                roomCategory: this.state.roomCategory});
+                roomCategory: this.state.roomCategory, hostName: this.props.username});
 
             getRoomInfo({id: '', roomName: this.state.newRoomName,
-                roomCategory: this.state.roomCategory}, info => {
+                roomCategory: this.state.roomCategory, hostName: this.props.username},
+                    info => {
 
 
                 let newRoom = {id: info.id,
                     roomName: info.roomName,
                     roomCategory: info.roomCategory,
-                    capacity: info.capacity};
+                    capacity: info.capacity,
+                    hostName: info.hostName};
 
                 let nextState = roomList.concat(newRoom);
 
@@ -194,8 +196,6 @@ class Dashboard extends React.Component {
                 map[info.id] = newRoom;
 
                 this.setState({ roomList: nextState, roomObjMap : map});
-
-                this.props.setRoomHost(true);
 
             })
 
@@ -210,19 +210,23 @@ class Dashboard extends React.Component {
 
         let id = e.target.id;
         let room = this.state.roomObjMap[id];
-        let roomList = this.state.roomList;
 
         joinRoom(room);
 
 
-        getRoomInfo({id: '', roomName: this.state.newRoomName,
-            roomCategory: this.state.roomCategory}, info => {
+        getRoomInfo({id: id,
+                roomName: room.roomName,
+            roomCategory: room.roomCategory,
+                capacity: room.capacity,
+                hostName: room.hostName}
+            , info => {
 
 
             let newRoom = {id: info.id,
                 roomName: info.roomName,
                 roomCategory: info.roomCategory,
-                capacity: info.capacity};
+                capacity: info.capacity,
+                hostName: info.hostName};
 
 
             this.setState( state => {
@@ -241,6 +245,11 @@ class Dashboard extends React.Component {
             this.setState({ roomObjMap : map});
 
             this.props.addRoomInfo(newRoom);
+            if(newRoom.hostName === this.props.username){
+                this.props.setRoomHost(true);
+            }else{
+                this.props.setRoomHost(false);
+            }
 
         })
 
@@ -388,10 +397,8 @@ class Dashboard extends React.Component {
 
 
 const mapStateToProps = (state) => {
-    return {currentRoomId: state.currentRoomId,
-    currentRoomName: state.currentRoomName,
-     isCurrentRoomHost: state.isCurrentRoomHost,
-    currentRoomCategory: state.currentRoomCategory}
+    return {
+        username: state.username}
 };
 
 const matchDispatchToProps = (dispatch) => {
@@ -402,7 +409,7 @@ const matchDispatchToProps = (dispatch) => {
 };
 
 Dashboard.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 

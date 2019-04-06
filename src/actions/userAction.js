@@ -6,10 +6,18 @@ export const setUser = (user) => {
 	return { type: 'SET_USER', user };
 };
 
-export const authenticate = (userType) => {
+export const authenticate = (userType, username) => {
 	return {
-		type: 'LOGIN_CHECK',
+		type: 'LOGIN_INFO',
 		userType: userType,
-	}
+		username: username,
+	};
 	// redo
 };
+
+export const changeGameState = (gameState) => {
+	return {
+		type: 'CHANGE_GAME_STATE',
+		gameState: gameState
+	};
+}

@@ -1,9 +1,28 @@
-export default (state = {}, action) => {
+const initState = {
+	userType: 'fail',
+	username: '',
+	gameState: 'notReady',
+	PlayerList: [],
+	currentRoomId: '',
+	currentRoomName: '',
+	currentRoomCategory: '',
+	isCurrentRoomHost: false
+
+};
+
+export default (state = initState, action) => {
 	switch (action.type) {
-		case 'LOGIN_CHECK':
-			return {
-				userType: action.userType
-			};
+		case 'LOGIN_INFO':
+			// return {userType: action.userType};
+			return Object.assign({}, state, {
+				userType: action.userType,
+				username: action.username
+			});
+		case 'CHANGE_GAME_STATE':
+			// return {gameState: action.gameState};
+			return Object.assign({}, state, {
+				gameState: action.gameState
+			});
 		case 'ADD_CURRENT_ROOM' :
 			return Object.assign({}, state, {
 				currentRoomId: action.currentRoomId,

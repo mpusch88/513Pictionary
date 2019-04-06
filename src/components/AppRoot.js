@@ -2,9 +2,8 @@ import React from 'react';
 import {connect} from 'react-redux';
 import Dashboard from './Dashboard';
 
-// could add something like the following (and compdidmount) to pre-populate
-// an active user/gameRoom list.
-// import {getUsers} from '../actions/userAction';
+// could add something like the following (and compdidmount) to pre-populate an
+// active user/gameRoom list. import {getUsers} from '../actions/userAction';
 
 class AppRoot extends React.Component {
     constructor(props) {
@@ -20,7 +19,7 @@ class AppRoot extends React.Component {
         return (
             <div>
                 <div>
-                    {(type === 'landing') && (<Dashboard userId={id} />)}
+                    {(type === 'landing') && (<Dashboard userId={id}/>)}
                 </div>
             </div>
         );
