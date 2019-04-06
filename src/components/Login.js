@@ -4,8 +4,8 @@ import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
-
 import {send_loginfo} from '../api';
+import logo from '../resources/logo.png';
 
 class Login extends React.Component {
     constructor(props) {
@@ -73,6 +73,8 @@ class Login extends React.Component {
                         <span className='title'>513Pictionary</span>
                         <span className='subtitle'>Sign In Below!</span>
                     </div>
+
+                    <img src={logo} className="logo" alt="logo" />
 
                     <div className='input-group'>
                         <span className='input-text-label'>Email</span>
