@@ -14,7 +14,6 @@ const styles = theme => ({
         flexWrap: 'wrap',
         marginTop: 100,
         justifyContent: 'center',
-        /*centers items on the line (the x-axis by default)*/
         alignItems: 'center'
     },
     textField: {
@@ -38,7 +37,6 @@ const styles = theme => ({
 });
 
 class AdminHome extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -50,7 +48,6 @@ class AdminHome extends React.Component {
             newCatVal: '',
             word: ''
         };
-
     }
 
     componentDidMount() {
@@ -72,9 +69,11 @@ class AdminHome extends React.Component {
         clearTimeout(this.timer);
         let value = event.target.value;
         this.setState({newCatVal: value});
+
         this.timer = setTimeout(() => {
             this.triggerChange(value);
         }, 1000);
+
         if (!value) {
             this.setState({isExistingDisabled: false, isNewDisabled: false});
         } else {
@@ -91,6 +90,7 @@ class AdminHome extends React.Component {
     handleCategoryChange = event => {
         this.setState({currentCategory: event.target.value});
         console.log('current value ' + event.target.value);
+
         if (!event.target.value) {
             this.setState({isExistingDisabled: false, isNewDisabled: false});
         } else {
@@ -112,6 +112,7 @@ class AdminHome extends React.Component {
     render() {
         const {classes} = this.props;
         const categories = this.state.categories;
+
         return (
             <div>
                 <Header/>

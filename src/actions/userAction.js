@@ -20,4 +20,4 @@ export const changeGameState = (gameState) => {
 		type: 'CHANGE_GAME_STATE',
 		gameState: gameState
 	};
-}
+};

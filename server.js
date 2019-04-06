@@ -16,9 +16,8 @@ const io = require('socket.io')(server);
 const uri = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
 const client = new MongoClient(uri, { useNewUrlParser: true });
 
-var url1 = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
-var client1 = new MongoClient(uri, { useNewUrlParser: true });
-
+// var url1 = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
+// var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
 // getting all categories from database
 client.connect(err => {
@@ -34,14 +33,11 @@ client.connect(err => {
 	client.close();
 });
 
-
-
 let getUsers = () => {
 	return Object.keys(users).map(function(key) {
 		return users[key].username;
 	});
 };
-
 
 // --------- Helper functions for chat message -------------------//
 let createSocket = (user) => {
@@ -86,8 +82,6 @@ let removeSocket = (socket_id) => {
 	}
 };
 
-
-
 // ------------------- helper function for admin page -----------------//
 let storeCategoryAndWord = (data) => {
 	let clientDriver = new MongoClient(uri, { useNewUrlParser: true });
@@ -108,6 +102,7 @@ let storeCategoryAndWord = (data) => {
 	clientDriver.close();
 };
 
+// should this be a function instead of a let?
 let addWordToExistingCategory = (data) => {
 	let clientDriver = new MongoClient(uri, { useNewUrlParser: true });
 	clientDriver.connect(err => {
@@ -136,7 +131,6 @@ let getUniqueId = function() {
 	// after the decimal.
 	return '_' + Math.random().toString(36).substr(2, 9);
 };
-
 
 //########----------- on socket connection --------------------###########/
 io.on('connection', (socket) => {
@@ -168,9 +162,6 @@ io.on('connection', (socket) => {
 			socket.emit('timer', new Date());
 		}, interval);
 	});
-
-
-
 
 	//------------------------- Cynthis -------------------------//
 	socket.on('newStrokeSnd', (item) => {
@@ -215,31 +206,30 @@ io.on('connection', (socket) => {
 
 	//---------------------------- creating and join room -------------------------------
 
-
     //lets socket join a room or create one if it doesn't exist
     //keep track of current rooms
     //in socket io, join and create room are a single function
     socket.on('join-room', function (room) {
         let roomsearch = io.sockets.adapter.rooms[room.id];
-        console.log("inside join room");
+        console.log('inside join room');
         console.log(roomsearch);
         if(rooms.includes(room.id)) {
             if (roomsearch && roomsearch.length < 5) {
                 socket.join(room.id);
                 room.capacity = roomsearch.length + '/5';
-                console.log("joined successfully in existing room")
+                console.log('joined successfully in existing room');
             } else if (!roomsearch){
                 socket.join(room.id);
                 room.capacity =  1 + '/5';
-                console.log("joined successfully first time")
+                console.log('joined successfully first time');
             } else{
                 room.capacity = roomsearch.length + '/5';
-                socket.emit('full room', "Room is full");
+                socket.emit('full room', 'Room is full');
             }
-        }
+		}
+		
         roomInfo[room.id] = room;
-        io.emit('sendRoomInfo', room)
-
+        io.emit('sendRoomInfo', room);
     });
 
     socket.on('create-room', function (room) {
@@ -251,13 +241,14 @@ io.on('connection', (socket) => {
         rooms.push(roomId);
 
         room.id = roomId;
-        room.capacity = 0 + '/5';
-       // socket.join(roomId)
+		room.capacity = 0 + '/5';
+		
+		// socket.join(roomId)
+		
         roomInfo[room.id] = room;
-        console.log("created new room " + roomId);
+        console.log('created new room ' + roomId);
 
-        io.emit('sendRoomInfo', room)
-
+        io.emit('sendRoomInfo', room);
     });
 
 
@@ -266,7 +257,7 @@ io.on('connection', (socket) => {
 
         let roomList = [];
         for (var key in roomInfo){
-            roomList.push(roomInfo[key])
+            roomList.push(roomInfo[key]);
         }
 
         socket.emit('all-rooms', roomList);
@@ -274,16 +265,14 @@ io.on('connection', (socket) => {
 
     //-------------------------------------------------------------------------------------//
 
-
-
-
     //emits message to all users in the room
     //add functionality to verify answer on each message receive
     socket.on('message', function (msg) {
         // io.in(room).emit('message',msg);
         socket.broadcast.emit('message', msg);
         //TODO - add function to check message with answer
-    });
+	});
+	
 	//emits message to all users in the room
 	//add functionality to verify answer on each message receive
 	socket.on('message', function(msg) {
@@ -307,7 +296,7 @@ io.on('connection', (socket) => {
 	//---------------- Admin page --------------------//
 
 	//this is for testing right now, need to fetch from DB
-	socket.on('categories', (data) => {
+	socket.on('categories', () => {
 		let cats = [];
 		categories.forEach(function(arrayItem) {
 			cats.push(arrayItem.type);

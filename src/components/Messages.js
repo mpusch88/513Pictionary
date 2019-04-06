@@ -11,7 +11,7 @@ class Messages extends React.Component {
         };
     }
 
-    static getDerivedStateFromProps(nprops, pstate) {
+    static getDerivedStateFromProps(nprops) {
         return {messages: nprops.messages};
     }
 

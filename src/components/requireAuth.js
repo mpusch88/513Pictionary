@@ -21,6 +21,7 @@ export default function requireAuth(Component, adminOnly) {
         checkAuth() {
             console.log('inside' + this.props.userType);
             if (this.props.userType === 'user' && !adminOnly) {
+
                 // const location = this.props.location; const redirect = location.pathname +
                 // location.search;
                 //
