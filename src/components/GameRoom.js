@@ -2,18 +2,19 @@ import React from 'react';
 import Header from "./Header";
 import SketchComponent from '../components/SketchComponent';
 import TimerProgressBar from './TimerProgressBar';
+import Chat from './Chat';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {changeGameState} from '../actions/userAction.js';
+import {removeCurrentRoom} from "../actions/dashBoardAction";
+import { withRouter } from 'react-router-dom';
 
-import {game_myReady} from '../api';
 import {game_myReady, leaveRoom} from '../api';
 import compose from "recompose/compose";
 
 
-
-class GameRoom extends React.Component {
+ class GameRoom extends React.Component {
     constructor(props) {
         super(props);
 
@@ -58,6 +59,7 @@ class GameRoom extends React.Component {
                 <SketchComponent/>
                 <button onClick={this.gameReady}>Ready</button>
                 <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
+                <Chat/>
 
                 {/*{*/}
                     {/*gameProgress === 'ready' ?*/}

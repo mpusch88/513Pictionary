@@ -93,7 +93,7 @@ class Chat extends React.Component{
                 username: localStorage.getItem('username'),
                 id: localStorage.getItem('id'),
                 message: message,
-                roomId: this.props.roomId
+                roomId: this.props.currentRoomId
             });
     }
 

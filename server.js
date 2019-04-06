@@ -294,34 +294,42 @@ io.on('connection', (socket) => {
 		// probably change to broadcasting to a room, if we still want multiple rooms
 		//socket.broadcast.emit('newStrokeRcv', data.item);
 
-		//broadcasting to room
-		socket.broadcast.to(data.roomId).emit('newStrokeRcv', data.item);
+		//broadcasting to everyone in room
+		io.in(data.roomId).emit('newStrokeRcv', data.item);
 	});
 
 
 	//emits message to all users in the room
     //add functionality to verify answer on each message receive
     socket.on('message', function (data) {
-        // io.in(room).emit('message',msg);
 
+        //io.in(room).emit('message',msg);
+
+		console.log("room id passed in : " +  data.roomId);
+
+		let roomsearch = io.sockets.adapter.rooms[data.roomId];
+		console.log(roomsearch);
 		//to room sockets
-		socket.broadcast.to(data.roomId).emit('message', data.message);
+		let rooms = Object.keys(socket.rooms);
+		console.log(rooms); // [ <socket.id>, 'room 237' ]
+		
+		io.in(data.roomId).emit('message', data);
 
-       // socket.broadcast.emit('message', msg);
+     // socket.broadcast.emit('message', data);
         //TODO - add function to check message with answer
     });
 
 
-	//emits message to all users in the room
-	//add functionality to verify answer on each message receive
-	socket.on('message', function(msg) {
-		// io.in(room).emit('message',msg);
-
-		socket.broadcast.to(msg.roomId).emit('message', msg.msq);
-
-		//socket.broadcast.emit('message', msg);
-		//TODO - add function to check message with answer
-	});
+	// //emits message to all users in the room
+	// //add functionality to verify answer on each message receive
+	// socket.on('message', function(msg) {
+	// 	// io.in(room).emit('message',msg);
+	//
+	// 	socket.broadcast.to(msg.roomId).emit('message', msg.msq);
+	//
+	// 	//socket.broadcast.emit('message', msg);
+	// 	//TODO - add function to check message with answer
+	// });
 
 
 	//Receives image from socket and emits to all other sockets in that room
