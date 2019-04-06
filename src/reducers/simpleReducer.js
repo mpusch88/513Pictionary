@@ -2,15 +2,21 @@ const initState = {
 	userType: 'fail',
 	username: '',
 	gameState: 'notReady',
-	PlayerList: []
+	PlayerList: [],
+	currentRoomId: '',
+	currentRoomName: '',
+	currentRoomCategory: '',
+	isCurrentRoomHost: false
+
 };
 
 export default (state = initState, action) => {
 	switch (action.type) {
-		case 'LOGIN_CHECK':
+		case 'LOGIN_INFO':
 			// return {userType: action.userType};
 			return Object.assign({}, state, {
-				userType: action.userType
+				userType: action.userType,
+				username: action.username
 			});
 		case 'CHANGE_GAME_STATE':
 			// return {gameState: action.gameState};
