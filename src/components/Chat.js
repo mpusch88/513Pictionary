@@ -4,7 +4,6 @@ import Messages from './Messages';
 import socketIOClient from 'socket.io-client';
 
 class Chat extends React.Component {
-
     constructor(props) {
         super(props);
         this.socket = null;
@@ -86,6 +85,7 @@ class Chat extends React.Component {
                     }
                 ])
         });
+
         this
             .socket
             .emit('message', {

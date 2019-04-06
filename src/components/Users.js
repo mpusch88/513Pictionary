@@ -8,7 +8,7 @@ class Users extends React.Component {
         };
     }
 
-    static getDerivedStateFromProps(nprops, pstate) {
+    static getDerivedStateFromProps(nprops) {
         return {users: nprops.users};
     }
 
