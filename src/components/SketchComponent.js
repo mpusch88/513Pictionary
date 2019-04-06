@@ -2,8 +2,11 @@ import React, {Component} from 'react';
 import {SketchPad, TOOL_PENCIL, TOOL_LINE, TOOL_RECTANGLE, TOOL_ELLIPSE} from '../../node_modules/react-sketchpad/lib';
 import {rcvStrokes} from '../api';
 import {sndStrokes} from '../api';
+import {bindActionCreators} from 'redux';
+import {changeGameState} from '../actions/userAction';
+import {connect} from 'react-redux';
 
-export default class SketchComponent extends Component
+class SketchComponent extends Component
 {
 
     constructor(props) {
@@ -19,15 +22,16 @@ export default class SketchComponent extends Component
     }
 
     componentDidMount() {
-        let flg = this.props.gameFlg;
-        console.log("!!!!", flg);
-        if(flg === 'notReady'){
+        // let flg = this.props.gameFlg;
+        let flg = this.props.gameState;
+
+        if (flg === 'notReady') {
             this.setState({color: '#ffffff'});
-        }else if(flg === 'ready'){
+        } else if (flg === 'ready') {
             this.setState(({color: '#000000'}));
         }
         rcvStrokes(item => {
-            if (item)
+            if (item) 
                 this.setState({
                     items: this
                         .state
@@ -65,8 +69,7 @@ export default class SketchComponent extends Component
                         : ''}
                         items={items}
                         tool={tool}
-                        onCompleteItem={(i) => sndStrokes(i)}
-                    />
+                        onCompleteItem={(i) => sndStrokes({item: i, roomId: this.props.currentRoomId})}/>
 
                 </div>
                 <div style={{
@@ -78,25 +81,45 @@ export default class SketchComponent extends Component
                         marginBottom: 20
                     }}>
                         <button
-                            style={tool == TOOL_PENCIL ? {fontWeight:'bold'} : undefined}
-                            className={tool == TOOL_PENCIL  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_PENCIL})}
-                        >Pencil</button>
+                            style={tool == TOOL_PENCIL
+                            ? {
+                                fontWeight: 'bold'
+                            }
+                            : undefined}
+                            className={tool == TOOL_PENCIL
+                            ? 'item-active'
+                            : 'item'}
+                            onClick={() => this.setState({tool: TOOL_PENCIL})}>Pencil</button>
                         <button
-                            style={tool == TOOL_LINE ? {fontWeight:'bold'} : undefined}
-                            className={tool == TOOL_LINE  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_LINE})}
-                        >Line</button>
+                            style={tool == TOOL_LINE
+                            ? {
+                                fontWeight: 'bold'
+                            }
+                            : undefined}
+                            className={tool == TOOL_LINE
+                            ? 'item-active'
+                            : 'item'}
+                            onClick={() => this.setState({tool: TOOL_LINE})}>Line</button>
                         <button
-                            style={tool == TOOL_ELLIPSE ? {fontWeight:'bold'} : undefined}
-                            className={tool == TOOL_ELLIPSE  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_ELLIPSE})}
-                        >Ellipse</button>
+                            style={tool == TOOL_ELLIPSE
+                            ? {
+                                fontWeight: 'bold'
+                            }
+                            : undefined}
+                            className={tool == TOOL_ELLIPSE
+                            ? 'item-active'
+                            : 'item'}
+                            onClick={() => this.setState({tool: TOOL_ELLIPSE})}>Ellipse</button>
                         <button
-                            style={tool == TOOL_RECTANGLE ? {fontWeight:'bold'} : undefined}
-                            className={tool == TOOL_RECTANGLE  ? 'item-active' : 'item'}
-                            onClick={() => this.setState({tool:TOOL_RECTANGLE})}
-                        >Rectangle</button>
+                            style={tool == TOOL_RECTANGLE
+                            ? {
+                                fontWeight: 'bold'
+                            }
+                            : undefined}
+                            className={tool == TOOL_RECTANGLE
+                            ? 'item-active'
+                            : 'item'}
+                            onClick={() => this.setState({tool: TOOL_RECTANGLE})}>Rectangle</button>
 
                     </div>
                     <div
@@ -115,18 +138,41 @@ export default class SketchComponent extends Component
                             size: parseInt(e.target.value)
                         })}/>
                     </div>
-                    {(this.state.tool == TOOL_ELLIPSE || this.state.tool == TOOL_RECTANGLE) ?
-                        <div>
-                            <label htmlFor="">fill in:</label>
-                            <input type="checkbox" value={fill} style={{margin:'0 8'}}
-                                   onChange={(e) => this.setState({fill: e.target.checked})} />
-                            {fill ? <span>
-                  <label htmlFor="">with color:</label>
-                  <input type="color" value={fillColor} onChange={(e) => this.setState({fillColor: e.target.value})} />
-                </span> : ''}
-                        </div> : ''}
+                    {(this.state.tool == TOOL_ELLIPSE || this.state.tool == TOOL_RECTANGLE)
+                        ? <div>
+                                <label htmlFor="">fill in:</label>
+                                <input
+                                    type="checkbox"
+                                    value={fill}
+                                    style={{
+                                    margin: '0 8'
+                                }}
+                                    onChange={(e) => this.setState({fill: e.target.checked})}/> {fill
+                                    ? <span>
+                                            <label htmlFor="">with color:</label>
+                                            <input
+                                                type="color"
+                                                value={fillColor}
+                                                onChange={(e) => this.setState({fillColor: e.target.value})}/>
+                                        </span>
+                                    : ''}
+                            </div>
+                        : ''}
                 </div>
             </div>
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return {gameState: state.gameState,
+            currentRoomId: state.currentRoomId};
+};
+
+const matchDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        changeGameState: changeGameState
+    }, dispatch);
+};
+
+export default connect(mapStateToProps, matchDispatchToProps)(SketchComponent);

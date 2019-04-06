@@ -97,7 +97,11 @@ const ListItem = ({ id, name, category, capacity, onClick }) => (
 const List = ({ items, onItemClick }) => (
 
             items.map((item, i) =>
-                <ListItem id={item.id} name={item.roomName} category={item.roomCategory} capacity={item.capacity} onClick={onItemClick} />)
+                <ListItem id={item.id}
+                          name={item.roomName}
+                          category={item.roomCategory}
+                          capacity={item.capacity}
+                          onClick={onItemClick} />)
 
 );
 
@@ -249,12 +253,43 @@ class Dashboard extends React.Component {
 
     };
 
+    updateRoomState = () => {
+        getRoomInfo(null,info => {
+
+
+            if (info) {
+                let newRoom = {
+                    id: info.id,
+                    roomName: info.roomName,
+                    roomCategory: info.roomCategory,
+                    capacity: info.capacity,
+                    hostName: info.hostName
+                };
+
+
+                this.setState(state => {
+                    const list = state.roomList.map(item => {
+                        if (item.id === info.id) {
+                            console.log("inside same id");
+                            item.capacity = info.capacity;
+                        }
+                    });
+                });
+
+
+                let map = this.state.roomObjMap;
+                map[info.id] = newRoom;
+
+                this.setState({roomObjMap: map});
+            }
+    });
+}
 
 
     render() {
-        const { classes } = this.props;
-        const { roomList} = this.state;
-
+        const {classes} = this.props;
+        const {roomList} = this.state;
+        this.updateRoomState();
         console.log(roomList);
         return (
             <div>

@@ -63,6 +63,10 @@ function joinRoom(data, cb) {
     socket.emit('join-room', data);
 }
 
+function leaveRoom(data, cb) {
+    socket.emit('leave-room', data);
+}
+
 function getRoomInfo(data, cb){
     socket.on('sendRoomInfo', (data) => {
         cb(data);
@@ -80,8 +84,6 @@ function getAllExistingRooms(cb) {
 
 
 
-
-
 export { subscribeToTimer };
 export {rcvStrokes};
 export {sndStrokes};
@@ -92,7 +94,8 @@ export {getCategories};
 export {checkIfCategoryExists};
 export {saveNewCategoryOrWord};
 export {joinRoom};
-export {createRoom}
+export {leaveRoom};
+export {createRoom};
 export {getRoomInfo};
 export {getAllExistingRooms}
 

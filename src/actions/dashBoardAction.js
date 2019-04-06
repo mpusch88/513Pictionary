@@ -8,6 +8,17 @@ export const addRoomInfo = (room) => {
 
 };
 
+export const removeCurrentRoom = () => {
+    return {
+        type: 'REMOVE_CURRENT_ROOM',
+        currentRoomId: "",
+        currentRoomName: "",
+        currentRoomCategory: "",
+        isCurrentRoomHost: false
+    }
+
+};
+
 export const setRoomHost = (isHost) => {
     return {
         type: 'SET_HOST',

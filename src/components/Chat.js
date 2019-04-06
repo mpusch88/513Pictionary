@@ -2,9 +2,10 @@ import React from 'react';
 import Users from "./Users";
 import Messages from "./Messages";
 import socketIOClient from 'socket.io-client';
+import {connect} from "react-redux";
 
 class Chat extends React.Component{
-    
+
     constructor(props){
         super(props);
         this.socket = null;
@@ -72,13 +73,15 @@ class Chat extends React.Component{
                message : message,
            }])
         });
-        this.socket.emit('message', {
-            username : localStorage.getItem('username'),
-            id : localStorage.getItem('id'),
-            message : message,
-        });
-}
-
+        this
+            .socket
+            .emit('message', {
+                username: localStorage.getItem('username'),
+                id: localStorage.getItem('id'),
+                message: message,
+                roomId: this.props.roomId
+            });
+    }
 
     render(){
         return(
@@ -94,4 +97,12 @@ class Chat extends React.Component{
     }
 }
 
-export default Chat;
+const mapStateToProps = (state) => {
+    return {
+        username: state.username,
+        currentRoomId: state.currentRoomId}
+};
+
+export default connect(mapStateToProps)(Chat);
+
+//export default Chat;
