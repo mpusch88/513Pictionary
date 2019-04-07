@@ -1,21 +1,17 @@
 import React from 'react';
 import Users from "./Users";
 import Messages from "./Messages";
-import socketIOClient from 'socket.io-client';
+import {updateUserList, rcvMessage, sendMessageEvent, initializeChat} from "../api";
 import {connect} from "react-redux";
 
 class Chat extends React.Component{
 
     constructor(props){
         super(props);
-        this.socket = null;
+        //this.socket = null;
         this.state = {
-            username: localStorage.getItem('username')
-                ? localStorage.getItem('username')
-                : 'defaultName',
-            id: localStorage.getItem('id')
-                ? localStorage.getItem('id')
-                : this.generateID(),
+            username: this.props.username ? this.props.username : 'DefaultUser',
+            id : this.props.id? this.props.id : this.generateID(),
             chat_read: false,
             users: [],
             messages: [],
@@ -29,48 +25,54 @@ class Chat extends React.Component{
         for (let i = 0; i < 15; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-        localStorage.setItem('id', text);
+      //  localStorage.setItem('id', text);
 
+        this.setState({id: text});
         console.log('ID not found, generating new id: ' + text);
         return text;
     }
 
     componentDidMount() {
         console.log('Chat mounted');
-        console.log('Username set as: ' + this.username);
-        console.log('User id set as: ' + this.id);
+        console.log('Username set as: ' + this.state.username);
+        console.log('User id set as: ' + this.state.id);
         if (this.state.username.length) {
             this.initChat();
         }
     }
 
     initChat() {
-        localStorage.setItem('username', this.state.username);
+     //   localStorage.setItem('username', this.state.username);
 
         // change the uri to the host once it's set up might have to relocae this block
         // to the after-login page
-        this.socket = socketIOClient('ws://localhost:8000', {
-            query: 'username=' + this.state.username + '&id=' + this.state.id
+        // this.socket = socketIOClient('ws://localhost:8000', {
+        //     query: 'username=' + this.state.username + '&id=' + this.state.id
+        // });
+
+        initializeChat({query: 'username=' + this.state.username + '&id=' + this.state.id});
+
+        updateUserList( list => {
+            console.log(list);
+            this.setState({users: list})
         });
+        // this
+        //
+        //     .socket
+        //     .on('updateUsersList', function (users) {
+        //         console.log(users);
+        //         this.setState({users: users});
+        //     }.bind(this));
 
-        this
-            .socket
-            .on('updateUsersList', function (users) {
-                console.log(users);
-                this.setState({users: users});
-            }.bind(this));
-
-        this
-            .socket
-            .on('message', function (message) {
-                this.setState({
-                    messages: this
-                        .state
-                        .messages
-                        .concat([message])
-                });
-                //this.scrollToBottom();
-            }.bind(this));
+        rcvMessage( message => {
+            this.setState({
+                messages: this
+                    .state
+                    .messages
+                    .concat([message])
+            });
+            //this.scrollToBottom();
+        });
     }
 
     sendMessage(message) {
@@ -81,20 +83,27 @@ class Chat extends React.Component{
                 .messages
                 .concat([
                     {
-                        username: localStorage.getItem('username'),
-                        id: localStorage.getItem('id'),
+                        username: this.state.username,
+                        id: this.state.id,
                         message: message
                     }
                 ])
         });
-        this
-            .socket
-            .emit('message', {
-                username: localStorage.getItem('username'),
-                id: localStorage.getItem('id'),
-                message: message,
-                roomId: this.props.currentRoomId
-            });
+
+        sendMessageEvent({
+            username: this.state.username,
+            id: this.state.id,
+            message: message,
+            roomId: this.props.currentRoomId
+        });
+        // this
+        //     .socket
+        //     .emit('message', {
+        //         username: localStorage.getItem('username'),
+        //         id: localStorage.getItem('id'),
+        //         message: message,
+        //         roomId: this.props.currentRoomId
+        //     });
     }
 
     render() {

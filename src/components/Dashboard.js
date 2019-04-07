@@ -9,7 +9,7 @@ import Header from "./Header";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import {getCategories,joinRoom, createRoom, getRoomInfo, getAllExistingRooms} from '../api';
+import {getCategories, joinRoom, createRoom, getRoomInfo, getAllExistingRooms, updateRoomInfo, getNewRoom} from '../api';
 import { withRouter } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -19,7 +19,7 @@ import TableRow from '@material-ui/core/TableRow';
 import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase';
 import {bindActionCreators} from "redux";
-import {addRoomInfo, setRoomHost} from "../actions/dashBoardAction";
+import {addRoomInfo, removeCurrentRoom, setRoomHost} from "../actions/dashBoardAction";
 import {connect} from "react-redux";
 
 import compose from 'recompose/compose';
@@ -97,7 +97,11 @@ const ListItem = ({ id, name, category, capacity, onClick }) => (
 const List = ({ items, onItemClick }) => (
 
             items.map((item, i) =>
-                <ListItem id={item.id} name={item.roomName} category={item.roomCategory} capacity={item.capacity} onClick={onItemClick} />)
+                <ListItem id={item.id}
+                          name={item.roomName}
+                          category={item.roomCategory}
+                          capacity={item.capacity}
+                          onClick={onItemClick} />)
 
 );
 
@@ -148,6 +152,7 @@ class Dashboard extends React.Component {
             }
         });
 
+
     }
 
     handleCategorySelect =  event => {
@@ -179,9 +184,11 @@ class Dashboard extends React.Component {
             createRoom({id: '', roomName: this.state.newRoomName,
                 roomCategory: this.state.roomCategory, hostName: this.props.username});
 
-            getRoomInfo({id: '', roomName: this.state.newRoomName,
+        }
+
+        getNewRoom({id: '', roomName: this.state.newRoomName,
                 roomCategory: this.state.roomCategory, hostName: this.props.username},
-                    info => {
+            info => {
 
 
                 let newRoom = {id: info.id,
@@ -197,10 +204,9 @@ class Dashboard extends React.Component {
 
                 this.setState({ roomList: nextState, roomObjMap : map});
 
-            })
+            });
 
-            this.setState({ dialogOpen: false });
-        }
+        this.setState({ dialogOpen: false });
 
     };
 
@@ -211,7 +217,7 @@ class Dashboard extends React.Component {
         let id = e.target.id;
         let room = this.state.roomObjMap[id];
 
-        joinRoom(room);
+        joinRoom({room:room, username: this.props.username});
 
 
         getRoomInfo({id: id,
@@ -244,14 +250,16 @@ class Dashboard extends React.Component {
 
             this.setState({ roomObjMap : map});
 
-            this.props.addRoomInfo(newRoom);
-            if(newRoom.hostName === this.props.username){
-                this.props.setRoomHost(true);
-            }else{
-                this.props.setRoomHost(false);
-            }
+        });
 
-        })
+        let updatedRoom = this.state.roomObjMap[id];
+        this.props.addRoomInfo(updatedRoom);
+        console.log("addRoom clicked again");
+        if(updatedRoom.hostName === this.props.username){
+            this.props.setRoomHost(true);
+        }else{
+            this.props.setRoomHost(false);
+        }
 
 
 
@@ -263,7 +271,7 @@ class Dashboard extends React.Component {
     };
 
     updateRoomState = () => {
-        getRoomInfo(null,info => {
+        updateRoomInfo(null,info => {
 
 
             if (info) {
@@ -298,7 +306,10 @@ class Dashboard extends React.Component {
     render() {
         const {classes} = this.props;
         const {roomList} = this.state;
+        //everytime component is loaded, clearing current game room
+       // this.props.removeCurrentRoom ();
         this.updateRoomState();
+
         console.log(roomList);
         return (
             <div>
@@ -405,6 +416,7 @@ const matchDispatchToProps = (dispatch) => {
     return bindActionCreators({
         addRoomInfo: addRoomInfo,
         setRoomHost: setRoomHost,
+        removeCurrentRoom: removeCurrentRoom
     }, dispatch);
 };
 

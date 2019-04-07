@@ -25,6 +25,28 @@ function game_otherReady(cb) {
     socket.on('newReadyPlayer', username => cb(username));
 }
 
+
+
+// --------------------  Chat inside Game ----------------------------//
+
+export function initializeChat(data){
+    socket.emit('init-chat', data);
+}
+export function updateUserList( cb) {
+
+    socket.on('updateUsersList', list => cb(list));
+}
+
+export function rcvMessage(cb){
+
+    socket.on('message', data => cb(data));
+}
+
+export function sendMessageEvent(data, cb ){
+    socket
+        .emit('message', data);
+}
+
 //----------------- Login -----------------//
 function send_loginfo(info, cb) {
     socket.on('login_flag', log_flag => cb(log_flag));
@@ -71,6 +93,17 @@ function getRoomInfo(data, cb){
     });
 }
 
+export function getNewRoom(data, cb){
+    socket.on('newRoomCreated', (data) => {
+        cb(data);
+    });
+}
+
+export function updateRoomInfo( data, cb){
+    socket.on('updateRoomInfo', (data) => {
+        cb(data);
+    });
+}
 
 function getAllExistingRooms(cb) {
     socket.emit('room-list');

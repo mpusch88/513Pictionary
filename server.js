@@ -142,25 +142,28 @@ let getUniqueId = function() {
 io.on('connection', (socket) => {
 
 
-	let query = socket.request._query,
-		user = {
-			username: query.username,
-			id: query.id,
-			socket_id: socket.id
-		};
+	socket.on('init-chat', (query) =>
+	{
+		//let query = socket.request._query,
+			user = {
+				username: query.username,
+				id: query.id,
+				socket_id: socket.id
+			};
 
-	//If incoming user connection is new, create a new user id and username
-	// otherwise, use the fetched data and update the userlist
-	if (users[user.id] !== undefined) {
-		// console.log("USER ID: " + user.id);
-		// console.log("Users list: " + users[user.id]);
-		createSocket(user);
-		socket.emit('updateUsersList', getUsers());
-	} else {
-		// console.log("Creating new user: " + user + " with id of: " + user.id);
-		createUser(user);
-		io.emit('updateUsersList', getUsers());
-	}
+		//If incoming user connection is new, create a new user id and username
+		// otherwise, use the fetched data and update the userlist
+		if (users[user.id] !== undefined) {
+			// console.log("USER ID: " + user.id);
+			// console.log("Users list: " + users[user.id]);
+			createSocket(user);
+			socket.emit('updateUsersList', getUsers());
+		} else {
+			// console.log("Creating new user: " + user + " with id of: " + user.id);
+			createUser(user);
+			io.emit('updateUsersList', getUsers());
+		}
+	});
 
 	socket.on('subscribeToTimer', (interval) => {
 		console.log('client is subscribing to timer with interval ', interval);
@@ -215,29 +218,39 @@ io.on('connection', (socket) => {
     //lets socket join a room or create one if it doesn't exist
     //keep track of current rooms
     //in socket io, join and create room are a single function
-    socket.on('join-room', function (room) {
-        let roomsearch = io.sockets.adapter.rooms[room.id];
+    socket.on('join-room', function (data) {
+        let roomsearch = io.sockets.adapter.rooms[data.room.id];
         console.log("inside join room");
         console.log(roomsearch);
-        if(rooms.includes(room.id)) {
+        if(rooms.includes(data.room.id)) {
             if (roomsearch && roomsearch.length < 5) {
-                socket.join(room.id);
-                room.capacity = roomsearch.length + '/5';
+                socket.join(data.room.id);
+                data.room.capacity = roomsearch.length + '/5';
                 console.log("joined successfully in existing room")
             } else if (!roomsearch){
-                socket.join(room.id);
-                room.capacity =  1 + '/5';
+                socket.join(data.room.id);
+                data.room.capacity =  1 + '/5';
                 console.log("joined successfully first time")
             } else{
-                room.capacity = roomsearch.length + '/5';
+                data.room.capacity = roomsearch.length + '/5';
                 socket.emit('full room', "Room is full");
             }
         }
-        roomInfo[room.id] = room;
-        io.emit('sendRoomInfo', room)
+
+
+		// socket.broadcast.to(data.room.id).emit('message',
+		// 	{type:'message', text: data.username + " just joined the room!"});
+
+
+        roomInfo[data.room.id] = data.room;
+
+        // to update capacity
+        socket.emit('updateRoomInfo', data.room)
 
     });
 
+
+    //not actually joining the room, creating an entry in the list
     socket.on('create-room', function (room) {
         let roomId = getUniqueId();
         while (rooms.includes(roomId)) {
@@ -252,7 +265,7 @@ io.on('connection', (socket) => {
         roomInfo[room.id] = room;
         console.log("created new room " + roomId);
 
-        io.emit('sendRoomInfo', room)
+        io.emit('newRoomCreated', room)
 
     });
 
@@ -265,7 +278,7 @@ io.on('connection', (socket) => {
             roomList.push(roomInfo[key])
         }
 
-        socket.emit('all-rooms', roomList);
+        io.emit('all-rooms', roomList);
     });
 
 	socket.on('leave-room', function (data) {
@@ -278,7 +291,7 @@ io.on('connection', (socket) => {
 		}
 		socket.leave(data.id);
 
-		io.emit('sendRoomInfo', room)
+		socket.emit('sendRoomInfo', room)
 
 	});
 
@@ -303,18 +316,21 @@ io.on('connection', (socket) => {
     //add functionality to verify answer on each message receive
     socket.on('message', function (data) {
 
-        //io.in(room).emit('message',msg);
 
 		console.log("room id passed in : " +  data.roomId);
 
+		console.log(socket.id);
 		let roomsearch = io.sockets.adapter.rooms[data.roomId];
 		console.log(roomsearch);
+
+
 		//to room sockets
 		let rooms = Object.keys(socket.rooms);
 		console.log(rooms); // [ <socket.id>, 'room 237' ]
-		
-		io.in(data.roomId).emit('message', data);
 
+		//io.in(data.roomId).emit('message', data);
+
+		socket.broadcast.to(data.roomId).emit('message', data);
      // socket.broadcast.emit('message', data);
         //TODO - add function to check message with answer
     });
@@ -340,7 +356,7 @@ io.on('connection', (socket) => {
 	//Handles socket disconnection and possible room deletion when disconnecting socket is last one in room
 	//Updates users list on user disconnect
 	socket.on('disconnect', () => {
-		removeSocket(socket.id);
+	//	removeSocket(socket.id);
 		io.emit('updateUsersList', getUsers());
 	});
 
