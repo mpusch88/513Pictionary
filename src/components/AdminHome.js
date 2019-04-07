@@ -109,6 +109,10 @@ class AdminHome extends React.Component {
         history.push({pathname: '/'});
     };
 
+    handleClear = () => {
+
+        this.setState({currentCategory: '', newCatVal: '', word: ''});
+    };
     render() {
         const {classes} = this.props;
         const categories = this.state.categories;
@@ -180,7 +184,7 @@ class AdminHome extends React.Component {
                         className={classes.button}>
                         Save
                     </Button>
-                    <Button variant="outlined" color="primary" className={classes.button}>
+                    <Button variant="outlined" color="primary" className={classes.button} onClick={this.handleClear}>
                         Clear
                     </Button>
                 </form>
