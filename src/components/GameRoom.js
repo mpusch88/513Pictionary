@@ -3,7 +3,7 @@ import Header from "./Header";
 import SketchComponent from '../components/SketchComponent';
 import TimerProgressBar from './TimerProgressBar';
 import Chat from './Chat';
-
+import Typography from '@material-ui/core/Typography';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {changeGameState} from '../actions/userAction.js';
@@ -58,7 +58,7 @@ import compose from "recompose/compose";
         const {gameProgress} = this.state;
         return (
             <div>
-                <Header/>
+                <Header title={'Lets play words in category '+ this.props.currentRoomCategory.toUpperCase() + '!'}/>
                 <TimerProgressBar/>
                 <SketchComponent/>
                 <button onClick={this.gameReady}>Ready</button>
@@ -96,7 +96,9 @@ import compose from "recompose/compose";
 
 const mapStateToProps = (state) => {
     return {gameState: state.gameState,
-            currentRoomId: state.currentRoomId};
+            currentRoomId: state.currentRoomId,
+            currentRoomCategory: state.currentRoomCategory,
+    currentRoomName: state.currentRoomName};
 };
 
 const matchDispatchToProps = (dispatch) => {

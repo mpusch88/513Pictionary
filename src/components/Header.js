@@ -9,6 +9,13 @@ import Home from '@material-ui/icons/HomeOutlined';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import compose from "recompose/compose";
+import {connect} from "react-redux";
+import { withRouter } from 'react-router-dom';
+import {socket} from "../api";
+import { Link } from 'react-router-dom'
+import {authenticate} from '../actions/userAction.js';
+import {bindActionCreators} from "redux";
 
 const styles = {
     root: {
@@ -18,8 +25,8 @@ const styles = {
         flexGrow: 1
     },
     menuButton: {
-        marginLeft: -12,
-        marginRight: 20
+        marginLeft: -10,
+        marginRight: 15
     }
 };
 
@@ -37,6 +44,12 @@ class Header extends React.Component {
         this.setState({anchorEl: null});
     };
 
+    handleLogout = () => {
+        this.setState({anchorEl: null});
+        this.props.authenticate("", "");
+        socket.emit('disconnect');
+    };
+
     render() {
         const {classes} = this.props;
         const {anchorEl} = this.state;
@@ -46,19 +59,31 @@ class Header extends React.Component {
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton className={classes.menuButton} color="inherit" aria-label="Home">
+                        <IconButton className={classes.menuButton} color="inherit" aria-label="Home"
+                                    component={Link}
+                                    to={this.props.userType === 'user'? '/Dashboard' : '/Admin'}>
                             <Home/>
                         </IconButton>
 
-                        <Typography variant="h6" color="inherit" className={classes.grow}>
+                        <Typography variant="h9" color="inherit" className={classes.grow}>
                             513Pictionary
                         </Typography>
+
+                        <Typography variant="h6" color="inherit" className={classes.grow}>
+                            {this.props.title}
+                        </Typography>
+
+                        <div>
+                            <Typography variant="h9" color="inherit" className={classes.grow}>
+                                signed in as {this.props.username}
+                            </Typography>
+                        </div>
 
                         <div>
                             <IconButton
                                 aria-owns={open
-                                ? 'menu-appbar'
-                                : undefined}
+                                    ? 'menu-appbar'
+                                    : undefined}
                                 aria-haspopup="true"
                                 onClick={this.handleMenu}
                                 color="inherit">
@@ -69,17 +94,18 @@ class Header extends React.Component {
                                 id="menu-appbar"
                                 anchorEl={anchorEl}
                                 anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right'
-                            }}
+                                    vertical: 'top',
+                                    horizontal: 'right'
+                                }}
                                 transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right'
-                            }}
+                                    vertical: 'top',
+                                    horizontal: 'right'
+                                }}
                                 open={open}
                                 onClose={this.handleClose}>
-                                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={this.handleClose}>Log out</MenuItem>
+                                <MenuItem hidden={this.props.hideProfileItem} onClick={this.handleClose}>Profile</MenuItem>
+                            }
+                                <MenuItem onClick={this.handleLogout}>Log out</MenuItem>
                             </Menu>
                         </div>
                     </Toolbar>
@@ -93,4 +119,23 @@ Header.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Header);
+
+const mapStateToProps = (state) => {
+    return {
+        username: state.username,
+        userType: state.userType,
+    }
+};
+
+const matchDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        authenticate: authenticate
+    }, dispatch);
+};
+
+
+export default compose(
+    withStyles(styles),
+    connect(mapStateToProps, matchDispatchToProps)
+)(withRouter(Header))
+

@@ -344,7 +344,7 @@ class Dashboard extends React.Component {
         console.log(roomList);
         return (
             <div>
-                <Header/>
+                <Header title='Welcome'/>
             <div>
 
                 <div className={classes.search}>

@@ -2,6 +2,8 @@ let app = require('express')();
 let express = require('express');
 let server = require('http').Server(app);
 let MongoClient = require('mongodb').MongoClient;
+
+
 let users = {};
 let rooms = [];
 let roomInfo = {};
@@ -9,12 +11,16 @@ let categories = [];
 let categoryTypes = [];
 let categoryToWords = {};
 
+
 app.use('/assets', express.static(__dirname + '/dist'));
 const io = require('socket.io')(server);
+
+
 
 // connect to mongo and store all categories w/ answers in categories list
 const uri = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
 const client = new MongoClient(uri, { useNewUrlParser: true });
+
 
 // var url1 = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
 // var client1 = new MongoClient(uri, { useNewUrlParser: true });
@@ -38,6 +44,8 @@ let getUsers = () => {
 		return users[key].username;
 	});
 };
+
+
 
 // --------- Helper functions for chat message -------------------//
 let createSocket = (user) => {
@@ -85,26 +93,26 @@ let removeSocket = (socket_id) => {
 
 
 // ------------------- helper function for admin page -----------------//
+
+//store new category and word
 let storeCategoryAndWord = (data) => {
 	let clientDriver = new MongoClient(uri, { useNewUrlParser: true });
 	clientDriver.connect(err => {
 
 		const collection = clientDriver.db('pictionary').collection('categories');
-		console.log('inside query ');
 		let type = data.category;
 		let word = data.word;
 		var obj = { type: type, [type]: word };
-		console.log(obj.type + obj[type]);
+
 		collection.insertOne(obj, function(err, res) {
 			if (err) throw err;
-			console.log('inserted');
 		});
 	});
 
 	clientDriver.close();
 };
 
-// should this be a function instead of a let?
+
 let addWordToExistingCategory = (data) => {
 	let clientDriver = new MongoClient(uri, { useNewUrlParser: true });
 	clientDriver.connect(err => {
@@ -112,19 +120,22 @@ let addWordToExistingCategory = (data) => {
 		const collection = clientDriver.db('pictionary').collection('categories');
 		let type = data.category;
 		let word = data.word;
-		var obj = { type: type, [type]: word };
+		var obj = { type: type};
 
-		collection.update({ _id: 1 }, { $push: { scores: 89 } });
+		console.log(obj)
+		collection.updateOne(
+			{obj},
+			{$addToSet : {[type]: word}}, function(err, res)  {
+				if (err) throw err;
+			}
+		);
 
-		console.log(obj.type + obj[type]);
-		collection.insertOne(obj, function(err, res) {
-			if (err) throw err;
-			console.log('inserted');
-		});
 	});
 
 	clientDriver.close();
 };
+
+
 
 //---------------- general helper functions -------------------------//
 let getUniqueId = function() {
@@ -191,7 +202,7 @@ io.on('connection', (socket) => {
 					if (res && res.length !== 0) {
 						if (res[0].isAdmin === '1') {
 							console.log('admin logged in');
-							socket.emit('login_flag', {type:'admin'});
+							socket.emit('login_flag', {type:'admin', username: res[0].username});
 						} else if (res[0].isAdmin === '0') {
 							socket.emit('login_flag', {type:'user', username: res[0].username});
 							console.log('uesr logged in');
@@ -381,6 +392,7 @@ io.on('connection', (socket) => {
 		if (data.existingCategory) {
 			if (!categoryToWords[data.existingCategory].includes(data.word)) {
 				console.log(data.word);
+				addWordToExistingCategory({category: data.existingCategory, word: data.word});
 			}
 		} else {
 			storeCategoryAndWord({ category: data.newCategory, word: data.word });

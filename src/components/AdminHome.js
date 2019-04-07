@@ -115,7 +115,7 @@ class AdminHome extends React.Component {
 
         return (
             <div>
-                <Header/>
+                <Header title='Admin Home' hideProfileItem={true}/>
                 <form className={classes.container} noValidate autoComplete="off">
                     <TextField
                         id="filled-select-category"

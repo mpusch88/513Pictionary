@@ -12,8 +12,8 @@ export const authenticate = (userType, username) => {
 		userType: userType,
 		username: username,
 	};
-	// redo
 };
+
 
 export const changeGameState = (gameState) => {
 	return {
