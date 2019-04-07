@@ -58,7 +58,8 @@ import compose from "recompose/compose";
         const {gameProgress} = this.state;
         return (
             <div>
-                <Header title={'Lets play words in category '+ this.props.currentRoomCategory.toUpperCase() + '!'}/>
+                <Header home={'Room: ' + this.props.currentRoomName}
+                        title={'Lets play words in category '+ this.props.currentRoomCategory.toUpperCase() + '!'}/>
                 <TimerProgressBar/>
                 <SketchComponent/>
                 <button onClick={this.gameReady}>Ready</button>

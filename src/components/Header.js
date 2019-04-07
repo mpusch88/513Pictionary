@@ -66,7 +66,7 @@ class Header extends React.Component {
                         </IconButton>
 
                         <Typography variant="h9" color="inherit" className={classes.grow}>
-                            513Pictionary
+                            {this.props.home ? this.props.home :'513Pictionary'}
                         </Typography>
 
                         <Typography variant="h6" color="inherit" className={classes.grow}>

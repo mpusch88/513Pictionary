@@ -54,12 +54,18 @@ const styles = theme =>({
 
     table: {
         minWidth: 600,
-        marginTop: 200
+        marginTop: 50
     },
     row: {
         '&:nth-of-type(odd)': {
             backgroundColor: '#009',
         },
+    },
+    search: {
+        display: 'flex',
+        flexDirection: 'row',
+        margin: 50 ,
+        justifyContent: 'center',
     }
 
 });
@@ -166,15 +172,11 @@ class Dashboard extends React.Component {
                 hostName: info.hostName
             };
 
-            console.log("before creation");
-            console.log(roomList);
             let nextState = roomList.concat(newRoom);
             let map = this.state.roomObjMap;
             map[info.id] = newRoom;
             this.setState({roomList: nextState, roomObjMap: map});
 
-            console.log("after change")
-            console.log(this.state.roomList);
 
         });
 
@@ -345,9 +347,9 @@ class Dashboard extends React.Component {
         return (
             <div>
                 <Header title='Welcome'/>
-            <div>
+            <div className={classes.search}>
 
-                <div className={classes.search}>
+                <div>
                     <div className={classes.searchIcon}>
                         <SearchIcon />
                     </div>
