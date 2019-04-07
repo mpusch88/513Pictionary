@@ -19,7 +19,7 @@ import compose from "recompose/compose";
         super(props);
 
         this.state = {
-            gameProgress: 'notReady',  //ready, waiting, start, roundEnd, gameEnd
+            gameProgress: 'notReady', //ready, waiting, start, roundEnd, gameEnd
             myUserInfo: {
                 username: 'myDefault',
                 score: 0,
@@ -29,12 +29,16 @@ import compose from "recompose/compose";
             userList: []
         };
 
-        this.gameReady = this.gameReady.bind(this);
+        this.gameReady = this
+            .gameReady
+            .bind(this);
     }
 
     gameReady() {
         this.setState({gameProgress: 'ready'});
-        this.props.changeGameState('ready');
+        this
+            .props
+            .changeGameState('ready');
         game_myReady(this.state.myUserInfo.username);
     }
 
@@ -51,28 +55,39 @@ import compose from "recompose/compose";
     };
 
     render() {
-        const { gameProgress } = this.state;
+        const {gameProgress} = this.state;
         return (
             <div>
-                <Header />
+                <Header/>
                 <TimerProgressBar/>
                 <SketchComponent/>
                 <button onClick={this.gameReady}>Ready</button>
                 <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
                 <Chat/>
 
-                {/*{*/}
-                    {/*gameProgress === 'ready' ?*/}
-                    {/*<div>*/}
-                        {/*<TimerProgressBar/>*/}
-                        {/*<SketchComponent gameFlg={'ready'}/>*/}
-                    {/*</div> :*/}
-                    {/*<div>*/}
-                        {/*<TimerProgressBar/>*/}
-                        {/*<SketchComponent gameFlg={'notReady'}/>*/}
-                        {/*<button onClick={this.gameReady}>Ready</button>*/}
-                    {/*</div>*/}
-                {/*}*/}
+                {/*{*/
+            }
+            {/*gameProgress === 'ready' ?*/
+            }
+            {/*<div>*/
+            }
+            {/*<TimerProgressBar/>*/
+            }
+            {/*<SketchComponent gameFlg={'ready'}/>*/
+            }
+            {/*</div> :*/
+            }
+            {/*<div>*/
+            }
+            {/*<TimerProgressBar/>*/
+            }
+            {/*<SketchComponent gameFlg={'notReady'}/>*/
+            }
+            {/*<button onClick={this.gameReady}>Ready</button>*/
+            }
+            {/*</div>*/
+            }
+            {/*}*/}
             </div>
         );
     }

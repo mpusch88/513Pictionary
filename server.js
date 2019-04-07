@@ -16,9 +16,8 @@ const io = require('socket.io')(server);
 const uri = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
 const client = new MongoClient(uri, { useNewUrlParser: true });
 
-var url1 = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
-var client1 = new MongoClient(uri, { useNewUrlParser: true });
-
+// var url1 = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/test?retryWrites=true';
+// var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
 // getting all categories from database
 client.connect(err => {
@@ -34,14 +33,11 @@ client.connect(err => {
 	client.close();
 });
 
-
-
 let getUsers = () => {
 	return Object.keys(users).map(function(key) {
 		return users[key].username;
 	});
 };
-
 
 // --------- Helper functions for chat message -------------------//
 let createSocket = (user) => {
@@ -108,6 +104,7 @@ let storeCategoryAndWord = (data) => {
 	clientDriver.close();
 };
 
+// should this be a function instead of a let?
 let addWordToExistingCategory = (data) => {
 	let clientDriver = new MongoClient(uri, { useNewUrlParser: true });
 	clientDriver.connect(err => {
@@ -136,7 +133,6 @@ let getUniqueId = function() {
 	// after the decimal.
 	return '_' + Math.random().toString(36).substr(2, 9);
 };
-
 
 //########----------- on socket connection --------------------###########/
 io.on('connection', (socket) => {
@@ -310,7 +306,7 @@ io.on('connection', (socket) => {
 		//socket.broadcast.emit('newStrokeRcv', data.item);
 
 		//broadcasting to everyone in room
-		io.in(data.roomId).emit('newStrokeRcv', data.item);
+		socket.broadcast.to(data.roomId).emit('newStrokeRcv', data.item);
 	});
 
 

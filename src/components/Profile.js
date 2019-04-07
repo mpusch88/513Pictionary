@@ -7,13 +7,10 @@ import {withRouter} from 'react-router-dom';
 import {send_loginfo} from '../api';
 import logo from '../resources/logo.png';
 
-class Login extends React.Component {
+class Profile extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            email: 'email@email.com',
-            password: '12345'
-        };
+        this.state = {};
 
         this.handleClick = this
             .handleClick
@@ -21,9 +18,6 @@ class Login extends React.Component {
         this.handleChange = this
             .handleChange
             .bind(this);
-        // this.handleForgotPassword = this
-        //     .handleForgotPassword
-        //     .bind(this);
     }
 
     handleClick() {
@@ -57,9 +51,9 @@ class Login extends React.Component {
         });
     }
 
-    // handleForgotPassword(e) {
-    //     e.preventDefault();
-    // }
+    handleForgotPassword(e) {
+        e.preventDefault();
+    }
 
     handleChange(e) {
         this.setState({
@@ -119,4 +113,4 @@ const matchDispatchToProps = (dispatch) => {
     }, dispatch);
 };
 
-export default withRouter(connect(mapStateToProps, matchDispatchToProps)(Login));
+export default withRouter(connect(mapStateToProps, matchDispatchToProps)(Profile));
