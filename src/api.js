@@ -1,5 +1,5 @@
 import openSocket from 'socket.io-client';
-const  socket = openSocket('http://localhost:8000');
+export const  socket = openSocket('http://localhost:8000');
 
 //----------------- Example -----------------//
 function subscribeToTimer(cb) { // cb stands for callback function
@@ -94,7 +94,7 @@ function getRoomInfo(data, cb){
 }
 
 export function getNewRoom(data, cb){
-    socket.on('newRoomCreated', (data) => {
+    socket.on('newRoom', (data) => {
         cb(data);
     });
 }

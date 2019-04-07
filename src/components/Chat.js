@@ -50,7 +50,7 @@ class Chat extends React.Component{
         //     query: 'username=' + this.state.username + '&id=' + this.state.id
         // });
 
-        initializeChat({query: 'username=' + this.state.username + '&id=' + this.state.id});
+        initializeChat({username: this.state.username, id: this.state.id});
 
         updateUserList( list => {
             console.log(list);
@@ -129,5 +129,3 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps)(Chat);
-
-//export default Chat;

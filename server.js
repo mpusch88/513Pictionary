@@ -212,7 +212,7 @@ io.on('connection', (socket) => {
 
 	//------------------------- Cynthis -------------------------//
 
-	//---------------------------- creating and join room -------------------------------
+	//---------------------------- creating and join room -----------------------------------------//
 
 
     //lets socket join a room or create one if it doesn't exist
@@ -244,8 +244,8 @@ io.on('connection', (socket) => {
 
         roomInfo[data.room.id] = data.room;
 
-        // to update capacity
-        socket.emit('updateRoomInfo', data.room)
+        // to update capacity all sockets
+        io.emit('updateRoomInfo', data.room)
 
     });
 
@@ -261,11 +261,13 @@ io.on('connection', (socket) => {
 
         room.id = roomId;
         room.capacity = 0 + '/5';
+
        // socket.join(roomId)
         roomInfo[room.id] = room;
         console.log("created new room " + roomId);
 
-        io.emit('newRoomCreated', room)
+        socket.emit('sendRoomInfo', room);
+		socket.broadcast.emit('newRoom', room);
 
     });
 
@@ -278,7 +280,7 @@ io.on('connection', (socket) => {
             roomList.push(roomInfo[key])
         }
 
-        io.emit('all-rooms', roomList);
+        socket.emit('all-rooms', roomList);
     });
 
 	socket.on('leave-room', function (data) {

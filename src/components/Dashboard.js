@@ -9,7 +9,7 @@ import Header from "./Header";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import {getCategories, joinRoom, createRoom, getRoomInfo, getAllExistingRooms, updateRoomInfo, getNewRoom} from '../api';
+import {getCategories, joinRoom, createRoom, getRoomInfo, getAllExistingRooms, updateRoomInfo, socket} from '../api';
 import { withRouter } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -153,6 +153,66 @@ class Dashboard extends React.Component {
         });
 
 
+
+        //need to have this for real time change from server side
+        // changes are for newRoom added by another user
+        socket.on('newRoom', (info) => {
+            let roomList = this.state.roomList;
+            let newRoom = {
+                id: info.id,
+                roomName: info.roomName,
+                roomCategory: info.roomCategory,
+                capacity: info.capacity,
+                hostName: info.hostName
+            };
+
+            console.log("before creation");
+            console.log(roomList);
+            let nextState = roomList.concat(newRoom);
+            let map = this.state.roomObjMap;
+            map[info.id] = newRoom;
+            this.setState({roomList: nextState, roomObjMap: map});
+
+            console.log("after change")
+            console.log(this.state.roomList);
+
+        });
+
+
+
+        /// to get change in room capacity from server side
+        socket.on('updateRoomInfo', (info) => {
+            if (info) {
+                let newRoom = {
+                    id: info.id,
+                    roomName: info.roomName,
+                    roomCategory: info.roomCategory,
+                    capacity: info.capacity,
+                    hostName: info.hostName
+                };
+
+
+                this.setState(state => {
+                    const list = state.roomList.map(item => {
+                        if (item.id === info.id) {
+                            console.log("inside same id");
+                            item.capacity = info.capacity;
+                        }
+                    });
+                });
+
+
+                let map = this.state.roomObjMap;
+                map[info.id] = newRoom;
+
+                this.setState({roomObjMap: map});
+            }
+        });
+
+
+
+
+
     }
 
     handleCategorySelect =  event => {
@@ -186,29 +246,34 @@ class Dashboard extends React.Component {
 
         }
 
-        getNewRoom({id: '', roomName: this.state.newRoomName,
-                roomCategory: this.state.roomCategory, hostName: this.props.username},
-            info => {
+        getRoomInfo({
+            id: '',
+            roomName: this.state.newRoomName,
+            roomCategory: this.state.roomCategory,
+            hostName: this.props.username
+        }, info => {
+            let newRoom = {
+                id: info.id,
+                roomName: info.roomName,
+                roomCategory: info.roomCategory,
+                capacity: info.capacity,
+                hostName: info.hostName
+            };
 
 
-                let newRoom = {id: info.id,
-                    roomName: info.roomName,
-                    roomCategory: info.roomCategory,
-                    capacity: info.capacity,
-                    hostName: info.hostName};
+            let nextState = roomList.concat(newRoom);
+            let map = this.state.roomObjMap;
+            map[info.id] = newRoom;
+            this.setState({roomList: nextState, roomObjMap: map});
 
-                let nextState = roomList.concat(newRoom);
+        });
 
-                let map = this.state.roomObjMap;
-                map[info.id] = newRoom;
+        this.setState({dialogOpen: false});
 
-                this.setState({ roomList: nextState, roomObjMap : map});
-
-            });
-
-        this.setState({ dialogOpen: false });
 
     };
+
+
 
 
     handleJoinRoomClick = (e) => {
@@ -270,45 +335,11 @@ class Dashboard extends React.Component {
 
     };
 
-    updateRoomState = () => {
-        updateRoomInfo(null,info => {
-
-
-            if (info) {
-                let newRoom = {
-                    id: info.id,
-                    roomName: info.roomName,
-                    roomCategory: info.roomCategory,
-                    capacity: info.capacity,
-                    hostName: info.hostName
-                };
-
-
-                this.setState(state => {
-                    const list = state.roomList.map(item => {
-                        if (item.id === info.id) {
-                            console.log("inside same id");
-                            item.capacity = info.capacity;
-                        }
-                    });
-                });
-
-
-                let map = this.state.roomObjMap;
-                map[info.id] = newRoom;
-
-                this.setState({roomObjMap: map});
-            }
-    });
-}
-
 
     render() {
         const {classes} = this.props;
         const {roomList} = this.state;
-        //everytime component is loaded, clearing current game room
-       // this.props.removeCurrentRoom ();
-        this.updateRoomState();
+
 
         console.log(roomList);
         return (
