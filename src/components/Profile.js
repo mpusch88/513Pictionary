@@ -51,50 +51,53 @@ class Profile extends React.Component {
 
     render() {
         return (
-            <div className='profile-outer'>
-                <div className='profile-container'>
+            <div>
+                <Header title='User Profile'/>
+                <div className='profile-outer'>
+                    <div className='profile-container'>
 
-                    <Header title='User Info'/>
-                    <span className='desc'>Modify your account info here!</span>
-                    <div className='status'>{this.state.status}</div>
+                        <span className='desc'>Modify your account info here!</span>
+                        <div className='status'>{this.state.status}</div>
 
-                    <div className='input-group'>
-                        <span className='input-text-label'>User Name</span>
-                        <input
-                            className='input-field'
-                            type='text'
-                            name='username'
-                            onChange={this.handleChange}
-                            value={this.state.username}/>
-                    </div>
+                        <div className='input-group'>
+                            <span className='input-text-label'>User Name</span>
+                            <input
+                                className='input-field'
+                                type='text'
+                                name='username'
+                                onChange={this.handleChange}
+                                value={this.state.username}/>
+                        </div>
 
-                    <div className='input-group'>
-                        <span className='input-text-label'>Email</span>
-                        <input
-                            className='input-field'
-                            type='text'
-                            name='email'
-                            onChange={this.handleChange}
-                            value={this.state.email}/>
-                    </div>
+                        <div className='input-group'>
+                            <span className='input-text-label'>Email</span>
+                            <input
+                                className='input-field'
+                                type='text'
+                                name='email'
+                                onChange={this.handleChange}
+                                value={this.state.email}/>
+                        </div>
 
-                    <div className='input-group'>
-                        <span className='input-text-label'>Password</span>
-                        <input
-                            className='input-field'
-                            type='password'
-                            name='password'
-                            onChange={this.handleChange}
-                            value={this.state.password}/>
-                    </div>
+                        <div className='input-group'>
+                            <span className='input-text-label'>Password</span>
+                            <input
+                                className='input-field'
+                                type='password'
+                                name='password'
+                                onChange={this.handleChange}
+                                value={this.state.password}/>
+                        </div>
 
-                    <div>
-                        <button className='update-button' onClick={this.handleClick}>
-                            Update
-                        </button>
+                        <div>
+                            <button className='update-button' onClick={this.handleClick}>
+                                Update
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
+
         );
     }
 }
