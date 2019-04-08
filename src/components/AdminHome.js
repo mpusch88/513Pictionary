@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import {getCategories, checkIfCategoryExists, saveNewCategoryOrWord} from '../api';
 import {withRouter} from 'react-router-dom';
+import DialogWindow from './DialogWindow';
 
 const styles = theme => ({
     container: {
@@ -46,7 +47,9 @@ class AdminHome extends React.Component {
             isExistingDisabled: false,
             isNewDisabled: false,
             newCatVal: '',
-            word: ''
+            word: '',
+            showConfirmDialog: false,
+            dialogMessage: ''
         };
     }
 
@@ -96,7 +99,6 @@ class AdminHome extends React.Component {
         } else {
             this.setState({isExistingDisabled: false, isNewDisabled: true});
         }
-
     };
 
     handleWordChange = event => {
@@ -104,10 +106,26 @@ class AdminHome extends React.Component {
     };
 
     saveForm = () => {
-        saveNewCategoryOrWord({existingCategory: this.state.currentCategory, newCategory: this.state.newCatVal, word: this.state.word});
-        let {history} = this.props;
-        history.push({pathname: '/'});
+
+        if ((this.state.currentCategory || this.state.newCatVal) && this.state.word) {
+            saveNewCategoryOrWord({existingCategory: this.state.currentCategory, newCategory: this.state.newCatVal, word: this.state.word});
+            this.toggleModal();
+            this.handleClear();
+            this.showDialogMessage('Category was successfully saved');
+        }
+
+        // this.toggleModal(); this.handleClear();
     };
+
+    toggleModal = () => {
+        this.setState({
+            showConfirmDialog: !this.state.showConfirmDialog
+        });
+    };
+
+    showDialogMessage = (data) => {
+        this.setState({dialogMessage: data});
+    }
 
     handleClear = () => {
 
@@ -184,10 +202,18 @@ class AdminHome extends React.Component {
                         className={classes.button}>
                         Save
                     </Button>
-                    <Button variant="outlined" color="primary" className={classes.button} onClick={this.handleClear}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        className={classes.button}
+                        onClick={this.handleClear}>
                         Clear
                     </Button>
                 </form>
+                <DialogWindow
+                    message={this.state.dialogMessage}
+                    show={this.state.showConfirmDialog}
+                    onClose={this.toggleModal}/>
             </div>
         );
     }

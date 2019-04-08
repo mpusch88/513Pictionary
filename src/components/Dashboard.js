@@ -181,6 +181,8 @@ class Dashboard extends React.Component {
                 };
 
                 this.setState(state => {
+
+                    // not used
                     const list = state
                         .roomList
                         .map(item => {
@@ -240,10 +242,25 @@ class Dashboard extends React.Component {
             let map = this.state.roomObjMap;
             map[info.id] = newRoom;
 
-            this.setState({roomList: nextState, roomObjMap: map});
+            this
+                .props
+                .addRoomInfo(newRoom);
+
+            if (newRoom.hostName === this.props.username) {
+                this
+                    .props
+                    .setRoomHost(true);
+            } else {
+                this
+                    .props
+                    .setRoomHost(false);
+            }
         });
 
         this.setState({dialogOpen: false});
+
+        let {history} = this.props;
+        history.push({pathname: '/Game'});
     };
 
     handleJoinRoomClick = (e) => {
@@ -285,10 +302,19 @@ class Dashboard extends React.Component {
         });
 
         let updatedRoom = this.state.roomObjMap[id];
-
         this
             .props
             .addRoomInfo(updatedRoom);
+
+        if (updatedRoom.hostName === this.props.username) {
+            this
+                .props
+                .setRoomHost(true);
+        } else {
+            this
+                .props
+                .setRoomHost(false);
+        }
 
         console.log('addRoom clicked again');
 

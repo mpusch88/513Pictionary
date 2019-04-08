@@ -3,6 +3,7 @@ let express = require('express');
 let server = require('http').Server(app);
 let MongoClient = require('mongodb').MongoClient;
 
+
 let users = {};
 let rooms = [];
 let roomInfo = {};
@@ -18,7 +19,7 @@ const uri = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mo
 const client = new MongoClient(uri, { useNewUrlParser: true });
 
 // getting all categories from database
-client.connect(() => {
+client.connect(err => {
 	const collection = client.db('pictionary').collection('categories');
 
 	let rawCategories = collection.find().toArray((err, items) => {
@@ -29,8 +30,7 @@ client.connect(() => {
 		});
 	});
 
-	// perhaps rawCategories should be returned? I'm confused
-
+	// not exported?
 	client.close();
 });
 
@@ -60,9 +60,10 @@ let createUser = (user) => {
 	}, users);
 };
 
-// also unused
+// not used
 let removeSocket = (socket_id) => {
 	let id = '';
+
 	Object.keys(users).map(function(key) {
 		let sockets = users[key].sockets;
 		if (sockets.indexOf(socket_id) !== -1) {
@@ -74,13 +75,11 @@ let removeSocket = (socket_id) => {
 
 	if (user.sockets.length > 1) {
 		let index = user.sockets.indexOf(socket_id);
-
 		let updated_user = {
 			[id]: Object.assign(user, {
 				sockets: user.sockets.slice(0, index).concat(user.sockets.slice(index + 1))
 			})
 		};
-
 		users = Object.assign(users, updated_user);
 	} else {
 		let cuser = Object.assign({}, users);
@@ -94,8 +93,7 @@ let removeSocket = (socket_id) => {
 //store new category and word
 let storeCategoryAndWord = (data) => {
 	let clientDriver = new MongoClient(uri, { useNewUrlParser: true });
-	clientDriver.connect(() => {
-
+	clientDriver.connect(err => {
 		const collection = clientDriver.db('pictionary').collection('categories');
 		let type = data.category;
 		let word = data.word;
@@ -111,26 +109,25 @@ let storeCategoryAndWord = (data) => {
 
 let addWordToExistingCategory = (data) => {
 	let clientDriver = new MongoClient(uri, { useNewUrlParser: true });
-	clientDriver.connect(() => {
-
+	clientDriver.connect(err => {
 		const collection = clientDriver.db('pictionary').collection('categories');
 		let type = data.category;
 		let word = data.word;
-		var obj = { type: type };
+		var obj = { type: type};
 
 		console.log(obj);
-		collection.updateOne({ obj }, { $addToSet: {
-				[type]: word } }, function(err, res) {
-			if (err) throw err;
-		});
-
+		collection.updateOne(
+			{obj},
+			{$addToSet : {[type]: word}}, function(err, res)  {
+				if (err) throw err;
+			}
+		);
 	});
 
 	clientDriver.close();
 };
 
 //---------------- general helper functions -------------------------//
-
 let getUniqueId = function() {
 	// Math.random should be unique because of its seeding algorithm.
 	// Convert it to base 36 (numbers + letters), and grab the first 9 characters
@@ -139,16 +136,15 @@ let getUniqueId = function() {
 };
 
 //########----------- on socket connection --------------------###########/
-
 io.on('connection', (socket) => {
-
-	socket.on('init-chat', (query) => {
+	socket.on('init-chat', (query) =>
+	{
 		//let query = socket.request._query,
-		let user = {
-			username: query.username,
-			id: query.id,
-			socket_id: socket.id
-		};
+			let user = {
+				username: query.username,
+				id: query.id,
+				socket_id: socket.id
+			};
 
 		//If incoming user connection is new, create a new user id and username
 		// otherwise, use the fetched data and update the userlist
@@ -166,25 +162,24 @@ io.on('connection', (socket) => {
 
 	socket.on('subscribeToTimer', (interval) => {
 		console.log('client is subscribing to timer with interval ', interval);
-
 		setInterval(() => {
 			socket.emit('timer', new Date());
 		}, interval);
 	});
 
-	//---------------------USER INFO UPDATE
+	//--------------UPDATE USER INFO---------------------//
 
 	socket.on('update_userinfo', (info) => {
-		console.log('User info update request');
+		console.log('User info update requested!');
 
 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
-		client1.connect(() => {
+		client1.connect(err => {
 			const collection = client1
 				.db('pictionary')
 				.collection('users');
 
-			var myobj = { email: info.email, password: info.psw };
+			var myobj = { email: info.email, password: info.psw, username: info.username};
 
 			collection
 				.find(myobj)
@@ -192,13 +187,13 @@ io.on('connection', (socket) => {
 					if (res && res.length !== 0) {
 						if (res[0].isAdmin === '1') {
 							console.log('admin logged in');
-							socket.emit('login_flag', { type: 'admin', username: res[0].username });
+							socket.emit('login_flag', {type:'admin', username: res[0].username});
 						} else if (res[0].isAdmin === '0') {
-							socket.emit('login_flag', { type: 'user', username: res[0].username });
+							socket.emit('login_flag', {type:'user', username: res[0].username});
 							console.log('uesr logged in');
 						}
 					} else {
-						socket.emit('login_flag', { type: 'fail' });
+						socket.emit('login_flag', {type:'fail'});
 						console.log('failure');
 					}
 				});
@@ -212,7 +207,7 @@ io.on('connection', (socket) => {
 
 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
-		client1.connect(() => {
+		client1.connect(err => {
 			const collection = client1
 				.db('pictionary')
 				.collection('users');
@@ -225,13 +220,13 @@ io.on('connection', (socket) => {
 					if (res && res.length !== 0) {
 						if (res[0].isAdmin === '1') {
 							console.log('admin logged in');
-							socket.emit('login_flag', { type: 'admin', username: res[0].username });
+							socket.emit('login_flag', {type:'admin', username: res[0].username});
 						} else if (res[0].isAdmin === '0') {
-							socket.emit('login_flag', { type: 'user', username: res[0].username });
+							socket.emit('login_flag', {type:'user', username: res[0].username});
 							console.log('uesr logged in');
 						}
 					} else {
-						socket.emit('login_flag', { type: 'fail' });
+						socket.emit('login_flag', {type:'fail'});
 						console.log('failure');
 					}
 				});
@@ -240,85 +235,89 @@ io.on('connection', (socket) => {
 
 	//---------------------------- creating and join room -----------------------------------------//
 
-	//lets socket join a room or create one if it doesn't exist
-	//keep track of current rooms
-	//in socket io, join and create room are a single function
-	socket.on('join-room', function(data) {
+    //lets socket join a room or create one if it doesn't exist
+    //keep track of current rooms
+    //in socket io, join and create room are a single function
+    socket.on('join-room', function (data) {
 		let roomsearch = io.sockets.adapter.rooms[data.room.id];
-		console.log('inside join room');
+		
+        console.log('inside join room');
 		console.log(roomsearch);
-		if (rooms.includes(data.room.id)) {
-			if (roomsearch && roomsearch.length < 5) {
-				socket.join(data.room.id);
-				data.room.capacity = roomsearch.length + '/5';
-				console.log('joined successfully in existing room');
-			} else if (!roomsearch) {
-				socket.join(data.room.id);
-				data.room.capacity = 1 + '/5';
-				console.log('joined successfully first time');
-			} else {
-				data.room.capacity = roomsearch.length + '/5';
-				socket.emit('full room', 'Room is full');
-			}
-		}
+		
+        if(rooms.includes(data.room.id)) {
+            if (roomsearch && roomsearch.length < 5) {
+                socket.join(data.room.id);
+                data.room.capacity = roomsearch.length + '/5';
+                console.log('joined successfully in existing room');
+            } else if (!roomsearch){
+                socket.join(data.room.id);
+                data.room.capacity =  1 + '/5';
+                console.log('joined successfully first time');
+            } else{
+                data.room.capacity = roomsearch.length + '/5';
+                socket.emit('full room', 'Room is full');
+            }
+        }
 
 		// socket.broadcast.to(data.room.id).emit('message',
 		// 	{type:'message', text: data.username + " just joined the room!"});
 
-		roomInfo[data.room.id] = data.room;
+        roomInfo[data.room.id] = data.room;
 
-		// to update capacity all sockets
-		io.emit('updateRoomInfo', data.room);
-	});
+        // to update capacity all sockets
+        io.emit('updateRoomInfo', data.room);
+    });
 
-	//not actually joining the room, creating an entry in the list
-	socket.on('create-room', function(room) {
+    //joining the room, creating an entry in the list
+    socket.on('create-room', function (room) {
 		let roomId = getUniqueId();
+		
+        while (rooms.includes(roomId)) {
+            roomId = getUniqueId();
+        }
 
-		while (rooms.includes(roomId)) {
-			roomId = getUniqueId();
-		}
-
-		rooms.push(roomId);
+        rooms.push(roomId);
+        socket.join(roomId);
 		room.id = roomId;
-		room.capacity = 0 + '/5';
 
-		// socket.join(roomId)
-		roomInfo[room.id] = room;
+		let roomsearch = io.sockets.adapter.rooms[room.id];
+		room.capacity = roomsearch.length + '/5';
+		roomInfo[roomId] = room;
+		
+        console.log('created new room ' + roomId + ' :' + room.capacity);
 
-		console.log('created new room ' + roomId);
-
-		socket.emit('sendRoomInfo', room);
+        socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
-	});
+    });
 
 
-	//get all the rooms
-	socket.on('room-list', function(data) {
+    //get all the rooms
+    socket.on('room-list', function (data) {
+        let roomList = [];
+        for (var key in roomInfo){
+            roomList.push(roomInfo[key]);
+        }
 
-		let roomList = [];
-		for (var key in roomInfo) {
-			roomList.push(roomInfo[key]);
-		}
+        socket.emit('all-rooms', roomList);
+    });
 
-		socket.emit('all-rooms', roomList);
-	});
-
-	socket.on('leave-room', function(data) {
+	socket.on('leave-room', function (data) {
 		let roomsearch = io.sockets.adapter.rooms[data.id];
 		let room = roomInfo[data.id];
 
-		if (roomsearch) {
-			room.capacity = roomsearch.length - 1 + '/5';
+		console.log('leaving room with id ' + data.id);
+
+		if(roomsearch){
+			room.capacity = roomsearch.length -1 + '/5' ;
 			roomInfo[data.id] = room;
+			console.log('leaving room ' + room.capacity);
 		}
 
 		socket.leave(data.id);
-		socket.emit('sendRoomInfo', room);
+		io.emit('updateRoomInfo', room);
 	});
 
 	///---------------------- GAME ROOM ACTIVITY NEED TO HAPPEN WITH socket room------------------////
-
 	socket.on('newStrokeSnd', (data) => {
 		// probably change to broadcasting to a room, if we still want multiple rooms
 		//socket.broadcast.emit('newStrokeRcv', data.item);
@@ -328,9 +327,9 @@ io.on('connection', (socket) => {
 	});
 
 	//emits message to all users in the room
-	//add functionality to verify answer on each message receive
-	socket.on('message', function(data) {
-		console.log('room id passed in : ' + data.roomId);
+    //add functionality to verify answer on each message receive
+    socket.on('message', function (data) {
+		console.log('room id passed in : ' +  data.roomId);
 		console.log(socket.id);
 
 		let roomsearch = io.sockets.adapter.rooms[data.roomId];
@@ -339,15 +338,14 @@ io.on('connection', (socket) => {
 
 		//to room sockets
 		let rooms = Object.keys(socket.rooms);
-
 		console.log(rooms); // [ <socket.id>, 'room 237' ]
 
 		//io.in(data.roomId).emit('message', data);
-		socket.broadcast.to(data.roomId).emit('message', data);
-		// socket.broadcast.emit('message', data);
 
-		//TODO - add function to check message with answer
-	});
+		socket.broadcast.to(data.roomId).emit('message', data);
+     // socket.broadcast.emit('message', data);
+        //TODO - add function to check message with answer
+    });
 
 	// //emits message to all users in the room
 	// //add functionality to verify answer on each message receive
@@ -360,6 +358,7 @@ io.on('connection', (socket) => {
 	// 	//TODO - add function to check message with answer
 	// });
 
+
 	//Receives image from socket and emits to all other sockets in that room
 	// socket.on('receive image', function (image) {
 	//     socket.broadcast.to(room).emit(image);
@@ -368,7 +367,7 @@ io.on('connection', (socket) => {
 	//Handles socket disconnection and possible room deletion when disconnecting socket is last one in room
 	//Updates users list on user disconnect
 	socket.on('disconnect', () => {
-		//	removeSocket(socket.id);
+	//	removeSocket(socket.id);
 		io.emit('updateUsersList', getUsers());
 	});
 
@@ -377,7 +376,6 @@ io.on('connection', (socket) => {
 	//this is for testing right now, need to fetch from DB
 	socket.on('categories', (data) => {
 		let cats = [];
-
 		categories.forEach(function(arrayItem) {
 			cats.push(arrayItem.type);
 		});
@@ -393,11 +391,10 @@ io.on('connection', (socket) => {
 
 	socket.on('storeNewCategory', (data) => {
 		console.log(data);
-
 		if (data.existingCategory) {
 			if (!categoryToWords[data.existingCategory].includes(data.word)) {
 				console.log(data.word);
-				addWordToExistingCategory({ category: data.existingCategory, word: data.word });
+				addWordToExistingCategory({category: data.existingCategory, word: data.word});
 			}
 		} else {
 			storeCategoryAndWord({ category: data.newCategory, word: data.word });
