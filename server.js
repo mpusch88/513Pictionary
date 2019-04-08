@@ -199,9 +199,10 @@ io.on('connection', (socket) => {
 				});
 		});
 	});
+	//------------------------- Login -------------------------//
 
-	//------------------------- Cynthis -------------------------//
 
+	// user log in
 	socket.on('new_loginfo', (info) => {
 		console.log('login req');
 
@@ -233,6 +234,9 @@ io.on('connection', (socket) => {
 		});
 	});
 
+
+	//------------------------- Login -------------------------//
+
 	//---------------------------- creating and join room -----------------------------------------//
 
     //lets socket join a room or create one if it doesn't exist
@@ -240,10 +244,10 @@ io.on('connection', (socket) => {
     //in socket io, join and create room are a single function
     socket.on('join-room', function (data) {
 		let roomsearch = io.sockets.adapter.rooms[data.room.id];
-		
+
         console.log('inside join room');
 		console.log(roomsearch);
-		
+
         if(rooms.includes(data.room.id)) {
             if (roomsearch && roomsearch.length < 5) {
                 socket.join(data.room.id);
@@ -271,7 +275,7 @@ io.on('connection', (socket) => {
     //joining the room, creating an entry in the list
     socket.on('create-room', function (room) {
 		let roomId = getUniqueId();
-		
+
         while (rooms.includes(roomId)) {
             roomId = getUniqueId();
         }
@@ -283,7 +287,7 @@ io.on('connection', (socket) => {
 		let roomsearch = io.sockets.adapter.rooms[room.id];
 		room.capacity = roomsearch.length + '/5';
 		roomInfo[roomId] = room;
-		
+
         console.log('created new room ' + roomId + ' :' + room.capacity);
 
         socket.emit('sendRoomInfo', room);
@@ -315,16 +319,25 @@ io.on('connection', (socket) => {
 
 		socket.leave(data.id);
 		io.emit('updateRoomInfo', room);
+
+		socket.emit('sendRoomInfo', room);
+
 	});
 
 	///---------------------- GAME ROOM ACTIVITY NEED TO HAPPEN WITH socket room------------------////
-	socket.on('newStrokeSnd', (data) => {
-		// probably change to broadcasting to a room, if we still want multiple rooms
-		//socket.broadcast.emit('newStrokeRcv', data.item);
 
+
+	// received new stroke from the drawer, emit to guessers
+	socket.on('newStrokeSnd', (data) => {
 		//broadcasting to everyone in room
 		socket.broadcast.to(data.roomId).emit('newStrokeRcv', data.item);
 	});
+
+	// receive user ready event, emit to other players
+	socket.on('newReadyPlayer', (username) => {
+
+	});
+
 
 	//emits message to all users in the room
     //add functionality to verify answer on each message receive

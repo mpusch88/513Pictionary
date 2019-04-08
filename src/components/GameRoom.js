@@ -3,7 +3,6 @@ import Header from "./Header";
 import SketchComponent from '../components/SketchComponent';
 import TimerProgressBar from './TimerProgressBar';
 import Chat from './Chat';
-import Typography from '@material-ui/core/Typography';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {changeGameState} from '../actions/userAction.js';
@@ -11,42 +10,81 @@ import {removeCurrentRoom} from "../actions/dashBoardAction";
 import { withRouter } from 'react-router-dom';
 
 import {game_myReady, leaveRoom} from '../api';
+import {game_otherReady} from '../api';
 import compose from "recompose/compose";
 
 
  class GameRoom extends React.Component {
     constructor(props) {
         super(props);
+        game_otherReady(username => this.setUserToReady(username));
 
         this.state = {
-            gameProgress: 'notReady', //ready, waiting, start, roundEnd, gameEnd
+            gameProgress: 'notReady', //ready, start, roundEnd, gameEnd
             myUserInfo: {
                 username: 'myDefault',
                 score: 0,
                 isDrawer: false,
-                index: 0
+                isReady: false
             },
             userList: []
         };
+
+        this.setState({userList: this.state.userList.push(this.state.myUserInfo)});
 
         this.gameReady = this
             .gameReady
             .bind(this);
     }
 
-    gameReady() {
-        this.setState({gameProgress: 'ready'});
-        this
-            .props
-            .changeGameState('ready');
-        game_myReady(this.state.myUserInfo.username);
+    // a little complicated to explain
+    // check out this:  https://stackoverflow.com/a/45582558
+    triggerTimer = () => {};
+
+    setUserToReady(username){
+        let tmp = this.state.userList;
+        tmp.forEach(function(ele){
+            if(ele.username === username)ele.isReady = true;
+        });
+        this.setState({userList: tmp});
     }
 
-    leaveRoom = () =>{
+    gameReady() {
+        console.log(this.state.userList);
+        // emit ready event to server
+        game_myReady({toomIdthis: this.props.currentRoomId, username: this.state.myUserInfo.username});
+
+        this.setUserToReady(this.state.myUserInfo.username);
+
+        //check for all the uesrs ready status in the uesrlist
+        if(this.allUsersReady()){
+            this.setState({gameProgress: 'start'});
+            this.props.changeGameState('start');
+            // start the timer
+            this.triggerTimer();
+        }else {
+            this.setState({gameProgress: 'ready'});
+            this.props
+                .changeGameState('ready');
+        }
+
+    }
+
+    allUsersReady() {
+        if(this.state.userList.length > 1){    //at least two
+            this.state.userList.forEach(function(ele){
+                if(!ele.isReady)return false;
+            });
+            return true;
+        }
+        return false;
+    }
+
+    leaveRoom = () => {
         leaveRoom({id: this.props.currentRoomId});
         this.props.removeCurrentRoom ();
 
-        console.log("leaving game room" + this.props.currentRoomId)
+        console.log("leaving game room" + this.props.currentRoomId);
         let { history } = this.props;
         history.push({
             pathname: '/Dashboard'
@@ -60,35 +98,16 @@ import compose from "recompose/compose";
             <div>
                 <Header home={'Room: ' + this.props.currentRoomName}
                         title={'Lets play words in category '+ this.props.currentRoomCategory.toUpperCase() + '!'}/>
-                <TimerProgressBar/>
+                <TimerProgressBar setReadyTrigger={func => this.triggerTimer = func}/>
                 <SketchComponent/>
-                <button onClick={this.gameReady}>Ready</button>
+                {
+                    gameProgress === 'notReady' ?
+                        <div><button onClick={this.gameReady}>Ready</button></div> :
+                        ''
+                }
+
                 <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
                 <Chat/>
-
-                {/*{*/
-            }
-            {/*gameProgress === 'ready' ?*/
-            }
-            {/*<div>*/
-            }
-            {/*<TimerProgressBar/>*/
-            }
-            {/*<SketchComponent gameFlg={'ready'}/>*/
-            }
-            {/*</div> :*/
-            }
-            {/*<div>*/
-            }
-            {/*<TimerProgressBar/>*/
-            }
-            {/*<SketchComponent gameFlg={'notReady'}/>*/
-            }
-            {/*<button onClick={this.gameReady}>Ready</button>*/
-            }
-            {/*</div>*/
-            }
-            {/*}*/}
             </div>
         );
     }
@@ -109,8 +128,7 @@ const matchDispatchToProps = (dispatch) => {
     }, dispatch);
 };
 
-
 export default compose(
     connect(mapStateToProps, matchDispatchToProps)
-)(withRouter(GameRoom))
+)(withRouter(GameRoom));
 

@@ -3,6 +3,7 @@ const initState = {
 	username: '',
 	gameState: 'notReady',
 	PlayerList: [],
+
 	currentRoomId: '',
 	currentRoomName: '',
 	currentRoomCategory: '',

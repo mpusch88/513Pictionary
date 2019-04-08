@@ -22,7 +22,6 @@ class SketchComponent extends Component
     }
 
     componentDidMount() {
-        // let flg = this.props.gameFlg;
         let flg = this.props.gameState;
 
         if (flg === 'notReady') {
@@ -31,7 +30,7 @@ class SketchComponent extends Component
             this.setState(({color: '#000000'}));
         }
         rcvStrokes(item => {
-            if (item) 
+            if (item)
                 this.setState({
                     items: this
                         .state

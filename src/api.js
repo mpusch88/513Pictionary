@@ -2,10 +2,9 @@ import openSocket from 'socket.io-client';
 export const socket = openSocket('http://localhost:8000');
 
 //----------------- Example -----------------//
-
-function subscribeToTimer(cb) {
-	socket.on('timer', timestamp => cb(null, timestamp));
-	socket.emit('subscribeToTimer', 1000);
+function subscribeToTimer(cb) { // cb stands for callback function
+    socket.on('timer', timestamp => cb(null, timestamp));
+    socket.emit('subscribeToTimer', 1000);
 }
 
 //----------------- Sketchpad related -----------------//
@@ -48,7 +47,6 @@ export function sendMessageEvent(data, cb) {
 }
 
 //----------------- Login -----------------//
-
 function send_loginfo(info, cb) {
 	socket.on('login_flag', log_flag => cb(log_flag));
 	socket.emit('new_loginfo', info);
@@ -62,7 +60,6 @@ function update_userinfo(info, cb) {
 }
 
 //------------------ Admin page-----------------//
-
 function getCategories(cb) {
 	socket.emit('categories', data => cb(data));
 	socket.on('categories', (data) => {
@@ -120,6 +117,8 @@ function getAllExistingRooms(cb) {
 		cb(data);
 	});
 }
+
+
 
 export { subscribeToTimer };
 export { rcvStrokes };

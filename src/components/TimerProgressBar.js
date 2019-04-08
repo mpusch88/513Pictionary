@@ -3,10 +3,11 @@ import 'rc-progress/assets/index.css';
 import {Line} from 'rc-progress';
 
 export default class TimerProgressBar extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            percent: -1
+            percent: 0,
+            start: false
         };
         this.increase = this
             .increase
@@ -17,12 +18,14 @@ export default class TimerProgressBar extends Component {
     }
 
     componentDidMount() {
-        this.increase();
+        this.props.setReadyTrigger(this.restart);
+        if(this.state.start)this.increase();
     }
 
     increase() {
         const percent = this.state.percent + 1;
         if (percent > 60) {
+            this.setState({start: false});
             clearTimeout(this.tm);
             return;
         }
@@ -31,9 +34,10 @@ export default class TimerProgressBar extends Component {
     }
 
     restart() {
+        this.setState({start: true});
         clearTimeout(this.tm);
         this.setState({
-            percent: -1
+            percent: 0
         }, () => {
             this.increase();
         });
@@ -48,7 +52,7 @@ export default class TimerProgressBar extends Component {
                 width: 400
             }}>
                 <p>Remaining time: {60 - percent}s</p>
-                <Line strokeWidth="4" percent={Math.fround(this.state.percent * 10.0 / 6.0)}/> {/*<button onClick={this.restart}>Restart</button>*/}
+                <Line strokeWidth="4" percent={Math.fround(this.state.percent * 10.0 / 6.0)}/>
             </div>
         );
     }
