@@ -257,7 +257,7 @@ io.on('connection', (socket) => {
     });
 
 
-    //not actually joining the room, creating an entry in the list
+    //joining the room, creating an entry in the list
     socket.on('create-room', function (room) {
         let roomId = getUniqueId();
         while (rooms.includes(roomId)) {
@@ -266,12 +266,15 @@ io.on('connection', (socket) => {
 
         rooms.push(roomId);
 
-        room.id = roomId;
-        room.capacity = 0 + '/5';
+        socket.join(roomId);
+		room.id = roomId;
 
-       // socket.join(roomId)
-        roomInfo[room.id] = room;
-        console.log("created new room " + roomId);
+		let roomsearch = io.sockets.adapter.rooms[room.id];
+		room.capacity = roomsearch.length + '/5';
+
+
+        roomInfo[roomId] = room;
+        console.log("created new room " + roomId + ' :' + room.capacity);
 
         socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
@@ -294,13 +297,17 @@ io.on('connection', (socket) => {
 
 		let roomsearch = io.sockets.adapter.rooms[data.id];
 		let room = roomInfo[data.id];
+
+		console.log("leaving room with id " + data.id)
 		if(roomsearch){
 			room.capacity = roomsearch.length -1 + '/5' ;
 			roomInfo[data.id] = room;
+			console.log("leaving room " + room.capacity);
 		}
+
 		socket.leave(data.id);
 
-		socket.emit('sendRoomInfo', room)
+		io.emit('updateRoomInfo', room)
 
 	});
 

@@ -92,10 +92,11 @@ const ListItem = ({ id, name, category, capacity, onClick }) => (
             <CustomTableCell align="right">{capacity}</CustomTableCell>
             <CustomTableCell align="right">
                 <button  id={id} onClick={onClick}>
-                    Join Room
+                    JOIN ROOM
                 </button>
             </CustomTableCell>
         </TableRow>
+
 
 
 );
@@ -268,9 +269,24 @@ class Dashboard extends React.Component {
             map[info.id] = newRoom;
             this.setState({roomList: nextState, roomObjMap: map});
 
+            this.props.addRoomInfo(newRoom);
+
+            if(newRoom.hostName === this.props.username){
+                this.props.setRoomHost(true);
+            }else{
+                this.props.setRoomHost(false);
+            }
+
         });
 
+
         this.setState({dialogOpen: false});
+
+
+        let { history } = this.props;
+        history.push({
+            pathname: '/Game'
+        });
 
 
     };
@@ -321,7 +337,7 @@ class Dashboard extends React.Component {
 
         let updatedRoom = this.state.roomObjMap[id];
         this.props.addRoomInfo(updatedRoom);
-        console.log("addRoom clicked again");
+
         if(updatedRoom.hostName === this.props.username){
             this.props.setRoomHost(true);
         }else{
