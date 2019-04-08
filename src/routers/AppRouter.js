@@ -5,6 +5,7 @@ import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
 import AdminHome from '../components/AdminHome';
 import Dashboard from '../components/Dashboard';
+import Profile from '../components/Profile';
 import requireAuth from '../components/requireAuth';
 import {connect} from 'react-redux';
 
@@ -25,16 +26,15 @@ class AppRouter extends React.Component {
         return (
             <div>
                 <Switch>
-
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/login' component={Login} exact={true}/>
                     <Route path='/Game' component={requireAuth(GameRoom, false)} exact={true}/>
+                    <Route path='/Profile' component={requireAuth(Profile, false)} exact={true}/>
                     <Route
                         path='/Dashboard'
                         component={requireAuth(Dashboard, false)}
                         exact={true}/>
                     <Route path='/Admin' component={requireAuth(AdminHome, true)} exact={true}/>
-
                     <UserRoute
                         path="/:type"
                         component={AppRoot}
@@ -42,7 +42,6 @@ class AppRouter extends React.Component {
                         status: 'LoggedIn'
                     }}
                         exact={true}/>
-
                 </Switch>
             </div>
         );

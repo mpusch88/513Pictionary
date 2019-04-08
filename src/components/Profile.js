@@ -2,15 +2,18 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
-import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
-import {send_loginfo} from '../api';
-import logo from '../resources/logo.png';
+import {update_userinfo} from '../api';
+import Header from './Header';
+import '../styles/profile.css';
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+
+        this.state = {
+            status: ''
+        };
 
         this.handleClick = this
             .handleClick
@@ -21,38 +24,23 @@ class Profile extends React.Component {
     }
 
     handleClick() {
-        send_loginfo({
+        update_userinfo({
+            username: this.state.username,
             email: this.state.email,
             psw: this.state.password
-        }, loginInfo => {
+        }, updateInfo => {
 
-            let userType = loginInfo.type
-                ? loginInfo.type
-                : '';
-            console.log(loginInfo);
-
-            this
-                .props
-                .authenticate(userType, loginInfo.username);
-            if (loginInfo.type === 'user') {
-                console.log('user logged in successful');
+            if (updateInfo.type === 'success') {
+                console.log('User info updated successfully!');
                 let {history} = this.props;
                 history.push({pathname: '/Dashboard'});
-            } else if (loginInfo.type === 'admin') {
-                console.log('admin logged in successful');
-                let {history} = this.props;
-                history.push({pathname: '/Admin'});
-            } else if (loginInfo.type === 'fail') {
-                alert('Invalid email or password!');
+            } else if (updateInfo.type === 'fail') {
+                alert('Update failed!');
                 let {history} = this.props;
                 history.push({pathname: '/'});
                 console.log('failed to log in');
             }
         });
-    }
-
-    handleForgotPassword(e) {
-        e.preventDefault();
     }
 
     handleChange(e) {
@@ -63,14 +51,22 @@ class Profile extends React.Component {
 
     render() {
         return (
-            <div className='login-outer'>
-                <div className='login-container'>
-                    <div className='titles'>
-                        <span className='title'>513Pictionary</span>
-                        <span className='subtitle'>Sign In Below!</span>
-                    </div>
+            <div className='profile-outer'>
+                <div className='profile-container'>
 
-                    <img src={logo} className="logo" alt="logo" />
+                    <Header title='User Info'/>
+                    <span className='desc'>Modify your account info here!</span>
+                    <div className='status'>{this.state.status}</div>
+
+                    <div className='input-group'>
+                        <span className='input-text-label'>User Name</span>
+                        <input
+                            className='input-field'
+                            type='text'
+                            name='username'
+                            onChange={this.handleChange}
+                            value={this.state.username}/>
+                    </div>
 
                     <div className='input-group'>
                         <span className='input-text-label'>Email</span>
@@ -93,8 +89,8 @@ class Profile extends React.Component {
                     </div>
 
                     <div>
-                        <button className='login-button' onClick={this.handleClick}>
-                            Log In
+                        <button className='update-button' onClick={this.handleClick}>
+                            Update
                         </button>
                     </div>
                 </div>

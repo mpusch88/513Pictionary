@@ -9,13 +9,13 @@ import Home from '@material-ui/icons/HomeOutlined';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import compose from "recompose/compose";
-import {connect} from "react-redux";
-import { withRouter } from 'react-router-dom';
-import {socket} from "../api";
-import { Link } from 'react-router-dom'
+import compose from 'recompose/compose';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import {socket} from '../api';
+import {Link} from 'react-router-dom';
 import {authenticate} from '../actions/userAction.js';
-import {bindActionCreators} from "redux";
+import {bindActionCreators} from 'redux';
 
 const styles = {
     root: {
@@ -44,9 +44,17 @@ class Header extends React.Component {
         this.setState({anchorEl: null});
     };
 
+    handleProfile = () => {
+        this.setState({anchorEl: null});
+        let {history} = this.props;
+        history.push({pathname: '/Profile'});
+    };
+
     handleLogout = () => {
         this.setState({anchorEl: null});
-        this.props.authenticate("", "");
+        this
+            .props
+            .authenticate('', '');
         socket.emit('disconnect');
     };
 
@@ -59,14 +67,22 @@ class Header extends React.Component {
             <div className={classes.root}>
                 <AppBar position="static">
                     <Toolbar>
-                        <IconButton className={classes.menuButton} color="inherit" aria-label="Home"
-                                    component={Link}
-                                    to={this.props.userType === 'user'? '/Dashboard' : '/Admin'}>
+
+                        <IconButton
+                            className={classes.menuButton}
+                            color="inherit"
+                            aria-label="Home"
+                            component={Link}
+                            to={this.props.userType === 'user'
+                            ? '/Dashboard'
+                            : '/Admin'}>
                             <Home/>
                         </IconButton>
 
                         <Typography variant="h9" color="inherit" className={classes.grow}>
-                            {this.props.home ? this.props.home :'513Pictionary'}
+                            {this.props.home
+                                ? this.props.home
+                                : '513Pictionary'}
                         </Typography>
 
                         <Typography variant="h6" color="inherit" className={classes.grow}>
@@ -82,8 +98,8 @@ class Header extends React.Component {
                         <div>
                             <IconButton
                                 aria-owns={open
-                                    ? 'menu-appbar'
-                                    : undefined}
+                                ? 'menu-appbar'
+                                : undefined}
                                 aria-haspopup="true"
                                 onClick={this.handleMenu}
                                 color="inherit">
@@ -94,17 +110,16 @@ class Header extends React.Component {
                                 id="menu-appbar"
                                 anchorEl={anchorEl}
                                 anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right'
-                                }}
+                                vertical: 'top',
+                                horizontal: 'right'
+                            }}
                                 transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right'
-                                }}
+                                vertical: 'top',
+                                horizontal: 'right'
+                            }}
                                 open={open}
                                 onClose={this.handleClose}>
-                                <MenuItem hidden={this.props.hideProfileItem} onClick={this.handleClose}>Profile</MenuItem>
-                            }
+                                <MenuItem hidden={this.props.hideProfileItem} onClick={this.handleProfile}>Profile</MenuItem>
                                 <MenuItem onClick={this.handleLogout}>Log out</MenuItem>
                             </Menu>
                         </div>
@@ -119,12 +134,8 @@ Header.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-
 const mapStateToProps = (state) => {
-    return {
-        username: state.username,
-        userType: state.userType,
-    }
+    return {username: state.username, userType: state.userType};
 };
 
 const matchDispatchToProps = (dispatch) => {
@@ -133,9 +144,4 @@ const matchDispatchToProps = (dispatch) => {
     }, dispatch);
 };
 
-
-export default compose(
-    withStyles(styles),
-    connect(mapStateToProps, matchDispatchToProps)
-)(withRouter(Header))
-
+export default compose(withStyles(styles), connect(mapStateToProps, matchDispatchToProps))(withRouter(Header));
