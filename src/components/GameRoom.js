@@ -1,17 +1,17 @@
 import React from 'react';
-import Header from "./Header";
+import Header from './Header';
 import SketchComponent from '../components/SketchComponent';
 import TimerProgressBar from './TimerProgressBar';
 import Chat from './Chat';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {changeGameState} from '../actions/userAction.js';
-import {removeCurrentRoom} from "../actions/dashBoardAction";
+import {removeCurrentRoom} from '../actions/dashBoardAction';
 import { withRouter } from 'react-router-dom';
 
 import {game_myReady, leaveRoom, getNewUserJoin, getUserList} from '../api';
 import {game_otherReady} from '../api';
-import compose from "recompose/compose";
+import compose from 'recompose/compose';
 
 
  class GameRoom extends React.Component {
@@ -52,7 +52,7 @@ import compose from "recompose/compose";
         });
     }
 
-     // a little complicated to explain
+    // a little complicated to explain
     // check out this:  https://stackoverflow.com/a/45582558
     triggerTimer = () => {};
 
@@ -99,7 +99,7 @@ import compose from "recompose/compose";
         leaveRoom({id: this.props.currentRoomId});
         this.props.removeCurrentRoom ();
 
-        console.log("leaving game room" + this.props.currentRoomId);
+        console.log('leaving game room' + this.props.currentRoomId);
         let { history } = this.props;
         history.push({
             pathname: '/Dashboard'
@@ -147,4 +147,3 @@ const matchDispatchToProps = (dispatch) => {
 export default compose(
     connect(mapStateToProps, matchDispatchToProps)
 )(withRouter(GameRoom));
-

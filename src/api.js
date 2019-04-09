@@ -37,7 +37,6 @@ export function updateUserList(cb) {
 	socket.on('updateUsersList', list => cb(list));
 }
 
-
 export function getNewUserJoin(cb){
 	socket.on('newUserInRoom', data => cb(data));
 }
@@ -68,7 +67,7 @@ function send_loginfo(info, cb) {
 
 function update_userinfo(info, cb) {
 	socket.on('update_flag', updated_flag => cb(updated_flag));
-	socket.emit('update_loginfo', info);
+	socket.emit('update_userinfo', info);
 }
 
 //------------------ Admin page-----------------//
@@ -129,8 +128,6 @@ function getAllExistingRooms(cb) {
 		cb(data);
 	});
 }
-
-
 
 export { subscribeToTimer };
 export { rcvStrokes };
