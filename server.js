@@ -253,10 +253,12 @@ io.on('connection', (socket) => {
                 socket.join(data.room.id);
                 data.room.capacity = roomsearch.length + '/5';
                 console.log('joined successfully in existing room');
+				io.in(data.room.id).emit('newUserInRoom', data.username);
             } else if (!roomsearch){
                 socket.join(data.room.id);
                 data.room.capacity =  1 + '/5';
                 console.log('joined successfully first time');
+				io.in(data.room.id).emit('newUserInRoom', data.username);
             } else{
                 data.room.capacity = roomsearch.length + '/5';
                 socket.emit('full room', 'Room is full');
@@ -290,8 +292,11 @@ io.on('connection', (socket) => {
 
         console.log('created new room ' + roomId + ' :' + room.capacity);
 
+
         socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
+
+		socket.broadcast.to(roomId).emit('newUserInRoom', "defaultUser");
     });
 
 

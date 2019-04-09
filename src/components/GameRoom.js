@@ -9,7 +9,7 @@ import {changeGameState} from '../actions/userAction.js';
 import {removeCurrentRoom} from "../actions/dashBoardAction";
 import { withRouter } from 'react-router-dom';
 
-import {game_myReady, leaveRoom} from '../api';
+import {game_myReady, leaveRoom, getNewUserJoin} from '../api';
 import {game_otherReady} from '../api';
 import compose from "recompose/compose";
 
@@ -37,7 +37,13 @@ import compose from "recompose/compose";
             .bind(this);
     }
 
-    // a little complicated to explain
+    componentDidMount() {
+        getNewUserJoin( username =>
+            console.log('User joined room as :' + username)
+        );
+    }
+
+     // a little complicated to explain
     // check out this:  https://stackoverflow.com/a/45582558
     triggerTimer = () => {};
 
