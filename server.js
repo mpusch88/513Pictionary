@@ -215,35 +215,70 @@ io.on('connection', (socket) => {
 	//--------------UPDATE USER INFO---------------------//
 
 	// socket.on('update_userinfo', (info) => {
-	//     console.log('User info update requested!');
+	// 	console.log('User info update requested!');
 
-	//     var client1 = new MongoClient(uri, {useNewUrlParser: true});
+	// 	if (info.cpsw === info.npsw) { //confirming passwords match
+	// 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
-	//     client1.connect(() => {
-	//         const collection = client1
-	//             .db('pictionary')
-	//             .collection('users');
+	// 		client1.connect(() => {
+	// 			const collection = client1
+	// 				.db('pictionary')
+	// 				.collection('users');
 
-	//         var updateobject = {};
+	// 			let result = collection.find({
+	// 					email: info.email,
+	// 					username: info.username
+	// 				},
 
-	//         if (info.username) 
-	//             updateobject.username = info.username;
+	// 				{
+	// 					password: 1,
+	// 					_id: 0
+	// 				}
+	// 			);
 
-	//         if (info.psw) 
-	//             updateobject.password = info.psw;
+	// 			if (result) {
+	// 				console.log('result pass = ' + result.password);
+	// 				console.log('info.password = ' + info.psw);
 
-	//         updateobject = {
-	//             $set: updateobject
-	//         };
+	// 				if (result.password === info.psw) { //do if db-password matches user supplied pasword
 
-	//         collection.updateOne({
-	// 			'email': info.email,
-	//         }, {updateobject});
-	//     });
+	// 					let updateresult = {};
+
+	// 					// if (info.psw)
+	// 					// 	updateobject.password = info.psw;
+
+	// 					// updateobject = { $set: updateobject };
+
+	// 					updateresult = collection.updateOne( //update first entry that matches
+	// 						{
+	// 							'username': info.username,
+	// 							'email': info.email
+	// 						},
+
+	// 						{
+	// 							$set: { 'password': info.npsw }
+	// 						},
+	// 					);
+
+	// 					if (updateresult) { //on a matched document, return success with info types passed in
+	// 						console.log('Update successful');
+	// 						socket.emit('update_flag', { type: 'success' });
+	// 					} else {
+	// 						console.log('Update failed');
+	// 						socket.emit('update_flag', { type: 'fail' });
+	// 					}
+	// 				}
+	// 			}
+	// 		});
+
+	// 	} else
+	// 		socket.emit('update_flag', { type: 'fail' });
 	// });
 
 	socket.on('update_userinfo', (info) => {
 		console.log('User info update requested!');
+		console.log(info.email);
+		console.log(info.username);
 
 		if (info.cpsw === info.npsw) { //confirming passwords match
 			var client1 = new MongoClient(uri, { useNewUrlParser: true });
@@ -253,53 +288,55 @@ io.on('connection', (socket) => {
 					.db('pictionary')
 					.collection('users');
 
-				let result = collection.find({
-						email: info.email,
-						username: info.username
-					},
+				collection.find({
+					email: info.email,
+					username: info.username
+				}).toArray(function(err, res) {
 
-					{
-						password: 1,
-						_id: 0
-					}
-				);
-
-				if (result) {
-
-					if (result.password === info.password) { //do if db-password matches user supplied pasword
-
-						let updateresult = {};
-
-						// if (info.psw)
-						// 	updateobject.password = info.psw;
-
-						// updateobject = { $set: updateobject };
-
-						updateresult = collection.updateOne( //update first entry that matches
-							{
-								'username': info.username,
-								'email': info.email
-							},
-
-							{
-								$set: { 'password': info.npsw }
-							},
-						);
-
-						if (updateresult) { //on a matched document, return success with info types passed in
-							console.log('Update successful');
-							socket.emit('update_flag', { type: 'success' });
-						} else {
-							console.log('Update failed');
-							socket.emit('update_flag', { type: 'fail' });
-						}
-					}
-				}
+					console.log(res[0].password);
+				});
 			});
-
-		} else
-			socket.emit('update_flag', { type: 'fail' });
+		}
 	});
+
+	// 			if (result) {
+	// 				console.log('result pass = ' + result.password);
+	// 				console.log('info.password = ' + info.psw);
+
+	// 				if (result.password === info.psw) { //do if db-password matches user supplied pasword
+
+	// 					let updateresult = {};
+
+	// 					// if (info.psw)
+	// 					// 	updateobject.password = info.psw;
+
+	// 					// updateobject = { $set: updateobject };
+
+	// 					updateresult = collection.updateOne( //update first entry that matches
+	// 						{
+	// 							'username': info.username,
+	// 							'email': info.email
+	// 						},
+
+	// 						{
+	// 							$set: { 'password': info.npsw }
+	// 						},
+	// 					);
+
+	// 					if (updateresult) { //on a matched document, return success with info types passed in
+	// 						console.log('Update successful');
+	// 						socket.emit('update_flag', { type: 'success' });
+	// 					} else {
+	// 						console.log('Update failed');
+	// 						socket.emit('update_flag', { type: 'fail' });
+	// 					}
+	// 				}
+	// 			}
+	// 		});
+
+	// 	} else
+	// 		socket.emit('update_flag', { type: 'fail' });
+	// });
 
 	//------------------------- Login -------------------------//
 
@@ -331,12 +368,14 @@ io.on('connection', (socket) => {
 								username: res[0].username,
 								email: res[0].email
 							});
+
 						} else if (res[0].isAdmin === '0') {
 							socket.emit('login_flag', {
 								type: 'user',
 								username: res[0].username,
 								email: res[0].email
 							});
+
 							console.log('User logged in');
 						}
 					} else {
@@ -358,56 +397,56 @@ io.on('connection', (socket) => {
 		console.log('inside join room');
 		console.log(roomsearch);
 
-		if(rooms.includes(data.room.id)) {
-            if (roomsearch && roomsearch.length < 5) {
-                socket.join(data.room.id);
-                data.room.capacity = roomsearch.length + '/5';
-                console.log('joined successfully in existing room');
+		if (rooms.includes(data.room.id)) {
+			if (roomsearch && roomsearch.length < 5) {
+				socket.join(data.room.id);
+				data.room.capacity = roomsearch.length + '/5';
+				console.log('joined successfully in existing room');
 				io.in(data.room.id).emit('newUserInRoom', data.username);
-            } else if (!roomsearch){
-                socket.join(data.room.id);
-                data.room.capacity =  1 + '/5';
-                console.log('joined successfully first time');
+			} else if (!roomsearch) {
+				socket.join(data.room.id);
+				data.room.capacity = 1 + '/5';
+				console.log('joined successfully first time');
 				io.in(data.room.id).emit('newUserInRoom', data.username);
-            } else{
-                data.room.capacity = roomsearch.length + '/5';
-                socket.emit('full room', 'Room is full');
-            }
-        }
+			} else {
+				data.room.capacity = roomsearch.length + '/5';
+				socket.emit('full room', 'Room is full');
+			}
+		}
 
 		// socket.broadcast.to(data.room.id).emit('message',
 		// 	{type:'message', text: data.username + " just joined the room!"});
 
-        roomInfo[data.room.id] = data.room;
+		roomInfo[data.room.id] = data.room;
 
-        // to update capacity all sockets
-        io.emit('updateRoomInfo', data.room);
-    });
+		// to update capacity all sockets
+		io.emit('updateRoomInfo', data.room);
+	});
 
-    //joining the room, creating an entry in the list
-	socket.on('create-room', function (room) {
+	//joining the room, creating an entry in the list
+	socket.on('create-room', function(room) {
 		let roomId = getUniqueId();
 
-        while (rooms.includes(roomId)) {
-            roomId = getUniqueId();
-        }
+		while (rooms.includes(roomId)) {
+			roomId = getUniqueId();
+		}
 
-        rooms.push(roomId);
-        socket.join(roomId);
+		rooms.push(roomId);
+		socket.join(roomId);
 		room.id = roomId;
 
 		let roomsearch = io.sockets.adapter.rooms[room.id];
 		room.capacity = roomsearch.length + '/5';
 		roomInfo[roomId] = room;
 
-        console.log('created new room ' + roomId + ' :' + room.capacity);
+		console.log('created new room ' + roomId + ' :' + room.capacity);
 
 
-        socket.emit('sendRoomInfo', room);
+		socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
 
 		socket.broadcast.to(roomId).emit('newUserInRoom', 'defaultUser');
-    });
+	});
 
 	//get all the rooms
 	socket.on('room-list', function(data) {

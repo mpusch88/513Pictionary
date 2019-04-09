@@ -41,10 +41,10 @@ class Profile extends React.Component {
                 alert('Updated successfully!');
                 history.push({pathname: '/Dashboard'});
             } else if (updateInfo.type === 'fail') {
+                console.log('Log in failed!');
                 alert('Update failed!');
                 let {history} = this.props;
                 history.push({pathname: '/'});
-                console.log('failed to log in');
             }
         });
     }
