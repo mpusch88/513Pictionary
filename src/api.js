@@ -42,6 +42,13 @@ export function getNewUserJoin(cb){
 	socket.on('newUserInRoom', data => cb(data));
 }
 
+
+export function getUserList(data, cb){
+	socket.emit('getUserList', data);
+	socket.on('userList', list => cb(list));
+}
+
+
 export function rcvMessage(cb) {
 
 	socket.on('message', data => cb(data));

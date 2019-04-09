@@ -9,7 +9,7 @@ import {changeGameState} from '../actions/userAction.js';
 import {removeCurrentRoom} from "../actions/dashBoardAction";
 import { withRouter } from 'react-router-dom';
 
-import {game_myReady, leaveRoom, getNewUserJoin} from '../api';
+import {game_myReady, leaveRoom, getNewUserJoin, getUserList} from '../api';
 import {game_otherReady} from '../api';
 import compose from "recompose/compose";
 
@@ -22,7 +22,7 @@ import compose from "recompose/compose";
         this.state = {
             gameProgress: 'notReady', //ready, start, roundEnd, gameEnd
             myUserInfo: {
-                username: 'myDefault',
+                username: this.props.username,
                 score: 0,
                 isDrawer: false,
                 isReady: false
@@ -38,9 +38,18 @@ import compose from "recompose/compose";
     }
 
     componentDidMount() {
-        getNewUserJoin( username =>
-            console.log('User joined room as :' + username)
-        );
+        getNewUserJoin( userInfo => {
+
+            console.log('User joined room as :' + userInfo.username);
+            this.setState({userList: this.state.userList.push(userInfo)});
+
+            console.trace(this.state.userList);
+        });
+
+        getUserList( { id: this.props.currentRoomId}, userList => {
+            console.log('UserList' + userList)
+            this.setState({userList: this.state.userList.concat(userList)});
+        });
     }
 
      // a little complicated to explain
@@ -124,7 +133,8 @@ const mapStateToProps = (state) => {
     return {gameState: state.gameState,
             currentRoomId: state.currentRoomId,
             currentRoomCategory: state.currentRoomCategory,
-    currentRoomName: state.currentRoomName};
+    currentRoomName: state.currentRoomName,
+    username: state.username};
 };
 
 const matchDispatchToProps = (dispatch) => {

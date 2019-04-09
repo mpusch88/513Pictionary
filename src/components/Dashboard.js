@@ -221,7 +221,10 @@ class Dashboard extends React.Component {
     createNewRoom = () => {
         let roomList = this.state.roomList;
         if (this.state.newRoomName && this.state.roomCategory) {
-            createRoom({id: '', roomName: this.state.newRoomName, roomCategory: this.state.roomCategory, hostName: this.props.username});
+            createRoom({id: '', roomName: this.state.newRoomName,
+                roomCategory: this.state.roomCategory,
+                hostName: this.props.username,
+                username: this.props.username});
         }
 
         getRoomInfo({

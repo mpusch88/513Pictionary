@@ -5,6 +5,8 @@ let MongoClient = require('mongodb').MongoClient;
 
 
 let users = {};
+
+let userListPerRoom = {};
 let rooms = [];
 let roomInfo = {};
 let categories = [];
@@ -146,6 +148,7 @@ io.on('connection', (socket) => {
 				socket_id: socket.id
 			};
 
+
 		//If incoming user connection is new, create a new user id and username
 		// otherwise, use the fetched data and update the userlist
 		if (users[user.id] !== undefined) {
@@ -250,20 +253,46 @@ io.on('connection', (socket) => {
 
         if(rooms.includes(data.room.id)) {
             if (roomsearch && roomsearch.length < 5) {
+            	// join room
                 socket.join(data.room.id);
+
+
+                // updating capacity
                 data.room.capacity = roomsearch.length + '/5';
+
+
                 console.log('joined successfully in existing room');
-				io.in(data.room.id).emit('newUserInRoom', data.username);
-            } else if (!roomsearch){
-                socket.join(data.room.id);
-                data.room.capacity =  1 + '/5';
-                console.log('joined successfully first time');
-				io.in(data.room.id).emit('newUserInRoom', data.username);
-            } else{
+
+				let userInfo  = {
+					username: data.username,
+						score: 0,
+						isDrawer: false,
+						isReady: false
+				};
+
+                // emiting to all sockets in room for new user joining in
+				io.in(data.room.id).emit('newUserInRoom', userInfo);
+
+
+				// adding user to room user list
+				//Make array for key if doesn't exist
+				userListPerRoom[data.room.id] = userListPerRoom[data.room.id] ? userListPerRoom[data.room.id] : [];
+				//Add value to array
+				userListPerRoom[data.room.id].push(userInfo);
+
+				console.log(userListPerRoom[data.room.id]);
+
+
+
+
+            } else if (roomsearch) {
                 data.room.capacity = roomsearch.length + '/5';
                 socket.emit('full room', 'Room is full');
             }
         }
+
+
+
 
 		// socket.broadcast.to(data.room.id).emit('message',
 		// 	{type:'message', text: data.username + " just joined the room!"});
@@ -282,21 +311,46 @@ io.on('connection', (socket) => {
             roomId = getUniqueId();
         }
 
+        //pushing it to room list
         rooms.push(roomId);
+
+
+        //joining room
         socket.join(roomId);
+
+        //setting the id on return data
 		room.id = roomId;
 
 		let roomsearch = io.sockets.adapter.rooms[room.id];
-		room.capacity = roomsearch.length + '/5';
-		roomInfo[roomId] = room;
 
+		//should be 1
+		room.capacity = roomsearch.length + '/5';
+
+
+		roomInfo[roomId] = room;
         console.log('created new room ' + roomId + ' :' + room.capacity);
 
 
         socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
 
-		socket.broadcast.to(roomId).emit('newUserInRoom', "defaultUser");
+
+		let userInfo  = {
+			username: room.username,
+			score: 0,
+			isDrawer: false,
+			isReady: false
+		};
+
+		//Make array for key if doesn't exist
+		userListPerRoom[roomId] = userListPerRoom[roomId] ? userListPerRoom[roomId] : [];
+		//Add value to array
+		userListPerRoom[roomId].push(userInfo);
+
+		console.log(userListPerRoom[roomId]);
+
+
+		socket.broadcast.to(roomId).emit('newUserInRoom', userInfo);
     });
 
 
@@ -310,6 +364,8 @@ io.on('connection', (socket) => {
         socket.emit('all-rooms', roomList);
     });
 
+
+    //leave game room event
 	socket.on('leave-room', function (data) {
 		let roomsearch = io.sockets.adapter.rooms[data.id];
 		let room = roomInfo[data.id];
@@ -322,7 +378,23 @@ io.on('connection', (socket) => {
 			console.log('leaving room ' + room.capacity);
 		}
 
+
+		/// Remove from userList
+		if(userListPerRoom[data.id]){
+			let list = userListPerRoom[data.id];
+			for (var i in list) {
+				if (list[i] == data.username) {
+					list.splice(i, 1);
+				}
+			}
+
+			userListPerRoom[data.id] = list;
+		}
+
+
 		socket.leave(data.id);
+
+
 		io.emit('updateRoomInfo', room);
 
 		socket.emit('sendRoomInfo', room);
@@ -331,6 +403,11 @@ io.on('connection', (socket) => {
 
 	///---------------------- GAME ROOM ACTIVITY NEED TO HAPPEN WITH socket room------------------////
 
+
+	socket.on('getUserList', (data) => {
+
+		 socket.emit('userList', userListPerRoom[data.id]);
+	});
 
 	// received new stroke from the drawer, emit to guessers
 	socket.on('newStrokeSnd', (data) => {
