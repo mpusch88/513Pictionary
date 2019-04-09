@@ -17,8 +17,6 @@ import compose from 'recompose/compose';
  class GameRoom extends React.Component {
     constructor(props) {
         super(props);
-        game_otherReady(username => this.setUserToReady(username));
-
         this.state = {
             gameProgress: 'notReady', //ready, start, roundEnd, gameEnd
             myUserInfo: {
@@ -30,11 +28,8 @@ import compose from 'recompose/compose';
             userList: []
         };
 
-        this.setState({userList: this.state.userList.push(this.state.myUserInfo)});
-
-        this.gameReady = this
-            .gameReady
-            .bind(this);
+        this.props.updateUserList(this.props.username);
+        this.gameReady = this.gameReady.bind(this);
     }
 
     componentDidMount() {
@@ -65,7 +60,6 @@ import compose from 'recompose/compose';
     }
 
     gameReady() {
-        console.log(this.state.userList);
         // emit ready event to server
         game_myReady({toomIdthis: this.props.currentRoomId, username: this.state.myUserInfo.username});
 
@@ -130,6 +124,14 @@ import compose from 'recompose/compose';
 }
 
 const mapStateToProps = (state) => {
+    return {
+        gameState: state.gameState,
+        currentRoomId: state.currentRoomId,
+        currentRoomCategory: state.currentRoomCategory,
+        currentRoomName: state.currentRoomName,
+        username: state.username,
+        PlayerList: state.PlayerList
+    };
     return {gameState: state.gameState,
             currentRoomId: state.currentRoomId,
             currentRoomCategory: state.currentRoomCategory,
@@ -140,10 +142,11 @@ const mapStateToProps = (state) => {
 const matchDispatchToProps = (dispatch) => {
     return bindActionCreators({
         changeGameState: changeGameState,
-        removeCurrentRoom: removeCurrentRoom
+        removeCurrentRoom: removeCurrentRoom,
     }, dispatch);
 };
 
 export default compose(
     connect(mapStateToProps, matchDispatchToProps)
 )(withRouter(GameRoom));
+

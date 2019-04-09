@@ -27,7 +27,7 @@ class AppRouter extends React.Component {
             <div>
                 <Switch>
                     <Route path='/' component={Login} exact={true}/>
-                    <Route path='/login' component={Login} exact={true}/>
+                    {/*<Route path='/login' component={Login} exact={true}/>*/}
                     <Route path='/Game' component={requireAuth(GameRoom, false)} exact={true}/>
                     <Route path='/Profile' component={requireAuth(Profile, false)} exact={true}/>
                     <Route

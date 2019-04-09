@@ -7,10 +7,13 @@ import {withRouter} from 'react-router-dom';
 import {send_loginfo} from '../api';
 import logo from '../resources/logo.png';
 
+import $ from 'jquery';
+import {cookie} from 'jquery.cookie';
+import {socket} from '../api';
+
 class Login extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             email: 'email@email.com',
             password: '12345'
@@ -22,6 +25,28 @@ class Login extends React.Component {
         this.handleChange = this
             .handleChange
             .bind(this);
+
+        // get the cookie
+        let myName = $.cookie('user_name');
+        let myType = $.cookie('user_type');
+        if(myName && myType){   // has logged in before, route to dashboard/admin page
+            if(myType === 'user'){
+                this
+                    .props
+                    .authenticate(myType, myName);
+                console.log('user reconnected successful');
+                let {history} = this.props;
+                history.push({pathname: '/Dashboard'});
+            }else if(myType === 'admin'){
+                this
+                    .props
+                    .authenticate(myType, myName);
+                console.log('admin reconnected successful');
+                let {history} = this.props;
+                history.push({pathname: '/Admin'});
+            }
+        }
+
     }
 
     handleClick() {
@@ -43,10 +68,14 @@ class Login extends React.Component {
                 console.log('user logged in successful');
                 let {history} = this.props;
                 history.push({pathname: '/Dashboard'});
+                $.cookie('user_name', loginInfo.username);
+                $.cookie('user_type', loginInfo.type);
             } else if (loginInfo.type === 'admin') {
                 console.log('admin logged in successful');
                 let {history} = this.props;
                 history.push({pathname: '/Admin'});
+                $.cookie('user_name', loginInfo.username);
+                $.cookie('user_type', loginInfo.type);
             } else if (loginInfo.type === 'fail') {
                 alert('Invalid email or password!');
                 let {history} = this.props;

@@ -16,6 +16,7 @@ import {socket} from '../api';
 import {Link} from 'react-router-dom';
 import {authenticate} from '../actions/userAction.js';
 import {bindActionCreators} from 'redux';
+import $ from 'jquery';
 
 const styles = {
     root: {
@@ -55,7 +56,12 @@ class Header extends React.Component {
         this
             .props
             .authenticate('', '');
-        socket.emit('disconnect');
+
+        $.cookie('user_name', '');
+        $.cookie('user_type', '');
+        let {history} = this.props;
+        history.push({pathname: '/'});
+        //socket.emit('disconnect');
     };
 
     render() {

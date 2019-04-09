@@ -132,7 +132,7 @@ class Dashboard extends React.Component {
 
         getAllExistingRooms(data => {
             if (data) {
-                console.log(data);
+                // console.log(data);
 
                 this.setState({
                     roomList: this
@@ -187,7 +187,7 @@ class Dashboard extends React.Component {
                         .roomList
                         .map(item => {
                             if (item.id === info.id) {
-                                console.log('inside same id');
+                                // console.log('inside same id');
                                 item.capacity = info.capacity;
                             }
                         });
@@ -292,7 +292,7 @@ class Dashboard extends React.Component {
                     .roomList
                     .map(item => {
                         if (item.id === info.id) {
-                            console.log('inside same id');
+                            // console.log('inside same id');
                             item.capacity = info.capacity;
                         }
                     });
@@ -319,7 +319,7 @@ class Dashboard extends React.Component {
                 .setRoomHost(false);
         }
 
-        console.log('addRoom clicked again');
+        // console.log('addRoom clicked again');
 
         if (updatedRoom.hostName === this.props.username) {
             this
@@ -339,7 +339,7 @@ class Dashboard extends React.Component {
         const {classes} = this.props;
         const {roomList} = this.state;
 
-        console.log(roomList);
+        // console.log(roomList);
 
         return (
             <div>

@@ -21,3 +21,10 @@ export const changeGameState = (gameState) => {
 		gameState: gameState
 	};
 };
+
+export const updateUserList = (newPlayer) => {
+	return {
+		type: 'UPDATE_USERLIST',
+		newPlayer: newPlayer
+	};
+}

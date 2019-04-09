@@ -129,6 +129,17 @@ function getAllExistingRooms(cb) {
 	});
 }
 
+/*--------------Cynthia updates--------------*/
+function joinRoomUpdateUserList(cb){
+    socket.on('joinRoomUpdateUserList', username => {
+        cb(username);
+    });
+}
+
+/*--------------Cynthia updates--------------*/
+
+
+
 export { subscribeToTimer };
 export { rcvStrokes };
 export { sndStrokes };

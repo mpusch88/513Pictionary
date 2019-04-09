@@ -61,7 +61,6 @@ let createSocket = (user) => {
 				]
 			})
 		};
-
 	users = Object.assign(users, updated_user);
 };
 
@@ -185,6 +184,10 @@ let getUniqueId = function() {
 
 io.on('connection', (socket) => {
 	socket.on('init-chat', (query) => {
+	// TODO: check if it's a reconnection
+
+	socket.on('init-chat', (query) =>
+	{
 		//let query = socket.request._query,
 		let user = {
 			username: query.username,
@@ -642,6 +645,15 @@ io.on('connection', (socket) => {
 	});
 
 	// -----------------  Dashboard ---------------------------//
+
+	// TODO: socket disconnection
+
+});
+
+io.on('disconnect', (socket) => {
+	// socket disconnected, set a timeout for reconnection
+
+	// inform other players in the room
 
 });
 

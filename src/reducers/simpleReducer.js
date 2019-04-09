@@ -46,6 +46,14 @@ export default (state = initState, action) => {
 				isCurrentRoomHost: action.isCurrentRoomHost,
 			});
 
+		case 'UPDATE_USERLIST':
+			return {
+				...state,
+				PlayerList: state.PlayerList.concat(action.newPlayer)
+			}
+			// return Object.assign({}, state,{
+			// 	PlayerList: state.PlayerList.concat(action.newPlayer)
+			// });
 		default:
 			return state;
 	}
