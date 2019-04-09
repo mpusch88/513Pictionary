@@ -10,6 +10,7 @@ import logo from '../resources/logo.png';
 class Login extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             email: 'email@email.com',
             password: '12345'
@@ -21,9 +22,6 @@ class Login extends React.Component {
         this.handleChange = this
             .handleChange
             .bind(this);
-        // this.handleForgotPassword = this
-        //     .handleForgotPassword
-        //     .bind(this);
     }
 
     handleClick() {
@@ -39,7 +37,8 @@ class Login extends React.Component {
 
             this
                 .props
-                .authenticate(userType, loginInfo.username);
+                .authenticate(userType, loginInfo.username, loginInfo.email);
+
             if (loginInfo.type === 'user') {
                 console.log('user logged in successful');
                 let {history} = this.props;
@@ -57,10 +56,6 @@ class Login extends React.Component {
         });
     }
 
-    // handleForgotPassword(e) {
-    //     e.preventDefault();
-    // }
-
     handleChange(e) {
         this.setState({
             [e.target.name]: e.target.value
@@ -76,7 +71,7 @@ class Login extends React.Component {
                         <span className='subtitle'>Sign In Below!</span>
                     </div>
 
-                    <img src={logo} className="logo" alt="logo" />
+                    <img src={logo} className="logo" alt="logo"/>
 
                     <div className='input-group'>
                         <span className='input-text-label'>Email</span>

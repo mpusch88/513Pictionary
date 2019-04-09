@@ -12,7 +12,9 @@ class Profile extends React.Component {
         super(props);
 
         this.state = {
-            status: ''
+            status: '',
+            new_password: '',
+            conf_password: ''
         };
 
         this.handleClick = this
@@ -25,14 +27,18 @@ class Profile extends React.Component {
 
     handleClick() {
         update_userinfo({
-            username: this.state.username,
-            email: this.state.email,
-            psw: this.state.password
+            username: this.props.username,
+            nusername: this.state.new_username,
+            email: this.props.email,
+            psw: this.state.password,
+            npsw: this.state.new_password,
+            cpsw: this.state.conf_password
         }, updateInfo => {
 
             if (updateInfo.type === 'success') {
                 console.log('User info updated successfully!');
                 let {history} = this.props;
+                alert('Updated successfully!');
                 history.push({pathname: '/Dashboard'});
             } else if (updateInfo.type === 'fail') {
                 alert('Update failed!');
@@ -53,46 +59,74 @@ class Profile extends React.Component {
         return (
             <div>
                 <Header title='User Profile'/>
-                <div className='profile-outer'>
-                    <div className='profile-container'>
 
-                        <span className='desc'>Modify your account info here!</span>
-                        <div className='status'>{this.state.status}</div>
+                <div className='row'>
 
-                        <div className='input-group'>
-                            <span className='input-text-label'>User Name</span>
-                            <input
-                                className='input-field'
-                                type='text'
-                                name='username'
-                                onChange={this.handleChange}
-                                value={this.state.username}/>
+                    <div className='col-lg-3'>
+                        <div className='sidebar-space'>
+                            <div className='sidebar-container'>sidebar</div>
                         </div>
+                    </div>
 
-                        <div className='input-group'>
-                            <span className='input-text-label'>Email</span>
-                            <input
-                                className='input-field'
-                                type='text'
-                                name='email'
-                                onChange={this.handleChange}
-                                value={this.state.email}/>
+                    <div className='col-lg-6'>
+                        <div className='profile-outer'>
+                            <div className='profile-container'>
+
+                                <span className='desc'>Modify your account password below!</span>
+                                <div className='status'>{this.state.status}</div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>User Name</span>
+                                    <span className='input-text-label'>{this.props.username}</span>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>Email</span>
+                                    <span className='input-text-label'>{this.props.email}</span>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>Current Password</span>
+                                    <input
+                                        className='input-field'
+                                        type='password'
+                                        name='password'
+                                        onChange={this.handleChange}
+                                        value={this.state.password}/>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>New Password</span>
+                                    <input
+                                        className='input-field'
+                                        type='password'
+                                        name='new_password'
+                                        onChange={this.handleChange}
+                                        value={this.state.new_password}/>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>Confirm Password</span>
+                                    <input
+                                        className='input-field'
+                                        type='password'
+                                        name='conf_password'
+                                        onChange={this.handleChange}
+                                        value={this.state.conf_password}/>
+                                </div>
+
+                                <div>
+                                    <button className='update-button' onClick={this.handleClick}>
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
-                        <div className='input-group'>
-                            <span className='input-text-label'>Password</span>
-                            <input
-                                className='input-field'
-                                type='password'
-                                name='password'
-                                onChange={this.handleChange}
-                                value={this.state.password}/>
-                        </div>
-
-                        <div>
-                            <button className='update-button' onClick={this.handleClick}>
-                                Update
-                            </button>
+                    <div className='col-lg-3'>
+                        <div className='avatar-space'>
+                            <div className='avatar-container'>avatar</div>
                         </div>
                     </div>
                 </div>
@@ -103,7 +137,7 @@ class Profile extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    return {userType: state.userType};
+    return {userType: state.userType, username: state.username, email: state.email};
 };
 
 const matchDispatchToProps = (dispatch) => {
