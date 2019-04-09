@@ -358,53 +358,56 @@ io.on('connection', (socket) => {
 		console.log('inside join room');
 		console.log(roomsearch);
 
-		if (rooms.includes(data.room.id)) {
-			if (roomsearch && roomsearch.length < 5) {
-				socket.join(data.room.id);
-				data.room.capacity = roomsearch.length + '/5';
-				console.log('joined successfully in existing room');
-			} else if (!roomsearch) {
-				socket.join(data.room.id);
-				data.room.capacity = 1 + '/5';
-				console.log('joined successfully first time');
-			} else {
-				data.room.capacity = roomsearch.length + '/5';
-				socket.emit('full room', 'Room is full');
-			}
-		}
+		if(rooms.includes(data.room.id)) {
+            if (roomsearch && roomsearch.length < 5) {
+                socket.join(data.room.id);
+                data.room.capacity = roomsearch.length + '/5';
+                console.log('joined successfully in existing room');
+				io.in(data.room.id).emit('newUserInRoom', data.username);
+            } else if (!roomsearch){
+                socket.join(data.room.id);
+                data.room.capacity =  1 + '/5';
+                console.log('joined successfully first time');
+				io.in(data.room.id).emit('newUserInRoom', data.username);
+            } else{
+                data.room.capacity = roomsearch.length + '/5';
+                socket.emit('full room', 'Room is full');
+            }
+        }
 
-		// socket.broadcast.to(data.room.id).emit('message', 	{type:'message', text:
-		// data.username + " just joined the room!"});
+		// socket.broadcast.to(data.room.id).emit('message',
+		// 	{type:'message', text: data.username + " just joined the room!"});
 
-		roomInfo[data.room.id] = data.room;
+        roomInfo[data.room.id] = data.room;
 
-		// to update capacity all sockets
-		io.emit('updateRoomInfo', data.room);
-	});
+        // to update capacity all sockets
+        io.emit('updateRoomInfo', data.room);
+    });
 
-	//joining the room, creating an entry in the list
-	socket.on('create-room', function(room) {
+    //joining the room, creating an entry in the list
+	socket.on('create-room', function (room) {
 		let roomId = getUniqueId();
 
-		while (rooms.includes(roomId)) {
-			roomId = getUniqueId();
-		}
+        while (rooms.includes(roomId)) {
+            roomId = getUniqueId();
+        }
 
-		rooms.push(roomId);
-		socket.join(roomId);
+        rooms.push(roomId);
+        socket.join(roomId);
 		room.id = roomId;
 
 		let roomsearch = io.sockets.adapter.rooms[room.id];
 		room.capacity = roomsearch.length + '/5';
 		roomInfo[roomId] = room;
 
-		console.log('created new room ' + roomId + ' :' + room.capacity);
+        console.log('created new room ' + roomId + ' :' + room.capacity);
 
-		socket.emit('sendRoomInfo', room);
-		socket
-			.broadcast
-			.emit('newRoom', room);
-	});
+
+        socket.emit('sendRoomInfo', room);
+		socket.broadcast.emit('newRoom', room);
+
+		socket.broadcast.to(roomId).emit('newUserInRoom', 'defaultUser');
+    });
 
 	//get all the rooms
 	socket.on('room-list', function(data) {
