@@ -60,7 +60,7 @@ class Header extends React.Component {
         $.cookie('user_name', '');
         $.cookie('user_type', '');
         let {history} = this.props;
-        history.push({pathname: '/'});
+        history.push({pathname: '/Login'});
         //socket.emit('disconnect');
     };
 

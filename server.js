@@ -183,7 +183,6 @@ let getUniqueId = function() {
 //########----------- on socket connection --------------------###########/
 
 io.on('connection', (socket) => {
-	socket.on('init-chat', (query) => {
 	// TODO: check if it's a reconnection
 
 	socket.on('init-chat', (query) =>
@@ -220,67 +219,6 @@ io.on('connection', (socket) => {
 
 	//--------------UPDATE USER INFO---------------------//
 
-	// socket.on('update_userinfo', (info) => {
-	// 	console.log('User info update requested!');
-
-	// 	if (info.cpsw === info.npsw) { //confirming passwords match
-	// 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
-
-	// 		client1.connect(() => {
-	// 			const collection = client1
-	// 				.db('pictionary')
-	// 				.collection('users');
-
-	// 			let result = collection.find({
-	// 					email: info.email,
-	// 					username: info.username
-	// 				},
-
-	// 				{
-	// 					password: 1,
-	// 					_id: 0
-	// 				}
-	// 			);
-
-	// 			if (result) {
-	// 				console.log('result pass = ' + result.password);
-	// 				console.log('info.password = ' + info.psw);
-
-	// 				if (result.password === info.psw) { //do if db-password matches user supplied pasword
-
-	// 					let updateresult = {};
-
-	// 					// if (info.psw)
-	// 					// 	updateobject.password = info.psw;
-
-	// 					// updateobject = { $set: updateobject };
-
-	// 					updateresult = collection.updateOne( //update first entry that matches
-	// 						{
-	// 							'username': info.username,
-	// 							'email': info.email
-	// 						},
-
-	// 						{
-	// 							$set: { 'password': info.npsw }
-	// 						},
-	// 					);
-
-	// 					if (updateresult) { //on a matched document, return success with info types passed in
-	// 						console.log('Update successful');
-	// 						socket.emit('update_flag', { type: 'success' });
-	// 					} else {
-	// 						console.log('Update failed');
-	// 						socket.emit('update_flag', { type: 'fail' });
-	// 					}
-	// 				}
-	// 			}
-	// 		});
-
-	// 	} else
-	// 		socket.emit('update_flag', { type: 'fail' });
-	// });
-
 	socket.on('update_userinfo', (info) => {
 		console.log('User info update requested!');
 		console.log(info.email);
@@ -304,45 +242,6 @@ io.on('connection', (socket) => {
 			});
 		}
 	});
-
-	// 			if (result) {
-	// 				console.log('result pass = ' + result.password);
-	// 				console.log('info.password = ' + info.psw);
-
-	// 				if (result.password === info.psw) { //do if db-password matches user supplied pasword
-
-	// 					let updateresult = {};
-
-	// 					// if (info.psw)
-	// 					// 	updateobject.password = info.psw;
-
-	// 					// updateobject = { $set: updateobject };
-
-	// 					updateresult = collection.updateOne( //update first entry that matches
-	// 						{
-	// 							'username': info.username,
-	// 							'email': info.email
-	// 						},
-
-	// 						{
-	// 							$set: { 'password': info.npsw }
-	// 						},
-	// 					);
-
-	// 					if (updateresult) { //on a matched document, return success with info types passed in
-	// 						console.log('Update successful');
-	// 						socket.emit('update_flag', { type: 'success' });
-	// 					} else {
-	// 						console.log('Update failed');
-	// 						socket.emit('update_flag', { type: 'fail' });
-	// 					}
-	// 				}
-	// 			}
-	// 		});
-
-	// 	} else
-	// 		socket.emit('update_flag', { type: 'fail' });
-	// });
 
 	//------------------------- Login -------------------------//
 

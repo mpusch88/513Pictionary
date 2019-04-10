@@ -279,6 +279,9 @@ class Dashboard extends React.Component {
             capacity: room.capacity,
             hostName: room.hostName
         }, info => {
+
+
+            // console.log("joining room:" , room);
             let newRoom = {
                 id: info.id,
                 roomName: info.roomName,

@@ -10,7 +10,6 @@ import {removeCurrentRoom} from '../actions/dashBoardAction';
 import { withRouter } from 'react-router-dom';
 
 import {game_myReady, leaveRoom, getNewUserJoin, getUserList} from '../api';
-import {game_otherReady} from '../api';
 import compose from 'recompose/compose';
 
 
@@ -27,8 +26,8 @@ import compose from 'recompose/compose';
             },
             userList: []
         };
+        console.log("in room");
 
-        this.props.updateUserList(this.props.username);
         this.gameReady = this.gameReady.bind(this);
     }
 
@@ -132,11 +131,6 @@ const mapStateToProps = (state) => {
         username: state.username,
         PlayerList: state.PlayerList
     };
-    return {gameState: state.gameState,
-            currentRoomId: state.currentRoomId,
-            currentRoomCategory: state.currentRoomCategory,
-    currentRoomName: state.currentRoomName,
-    username: state.username};
 };
 
 const matchDispatchToProps = (dispatch) => {
