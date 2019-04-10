@@ -567,36 +567,48 @@ io.on('connection', (socket) => {
 
 
     });
+
+
+
+
+    ///---------------------------ON DISCONNECT ---------------------------------------------//
+
+
+	/// on disconnect , socket already leaves all the rooms it was in , no need to do it manually
+	socket.on('disconnect', (data) => {
+		// socket disconnected, set a timeout for reconnection
+
+
+
+		console.log("inside disconnect");
+
+		// remove all rooms
+		console.log("Socket id: ", socket.id);
+		console.log("UserName : ", socket.username);
+
+
+		for (const [roomId, userList] of Object.entries(userListPerRoom)) {
+			console.log(roomId);
+
+			for(var i in userList){
+				if(userList[i].username === socket.username){
+
+					console.log("Before  logout: ", userListPerRoom[roomId]);
+					removeFromUserList(roomId, socket.username);
+
+					// inform other players in the room
+					io.in(roomId).emit('entireUserList', userListPerRoom[roomId]);
+
+					console.log("After logout: ", userListPerRoom[roomId]);
+				}
+
+			}
+		}
+
+	});
 });
 
 
-io.on('disconnect', (socket) => {
-	// socket disconnected, set a timeout for reconnection
-
-
-    // remove all rooms
-
-    console.log("inside disconnect");
-    let temp = Object.keys(io.sockets.adapter.sids[socket.id]);
-    let allRoomsForSocket = temp.slice(1);
-
-    //console.log(allRoomsForSocket);
-
-    for (var i in allRoomsForSocket) {
-
-         console.log("Before  logout: ", userListPerRoom[allRoomsForSocket[i]]);
-        removeFromUserList(allRoomsForSocket[i], socket.username);
-
-         console.log("After logout: ", userListPerRoom[allRoomsForSocket[i]]);
-        io.in(allRoomsForSocket[i]).emit('entireUserList', userListPerRoom[allRoomsForSocket[i]]);
-    }
-
-
-
-
-    // inform other players in the room
-
-});
 
 
 const port = 8000;
