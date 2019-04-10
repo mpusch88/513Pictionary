@@ -53,7 +53,7 @@ class Chat extends React.Component{
         initializeChat({username: this.state.username, id: this.state.id});
 
         updateUserList( list => {
-            console.log(list);
+           // console.log(list);
             this.setState({users: list})
         });
         // this

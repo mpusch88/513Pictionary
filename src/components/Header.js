@@ -12,7 +12,7 @@ import Menu from '@material-ui/core/Menu';
 import compose from 'recompose/compose';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
-import {socket} from '../api';
+import {logout} from '../api';
 import {Link} from 'react-router-dom';
 import {authenticate} from '../actions/userAction.js';
 import {bindActionCreators} from 'redux';
@@ -59,6 +59,10 @@ class Header extends React.Component {
 
         $.cookie('user_name', '');
         $.cookie('user_type', '');
+
+
+        logout({id : this.props.currentRoomId, username: this.props.username});
+
         let {history} = this.props;
         history.push({pathname: '/Login'});
         //socket.emit('disconnect');
@@ -85,7 +89,7 @@ class Header extends React.Component {
                             <Home/>
                         </IconButton>
 
-                        <Typography variant="h9" color="inherit" className={classes.grow}>
+                        <Typography variant="h6" color="inherit" className={classes.grow}>
                             {this.props.home
                                 ? this.props.home
                                 : '513Pictionary'}
@@ -96,7 +100,7 @@ class Header extends React.Component {
                         </Typography>
 
                         <div>
-                            <Typography variant="h9" color="inherit" className={classes.grow}>
+                            <Typography variant="h6" color="inherit" className={classes.grow}>
                                 signed in as {this.props.username}
                             </Typography>
                         </div>
@@ -141,7 +145,9 @@ Header.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-    return {username: state.username, userType: state.userType};
+    return {username: state.username,
+        currentRoomId: state.currentRoomId,
+        userType: state.userType};
 };
 
 const matchDispatchToProps = (dispatch) => {

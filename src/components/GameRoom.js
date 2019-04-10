@@ -104,7 +104,7 @@ import compose from 'recompose/compose';
     }
 
     leaveRoom = () => {
-        leaveRoom({id: this.props.currentRoomId});
+        leaveRoom({id: this.props.currentRoomId, username: this.props.username});
         this.props.removeCurrentRoom ();
 
         console.log('leaving game room' + this.props.currentRoomId);
@@ -120,17 +120,21 @@ import compose from 'recompose/compose';
         return (
             <div>
                 <Header home={'Room: ' + this.props.currentRoomName}
-                        title={'Lets play words in category '+ this.props.currentRoomCategory.toUpperCase() + '!'}/>
-                <TimerProgressBar setReadyTrigger={func => this.triggerTimer = func}/>
-                <SketchComponent/>
-                {
-                    gameProgress === 'notReady' ?
-                        <div><button onClick={this.gameReady}>Ready</button></div> :
-                        ''
-                }
+                        title={'Lets play words in category ' + this.props.currentRoomCategory.toUpperCase() + '!'}/>
+                <div>
+                    <TimerProgressBar setReadyTrigger={func => this.triggerTimer = func}/>
+                    <SketchComponent/>
+                    {
+                        gameProgress === 'notReady' ?
+                            <div>
+                                <button onClick={this.gameReady}>Ready</button>
+                            </div> :
+                            ''
+                    }
 
-                <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
-                {/*<Chat/>*/}
+                    <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
+                    {/*<Chat/>*/}
+                </div>
             </div>
         );
     }

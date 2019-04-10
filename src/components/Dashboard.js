@@ -319,17 +319,6 @@ class Dashboard extends React.Component {
                 .setRoomHost(false);
         }
 
-        // console.log('addRoom clicked again');
-
-        if (updatedRoom.hostName === this.props.username) {
-            this
-                .props
-                .setRoomHost(true);
-        } else {
-            this
-                .props
-                .setRoomHost(false);
-        }
 
         let {history} = this.props;
         history.push({pathname: '/Game'});

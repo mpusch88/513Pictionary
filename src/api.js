@@ -7,6 +7,18 @@ function subscribeToTimer(cb) { // cb stands for callback function
     socket.emit('subscribeToTimer', 1000);
 }
 
+
+
+// -------------------Log out ---------------------------//
+
+export function logout(data){
+	socket.emit('logout', data);
+}
+
+
+
+
+
 //----------------- Sketchpad related -----------------//
 
 function rcvStrokes(cb) {

@@ -49,6 +49,8 @@ let getUsers = () => {
 		});
 };
 
+
+
 // --------- Helper functions for chat message -------------------//
 
 let createSocket = (user) => {
@@ -109,6 +111,7 @@ let removeSocket = (socket_id) => {
 	}
 };
 
+
 // ------------------- helper function for admin page -----------------//
 
 // store new category and word
@@ -166,6 +169,7 @@ let addWordToExistingCategory = (data) => {
 	clientDriver.close();
 };
 
+
 //---------------- general helper functions -------------------------//
 
 let getUniqueId = function() {
@@ -179,6 +183,31 @@ let getUniqueId = function() {
 		.toString(36)
 		.substr(2, 9);
 };
+
+
+
+// ------------------- Helper function for Removing from userList ----------------------//
+
+let removeFromUserList = (roomId, username) => {
+    /// Remove from userList
+    if(userListPerRoom[roomId]){
+        let list = userListPerRoom[roomId];
+        for (var i in list) {
+            if (list[i].username === username) {
+                list.splice(i, 1);
+            }
+        }
+
+        userListPerRoom[roomId] = list;
+    }
+};
+
+
+
+
+
+
+
 
 //########----------- on socket connection --------------------###########/
 
@@ -267,6 +296,8 @@ io.on('connection', (socket) => {
 								email: res[0].email
 							});
 
+							socket.username = res[0].username;
+
 						} else if (res[0].isAdmin === '0') {
 							socket.emit('login_flag', {
 								type: 'user',
@@ -274,6 +305,7 @@ io.on('connection', (socket) => {
 								email: res[0].email
 							});
 
+                            socket.username = res[0].username;
 							console.log('User logged in');
 						}
 					} else {
@@ -398,24 +430,18 @@ io.on('connection', (socket) => {
 
 
 		/// Remove from userList
-		if(userListPerRoom[data.id]){
-			let list = userListPerRoom[data.id];
-			for (var i in list) {
-				if (list[i] == data.username) {
-					list.splice(i, 1);
-				}
-			}
-
-			userListPerRoom[data.id] = list;
-		}
+        removeFromUserList(data.id, data.username);
 
 
+		//leave room
 		socket.leave(data.id);
 
 
 		io.emit('updateRoomInfo', room);
 
 		socket.emit('sendRoomInfo', room);
+
+        io.in(data.id).emit('entireUserList', userListPerRoom[data.id]);
 
 		console.log('User leaves: ', userListPerRoom[data.id]);
 
@@ -519,14 +545,59 @@ io.on('connection', (socket) => {
 
 	// TODO: socket disconnection
 
+
+    //------------------------------ Logout ----------------------------------------------------//
+
+    socket.on('logout', (data) => {
+
+       let temp =  Object.keys( io.sockets.adapter.sids[socket.id] );
+        let allRoomsForSocket = temp.slice(1);
+
+        //console.log(allRoomsForSocket);
+
+       for( var i in allRoomsForSocket){
+
+         //  console.log("Before  logout: ", userListPerRoom[allRoomsForSocket[i]]);
+           removeFromUserList(allRoomsForSocket[i], socket.username);
+
+         //  console.log("After logout: ", userListPerRoom[allRoomsForSocket[i]]);
+           io.in(allRoomsForSocket[i]).emit('entireUserList', userListPerRoom[allRoomsForSocket[i]]);
+        }
+
+
+
+    });
 });
+
 
 io.on('disconnect', (socket) => {
 	// socket disconnected, set a timeout for reconnection
 
-	// inform other players in the room
+
+    // remove all rooms
+
+    console.log("inside disconnect");
+    let temp = Object.keys(io.sockets.adapter.sids[socket.id]);
+    let allRoomsForSocket = temp.slice(1);
+
+    //console.log(allRoomsForSocket);
+
+    for (var i in allRoomsForSocket) {
+
+         console.log("Before  logout: ", userListPerRoom[allRoomsForSocket[i]]);
+        removeFromUserList(allRoomsForSocket[i], socket.username);
+
+         console.log("After logout: ", userListPerRoom[allRoomsForSocket[i]]);
+        io.in(allRoomsForSocket[i]).emit('entireUserList', userListPerRoom[allRoomsForSocket[i]]);
+    }
+
+
+
+
+    // inform other players in the room
 
 });
+
 
 const port = 8000;
 io.listen(port);
