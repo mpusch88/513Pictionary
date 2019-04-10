@@ -14,14 +14,6 @@ class AppRouter extends React.Component {
         super(props);
     }
 
-    checkIfLoggedIn = () => {
-        console.log(this.props.userType);
-
-        if (!this.props.userType == 'user') {
-            alert('NOT LOGGED IN');
-        }
-    }
-
     render() {
         return (
             <div>

@@ -9,7 +9,6 @@ import logo from '../resources/logo.png';
 
 import $ from 'jquery';
 import {cookie} from 'jquery.cookie';
-import {socket} from '../api';
 
 class Login extends React.Component {
     constructor(props) {
@@ -35,15 +34,11 @@ class Login extends React.Component {
                     .props
                     .authenticate(myType, myName);
                 console.log('user reconnected successful');
-                let {history} = this.props;
-                history.push({pathname: '/Dashboard'});
             }else if(myType === 'admin'){
                 this
                     .props
                     .authenticate(myType, myName);
                 console.log('admin reconnected successful');
-                let {history} = this.props;
-                history.push({pathname: '/Admin'});
             }
         }
 
@@ -58,7 +53,6 @@ class Login extends React.Component {
             let userType = loginInfo.type
                 ? loginInfo.type
                 : '';
-            console.log(loginInfo);
 
             this
                 .props
