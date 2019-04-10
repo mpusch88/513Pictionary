@@ -9,7 +9,7 @@ import {changeGameState} from '../actions/userAction.js';
 import {removeCurrentRoom} from '../actions/dashBoardAction';
 import { withRouter } from 'react-router-dom';
 
-import {game_myReady, leaveRoom, getNewUserJoin, getUserList} from '../api';
+import {game_myReady, leaveRoom, getNewUserJoin, getUserList, socket} from '../api';
 import compose from 'recompose/compose';
 
 
@@ -26,23 +26,31 @@ import compose from 'recompose/compose';
             },
             userList: []
         };
-        console.log("in room");
 
         this.gameReady = this.gameReady.bind(this);
     }
 
     componentDidMount() {
-        getNewUserJoin( userInfo => {
-
-            console.log('User joined room as :' + userInfo.username);
-            this.setState({userList: this.state.userList.push(userInfo)});
-
-            console.trace(this.state.userList);
+        socket.on('entireUserList', userList => {
+            console.log("entireUserList", userList);
+            this.setState({userList: userList});
         });
 
-        getUserList( { id: this.props.currentRoomId}, userList => {
-            console.log('UserList' + userList)
-            this.setState({userList: this.state.userList.concat(userList)});
+        socket.on('newReadyPlayer', username => {
+            let tmp = this.state.userList;
+            tmp.forEach(function(ele){
+                if(ele.username === username)ele.isReady = true;
+            });
+            this.setState({userList: tmp});
+            console.log(username + ' is ready');
+
+            //check for all the uesrs ready status in the uesrlist
+            if(this.allUsersReady()){
+                this.setState({gameProgress: 'start'});
+                this.props.changeGameState('start');
+                // start the timer
+                this.triggerTimer();
+            }
         });
     }
 
@@ -52,17 +60,21 @@ import compose from 'recompose/compose';
 
     setUserToReady(username){
         let tmp = this.state.userList;
+        console.log("check for tmp:", tmp);
         tmp.forEach(function(ele){
             if(ele.username === username)ele.isReady = true;
         });
         this.setState({userList: tmp});
+
+        console.log('im ready');
     }
 
     gameReady() {
         // emit ready event to server
-        game_myReady({toomIdthis: this.props.currentRoomId, username: this.state.myUserInfo.username});
-
+        // game_myReady({toomIdthis: this.props.currentRoomId, username: this.state.myUserInfo.username});
         this.setUserToReady(this.state.myUserInfo.username);
+
+        socket.emit('imReady', {username: this.props.username, roomId: this.props.currentRoomId});
 
         //check for all the uesrs ready status in the uesrlist
         if(this.allUsersReady()){
@@ -80,10 +92,13 @@ import compose from 'recompose/compose';
 
     allUsersReady() {
         if(this.state.userList.length > 1){    //at least two
+            let flag = true;
             this.state.userList.forEach(function(ele){
-                if(!ele.isReady)return false;
+                if(!ele.isReady){
+                    flag = false;
+                }
             });
-            return true;
+            return flag;
         }
         return false;
     }
@@ -115,7 +130,7 @@ import compose from 'recompose/compose';
                 }
 
                 <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
-                <Chat/>
+                {/*<Chat/>*/}
             </div>
         );
     }

@@ -210,13 +210,6 @@ io.on('connection', (socket) => {
 		}
 	});
 
-	socket.on('subscribeToTimer', (interval) => {
-		console.log('client is subscribing to timer with interval ', interval);
-		setInterval(() => {
-			socket.emit('timer', new Date());
-		}, interval);
-	});
-
 	//--------------UPDATE USER INFO---------------------//
 
 	socket.on('update_userinfo', (info) => {
@@ -299,7 +292,6 @@ io.on('connection', (socket) => {
 	socket.on('join-room', function(data) {
 		let roomsearch = io.sockets.adapter.rooms[data.room.id];
 
-		console.log('inside join room');
 		console.log(roomsearch);
 
         if(rooms.includes(data.room.id)) {
@@ -307,10 +299,8 @@ io.on('connection', (socket) => {
             	// join room
                 socket.join(data.room.id);
 
-
                 // updating capacity
                 data.room.capacity = roomsearch.length + '/5';
-
 
                 console.log('joined successfully in existing room');
 
@@ -321,29 +311,22 @@ io.on('connection', (socket) => {
 						isReady: false
 				};
 
-                // emiting to all sockets in room for new user joining in
-				io.in(data.room.id).emit('newUserInRoom', userInfo);
-
+				// emiting to all sockets in room for new user joining in
+				// io.in(data.room.id).emit('newUserInRoom', userInfo);
 
 				// adding user to room user list
 				//Make array for key if doesn't exist
 				userListPerRoom[data.room.id] = userListPerRoom[data.room.id] ? userListPerRoom[data.room.id] : [];
 				//Add value to array
 				userListPerRoom[data.room.id].push(userInfo);
-
-				console.log(userListPerRoom[data.room.id]);
-
-
-
+				console.log("new join user, update list: ",userListPerRoom[data.room.id]);
+				io.in(data.room.id).emit('entireUserList', userListPerRoom[data.room.id]);
 
             } else if (roomsearch) {
                 data.room.capacity = roomsearch.length + '/5';
                 socket.emit('full room', 'Room is full');
             }
         }
-
-
-
 
 		// socket.broadcast.to(data.room.id).emit('message',
 		// 	{type:'message', text: data.username + " just joined the room!"});
@@ -364,46 +347,30 @@ io.on('connection', (socket) => {
 
         //pushing it to room list
         rooms.push(roomId);
-
-
         //joining room
         socket.join(roomId);
-
         //setting the id on return data
 		room.id = roomId;
-
 		let roomsearch = io.sockets.adapter.rooms[room.id];
-
 		//should be 1
 		room.capacity = roomsearch.length + '/5';
-
-
 		roomInfo[roomId] = room;
         console.log('created new room ' + roomId + ' :' + room.capacity);
-
-
         socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
-
-
 		let userInfo  = {
 			username: room.username,
 			score: 0,
 			isDrawer: false,
 			isReady: false
 		};
-
 		//Make array for key if doesn't exist
 		userListPerRoom[roomId] = userListPerRoom[roomId] ? userListPerRoom[roomId] : [];
 		//Add value to array
 		userListPerRoom[roomId].push(userInfo);
-
-		console.log(userListPerRoom[roomId]);
-
-
-		socket.broadcast.to(roomId).emit('newUserInRoom', userInfo);
+		console.log("create new room, list: ", userListPerRoom[roomId]);
+		socket.emit('entireUserList', userListPerRoom[roomId]);
     });
-
 
 	//get all the rooms
 	socket.on('room-list', function(data) {
@@ -450,14 +417,16 @@ io.on('connection', (socket) => {
 
 		socket.emit('sendRoomInfo', room);
 
+		console.log('User leaves: ', userListPerRoom[data.id]);
+
 	});
 
 	///---------------------- GAME ROOM ACTIVITY NEED TO HAPPEN WITH socket room------------------////
 
 
 	socket.on('getUserList', (data) => {
-
-		 socket.emit('userList', userListPerRoom[data.id]);
+		console.log('send user list', userListPerRoom[data.id]);
+		socket.emit('userList', userListPerRoom[data.id]);
 	});
 
 	// received new stroke from the drawer, emit to guessers
@@ -470,7 +439,10 @@ io.on('connection', (socket) => {
 	});
 
 	// receive user ready event, emit to other players
-	socket.on('newReadyPlayer', (username) => {});
+	socket.on('imReady', data => {
+		console.log('User: '+data.username+ ' is ready');
+		io.in(data.roomId).emit('newReadyPlayer', data.username);
+	});
 
 	// emits message to all users in the room add functionality to verify answer on
 	// each message receive
