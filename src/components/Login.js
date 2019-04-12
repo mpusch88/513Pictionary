@@ -6,8 +6,8 @@ import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
 import {send_loginfo} from '../api';
 import logo from '../resources/logo.png';
-
 import $ from 'jquery';
+// eslint-disable-next-line no-unused-vars
 import {cookie} from 'jquery.cookie';
 
 class Login extends React.Component {
@@ -28,20 +28,21 @@ class Login extends React.Component {
         // get the cookie
         let myName = $.cookie('user_name');
         let myType = $.cookie('user_type');
+        let myEmail = $.cookie('user_email');
+
         if(myName && myType){   // has logged in before, route to dashboard/admin page
             if(myType === 'user'){
                 this
                     .props
-                    .authenticate(myType, myName);
+                    .authenticate(myType, myName, myEmail);
                 console.log('user reconnected successful');
             }else if(myType === 'admin'){
                 this
                     .props
-                    .authenticate(myType, myName);
+                    .authenticate(myType, myName, myEmail);
                 console.log('admin reconnected successful');
             }
         }
-
     }
 
     handleClick() {
@@ -64,12 +65,14 @@ class Login extends React.Component {
                 history.push({pathname: '/Dashboard'});
                 $.cookie('user_name', loginInfo.username);
                 $.cookie('user_type', loginInfo.type);
+                $.cookie('user_email', loginInfo.email);
             } else if (loginInfo.type === 'admin') {
                 console.log('admin logged in successful');
                 let {history} = this.props;
                 history.push({pathname: '/Admin'});
                 $.cookie('user_name', loginInfo.username);
                 $.cookie('user_type', loginInfo.type);
+                $.cookie('user_email', loginInfo.email);
             } else if (loginInfo.type === 'fail') {
                 alert('Invalid email or password!');
                 let {history} = this.props;
