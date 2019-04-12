@@ -210,8 +210,9 @@ class GameRoom extends React.Component {
                 <div className='row full'>
 
                     <div className='col-2'>
-                        <SidebarGame/>
+                        <SidebarGame />
                     </div>
+
                     <div className='col-10'>
                         <div className='maxw'>
 
