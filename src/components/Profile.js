@@ -58,10 +58,10 @@ class Profile extends React.Component {
     render() {
         return (
             <div>
+            
                 <Header title='User Profile'/>
 
                 <div className='row'>
-
                     <div className='col-lg-3'>
                         <div className='sidebar-space'>
                             <div className='sidebar-container'>sidebar</div>
