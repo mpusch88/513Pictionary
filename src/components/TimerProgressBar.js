@@ -24,9 +24,11 @@ export default class TimerProgressBar extends Component {
 
     increase() {
         const percent = this.state.percent + 1;
-        if (percent > 60) {
+        if (percent > 10) {  // TODO: change it back to 60
             this.setState({start: false});
             clearTimeout(this.tm);
+
+            this.props.restartTrigger();
             return;
         }
         this.setState({percent});
