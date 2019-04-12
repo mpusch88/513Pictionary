@@ -7,6 +7,7 @@ import {withRouter} from 'react-router-dom';
 import {send_loginfo} from '../api';
 import logo from '../resources/logo.png';
 import $ from 'jquery';
+import {cookie} from 'jquery.cookie';
 
 class Login extends React.Component {
     constructor(props) {
