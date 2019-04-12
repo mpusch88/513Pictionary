@@ -30,6 +30,8 @@ import {bindActionCreators} from 'redux';
 import {addRoomInfo, removeCurrentRoom, setRoomHost} from '../actions/dashBoardAction';
 import {connect} from 'react-redux';
 import compose from 'recompose/compose';
+import SidebarGeneral from './SidebarGeneral';
+import '../styles/dashboard.css';
 
 const styles = theme => ({
     button: {
@@ -221,10 +223,7 @@ class Dashboard extends React.Component {
     createNewRoom = () => {
         let roomList = this.state.roomList;
         if (this.state.newRoomName && this.state.roomCategory) {
-            createRoom({id: '', roomName: this.state.newRoomName,
-                roomCategory: this.state.roomCategory,
-                hostName: this.props.username,
-                username: this.props.username});
+            createRoom({id: '', roomName: this.state.newRoomName, roomCategory: this.state.roomCategory, hostName: this.props.username, username: this.props.username});
         }
 
         getRoomInfo({
@@ -319,7 +318,6 @@ class Dashboard extends React.Component {
                 .setRoomHost(false);
         }
 
-
         let {history} = this.props;
         history.push({pathname: '/Game'});
     };
@@ -333,90 +331,102 @@ class Dashboard extends React.Component {
         return (
             <div>
                 <Header title='Welcome'/>
-                <div className={classes.search}>
-                    <div>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon/>
-                        </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput
-                        }}/>
+
+                <div className='row full'>
+                    <div className='col-lg-2'>
+                        <SidebarGeneral/>
                     </div>
-                    <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                        Create New Game Room
-                    </Button>
-                </div>
-                <Dialog
-                    open={this.state.dialogOpen}
-                    onClose={this.handleClose}
-                    aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Create New Room</DialogTitle>
-                    <DialogContent>
-                        <form autoComplete="off">
-                            <TextField
-                                value={this.state.newRoomName}
-                                required
-                                autoFocus
-                                margin="dense"
-                                id="roomName"
-                                label="Enter a room name"
-                                onChange={this.handleRoomName}
-                                fullWidth/>
-                            <TextField
-                                id="filled-select-category"
-                                select
-                                required
-                                label="Choose a game Category"
-                                className={classes.textField}
-                                value={this.state.roomCategory}
-                                onChange={this
-                                .handleCategorySelect
-                                .bind(this)}
-                                SelectProps={{
-                                MenuProps: {
-                                    className: classes.menu
-                                }
-                            }}
-                                margin="normal"
-                                fullWidth
-                                variant="outlined">
-                                {this
-                                    .state
-                                    .categories
-                                    .map((option, index) => (
-                                        <MenuItem key={index} value={option}>
-                                            {option}
-                                        </MenuItem>
-                                    ))}
-                            </TextField>
-                        </form>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this.createNewRoom} color="primary">
-                            Create
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-                <div>
-                    <Table className={classes.table}>
-                        <TableHead>
-                            <TableRow>
-                                <CustomTableCell>Room Name</CustomTableCell>
-                                <CustomTableCell align="right">Game Category</CustomTableCell>
-                                <CustomTableCell align="right">Capacity</CustomTableCell>
-                                <CustomTableCell align="right"></CustomTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <List items={roomList} onItemClick={this.handleJoinRoomClick}/>
-                        </TableBody>
-                    </Table>
+
+                    <div className='col-lg-10'>
+                            <div className={classes.search}>
+                                <div>
+                                    <div className={classes.searchIcon}>
+                                        <SearchIcon/>
+                                    </div>
+                                    <InputBase
+                                        placeholder="Search…"
+                                        classes={{
+                                        root: classes.inputRoot,
+                                        input: classes.inputInput
+                                    }}/>
+                                </div>
+
+                                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+                                    Create New Game Room
+                                </Button>
+                            </div>
+
+                            <Dialog
+                                open={this.state.dialogOpen}
+                                onClose={this.handleClose}
+                                aria-labelledby="form-dialog-title">
+                                <DialogTitle id="form-dialog-title">Create New Room</DialogTitle>
+                                <DialogContent>
+                                    <form autoComplete="off">
+                                        <TextField
+                                            value={this.state.newRoomName}
+                                            required
+                                            autoFocus
+                                            margin="dense"
+                                            id="roomName"
+                                            label="Enter a room name"
+                                            onChange={this.handleRoomName}
+                                            fullWidth/>
+                                        <TextField
+                                            id="filled-select-category"
+                                            select
+                                            required
+                                            label="Choose a game Category"
+                                            className={classes.textField}
+                                            value={this.state.roomCategory}
+                                            onChange={this
+                                            .handleCategorySelect
+                                            .bind(this)}
+                                            SelectProps={{
+                                            MenuProps: {
+                                                className: classes.menu
+                                            }
+                                        }}
+                                            margin="normal"
+                                            fullWidth
+                                            variant="outlined">
+                                            {this
+                                                .state
+                                                .categories
+                                                .map((option, index) => (
+                                                    <MenuItem key={index} value={option}>
+                                                        {option}
+                                                    </MenuItem>
+                                                ))}
+                                        </TextField>
+                                    </form>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={this.handleClose} color="primary">
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={this.createNewRoom} color="primary">
+                                        Create
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+
+                            <div className='maxw'>
+                                <Table className={classes.table}>
+                                    <TableHead>
+                                        <TableRow>
+                                            <CustomTableCell>Room Name</CustomTableCell>
+                                            <CustomTableCell align="right">Game Category</CustomTableCell>
+                                            <CustomTableCell align="right">Capacity</CustomTableCell>
+                                            <CustomTableCell align="right"></CustomTableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <List items={roomList} onItemClick={this.handleJoinRoomClick}/>
+                                    </TableBody>
+                                </Table>
+                            </div>
+                    </div>
                 </div>
             </div>
         );

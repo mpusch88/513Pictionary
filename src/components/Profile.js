@@ -5,7 +5,9 @@ import {authenticate} from '../actions/userAction.js';
 import {withRouter} from 'react-router-dom';
 import {update_userinfo} from '../api';
 import Header from './Header';
+import SidebarGeneral from './SidebarGeneral';
 import '../styles/profile.css';
+import Avatar from './Avatar';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -62,13 +64,11 @@ class Profile extends React.Component {
 
                 <div className='row'>
 
-                    <div className='col-lg-3'>
-                        <div className='sidebar-space'>
-                            <div className='sidebar-container'>sidebar</div>
-                        </div>
+                    <div className='col-lg-2'>
+                        <SidebarGeneral/>
                     </div>
 
-                    <div className='col-lg-6'>
+                    <div className='col-lg-8'>
                         <div className='profile-outer'>
                             <div className='profile-container'>
 
@@ -124,10 +124,8 @@ class Profile extends React.Component {
                         </div>
                     </div>
 
-                    <div className='col-lg-3'>
-                        <div className='avatar-space'>
-                            <div className='avatar-container'>avatar</div>
-                        </div>
+                    <div className='col-lg-2'>
+                        <Avatar />
                     </div>
                 </div>
             </div>
