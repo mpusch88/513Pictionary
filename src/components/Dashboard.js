@@ -15,6 +15,7 @@ import {
     createRoom,
     getRoomInfo,
     getAllExistingRooms,
+    updateRoomInfo,
     socket
 } from '../api';
 import {withRouter} from 'react-router-dom';
@@ -68,39 +69,6 @@ const styles = theme => ({
     }
 });
 
-const CustomTableCell = withStyles(theme => ({
-    head: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white
-    },
-    body: {
-        fontSize: 16
-    }
-}))(TableCell);
-
-const ListItem = ({id, name, category, capacity, onClick}) => (
-    <TableRow className={styles.row} key={id}>
-        <CustomTableCell component="th" scope="row">
-            {name}
-        </CustomTableCell>
-        <CustomTableCell align="right">{category}</CustomTableCell>
-        <CustomTableCell align="right">{capacity}</CustomTableCell>
-        <CustomTableCell align="right">
-            <button id={id} onClick={onClick}>
-                Join Room
-            </button>
-        </CustomTableCell>
-    </TableRow>
-);
-
-const List = ({items, onItemClick}) => (items.map((item, i) => <ListItem
-    id={item.id}
-    key={i}
-    name={item.roomName}
-    category={item.roomCategory}
-    capacity={item.capacity}
-    onClick={onItemClick}/>));
-
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
@@ -112,7 +80,8 @@ class Dashboard extends React.Component {
             roomCategory: '',
             newRoomName: '',
             currentRoomId: '',
-            existingRooms: {}
+            existingRooms: {},
+            roomAvailable: {}
         };
     }
 
@@ -140,12 +109,16 @@ class Dashboard extends React.Component {
                 });
 
                 let map = {};
+                let roomAvailable = {};
 
                 for (var key in data) {
                     map[(data[key].id)] = data[key];
+                    roomAvailable[(data[key].id)] = true;
+
                 }
 
                 this.setState({roomObjMap: map});
+                this.setState({roomAvailable: roomAvailable});
             }
         });
 
@@ -163,6 +136,11 @@ class Dashboard extends React.Component {
 
             let nextState = roomList.concat(newRoom);
             let map = this.state.roomObjMap;
+
+            let nextStateForAvailale = this.state.roomAvailable;
+            nextStateForAvailale[info.id] = true;
+            this.setState({roomAvailable: nextStateForAvailale});
+
             map[info.id] = newRoom;
             this.setState({roomList: nextState, roomObjMap: map});
         });
@@ -197,6 +175,17 @@ class Dashboard extends React.Component {
             }
         });
 
+        socket.on('updateRoomAvail', (data) => {
+
+            let nextStateForAvailale = this.state.roomAvailable;
+            nextStateForAvailale[data.id] = data.isAvailable;
+            this.setState({roomAvailable: nextStateForAvailale});
+
+            console.log("inside update room available now");
+            console.log(this.state.roomAvailable[data.id]);
+
+
+        });
     }
 
     handleCategorySelect = event => {
@@ -240,6 +229,16 @@ class Dashboard extends React.Component {
             let map = this.state.roomObjMap;
             map[info.id] = newRoom;
 
+
+            let prevState = this.state;
+            this.setState(
+                prevState => ({
+                    roomAvailable: {
+                        ...prevState.roomAvailable,
+                        [prevState.roomAvailable[info.id]]: true,
+                    }
+                }));
+
             this
                 .props
                 .addRoomInfo(newRoom);
@@ -264,6 +263,16 @@ class Dashboard extends React.Component {
     handleJoinRoomClick = (e) => {
         let id = e.target.id;
         let room = this.state.roomObjMap[id];
+
+
+        socket.on("canJoinRoom", (data) => {
+
+            if(data.id === id){
+
+            }
+
+        });
+
 
         joinRoom({room: room, username: this.props.username});
 
@@ -413,6 +422,43 @@ class Dashboard extends React.Component {
         );
     }
 }
+
+
+const CustomTableCell = withStyles(theme => ({
+    head: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white
+    },
+    body: {
+        fontSize: 16
+    }
+}))(TableCell);
+
+const ListItem = ({id, name, category, capacity, onClick, showJoinButton}) => (
+    <TableRow className={styles.row} key={id}>
+        <CustomTableCell component="th" scope="row">
+            {name}
+        </CustomTableCell>
+        <CustomTableCell align="right">{category}</CustomTableCell>
+        <CustomTableCell align="right">{capacity}</CustomTableCell>
+        <CustomTableCell align="right">
+            { showJoinButton &&  <button id={id} onClick={onClick}>
+                Join Room
+            </button>}
+        </CustomTableCell>
+    </TableRow>
+);
+
+const List = ({items, showJoinButton, onItemClick}) => (items.map((item, i) => <ListItem
+    id={item.id}
+    key={i}
+    name={item.roomName}
+    category={item.roomCategory}
+    capacity={item.capacity}
+    onClick={onItemClick}
+    showJoinButton={showJoinButton[item.id]}/>));
+
+
 
 const mapStateToProps = (state) => {
     return {username: state.username};
