@@ -7,6 +7,8 @@ import {withRouter} from 'react-router-dom';
 import {send_loginfo} from '../api';
 import logo from '../resources/logo.png';
 import $ from 'jquery';
+// eslint-disable-next-line no-unused-vars
+import {cookie} from 'jquery.cookie';
 
 class Login extends React.Component {
     constructor(props) {
