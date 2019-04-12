@@ -60,6 +60,7 @@ class Profile extends React.Component {
     render() {
         return (
             <div>
+            
                 <Header title='User Profile'/>
 
                 <div className='row'>
