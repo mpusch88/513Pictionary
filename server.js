@@ -541,24 +541,6 @@ io.on('connection', (socket) => {
 		}
 	});
 
-
-	socket.on('gameIsStarted', (data) => {
-
-		io.emit('updateRoomAvail', {id: data, isAvailable: false} )
-
-
-	});
-
-
-	socket.on('gameIsEnded', (data) => {
-
-		io.emit('updateRoomAvail', {id: data, isAvailable: true} )
-
-	});
-
-
-
-
 	// -----------------  Dashboard ---------------------------//
 
 	// TODO: socket disconnection
