@@ -1,11 +1,7 @@
 import React from 'react';
-import {Route, Switch, Redirect} from 'react-router-dom';
+import {Route, Switch} from 'react-router-dom';
 import Login from '../components/Login';
-import Signup from '../components/Signup';
-import AppRoot from '../components/AppRoot';
 import GameRoom from '../components/GameRoom';
-import AdminHome from '../components/AdminHome';
-import Dashboard from '../components/Dashboard';
 import Profile from '../components/Profile';
 import requireAuth from '../components/requireAuth';
 import {connect} from 'react-redux';
@@ -29,13 +25,6 @@ class AppRouter extends React.Component {
                         component={requireAuth(Dashboard, false)}
                         exact={true}/>
                     <Route path='/Admin' component={requireAuth(AdminHome, true)} exact={true}/>
-                    <UserRoute
-                        path="/:type"
-                        component={AppRoot}
-                        auth={{
-                        status: 'LoggedIn'
-                    }}
-                        exact={true}/>
                 </Switch>
             </div>
         );
@@ -44,28 +33,6 @@ class AppRouter extends React.Component {
 
 const mapStateToProps = (state) => {
     return {userType: state.userType};
-};
-
-const UserRoute = ({
-    component: Component,
-    auth,
-    ...rest
-}) => {
-    return (
-        <Route
-            {...rest}
-            render={(props) => {
-            return (!!auth && (auth.status === 'LoggedIn'))
-                ? (<Component {...props}/>)
-                : (<Redirect
-                    to={{
-                    pathname: '/login',
-                    state: {
-                        from: props.location
-                    }
-                }}/>);
-        }}/>
-    );
 };
 
 export default connect(mapStateToProps)(AppRouter);

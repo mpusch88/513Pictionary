@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/sidebar.css';
 
 class SidebarGame extends React.Component {
     constructor(props) {

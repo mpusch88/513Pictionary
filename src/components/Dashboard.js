@@ -15,7 +15,6 @@ import {
     createRoom,
     getRoomInfo,
     getAllExistingRooms,
-    updateRoomInfo,
     socket
 } from '../api';
 import {withRouter} from 'react-router-dom';
@@ -24,14 +23,12 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
 import {bindActionCreators} from 'redux';
 import {addRoomInfo, removeCurrentRoom, setRoomHost} from '../actions/dashBoardAction';
 import {connect} from 'react-redux';
 import compose from 'recompose/compose';
 import SidebarGeneral from './SidebarGeneral';
-import '../styles/dashboard.css';
+import '../styles/sidebar.css';
 
 const styles = theme => ({
     button: {
@@ -56,7 +53,6 @@ const styles = theme => ({
         width: 200
     },
     table: {
-        minWidth: 600,
         marginTop: 50
     },
     row: {
@@ -183,7 +179,6 @@ class Dashboard extends React.Component {
                 };
 
                 this.setState(state => {
-
                     // not used
                     const list = state
                         .roomList
@@ -222,6 +217,7 @@ class Dashboard extends React.Component {
 
     createNewRoom = () => {
         let roomList = this.state.roomList;
+
         if (this.state.newRoomName && this.state.roomCategory) {
             createRoom({id: '', roomName: this.state.newRoomName, roomCategory: this.state.roomCategory, hostName: this.props.username, username: this.props.username});
         }
@@ -299,7 +295,6 @@ class Dashboard extends React.Component {
 
             let map = this.state.roomObjMap;
             map[info.id] = newRoom;
-
             this.setState({roomObjMap: map});
         });
 
@@ -339,18 +334,6 @@ class Dashboard extends React.Component {
 
                     <div className='col-lg-10'>
                         <div className={classes.search}>
-                            <div>
-                                <div className={classes.searchIcon}>
-                                    <SearchIcon/>
-                                </div>
-                                <InputBase
-                                    placeholder="Search…"
-                                    classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput
-                                }}/>
-                            </div>
-
                             <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
                                 Create New Game Room
                             </Button>
