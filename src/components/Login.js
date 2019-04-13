@@ -49,7 +49,7 @@ class Login extends React.Component {
             } else if (myType === 'fail') {
                 this
                     .props
-                    .authenticate(myType, myName, myEmail);
+                    .authenticate(myType, myName, myEmail, myAvatar);
                 this.setState({message: 'Invalid username or password'});
             }
         }
@@ -72,7 +72,9 @@ class Login extends React.Component {
 
             this
                 .props
-                .authenticate(userType, loginInfo.username, loginInfo.email);
+                .authenticate(userType, loginInfo.username, loginInfo.email, loginInfo.avatar);
+
+                console.log('AVATAR # = ' + loginInfo.avatar);
 
             if (loginInfo.type === 'user') {
                 console.log('user logged in successful');

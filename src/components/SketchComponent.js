@@ -36,15 +36,6 @@ class SketchComponent extends Component
     }
 
     render() {
-        var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-        w = 0.6 * w;
-        h = 0.6 * h;
-
-        console.log('w = ' + w);
-        console.log('h = ' + h);
-
         const {
             tool,
             size,
@@ -64,8 +55,8 @@ class SketchComponent extends Component
                                 marginBottom: 20
                             }}>
                                 <SketchPad
-                                    width={w}
-                                    height={h}
+                                    width={500}
+                                    height={400}
                                     animate={true}
                                     size={size}
                                     color={color}
@@ -186,8 +177,8 @@ class SketchComponent extends Component
                         marginBottom: 20
                     }}>
                         <SketchPad
-                            width={w}
-                            height={h}
+                            width={500}
+                            height={400}
                             animate={true}
                             size={size}
                             color={'#ffffff'}
