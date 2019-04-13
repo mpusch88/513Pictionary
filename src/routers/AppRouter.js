@@ -5,6 +5,9 @@ import GameRoom from '../components/GameRoom';
 import Profile from '../components/Profile';
 import requireAuth from '../components/requireAuth';
 import {connect} from 'react-redux';
+import Signup from '../components/Signup';
+import Dashboard from '../components/Dashboard';
+import AdminHome from '../components/AdminHome';
 
 class AppRouter extends React.Component {
     constructor(props) {
