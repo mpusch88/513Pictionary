@@ -4,17 +4,17 @@
     left: 0;
 	color: #ffffff;
     background-color: #00000044;
-    padding: 20px;
+    padding: 15px;
+}
+
+.sidebar-container {
+	border-color: black;
+	background-color: #00000066;
+	border-width: 3px;
+	border-style: solid;
+	height: 100%;
 }
 
 .full {
-    height: 100vh;
-}
-
-.maxw {
-    max-width: 98%;
-    display: block;
-    padding: 15px;
-    margin: auto;
-    margin-left: 30px;
+    height: 90vh;
 }

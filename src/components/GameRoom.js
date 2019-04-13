@@ -214,7 +214,6 @@ class GameRoom extends React.Component {
                     </div>
 
                     <div className='col-10'>
-                        <div className='maxw'>
 
                             <TimerProgressBar
                                 restartTrigger={this.restartRound}
@@ -227,7 +226,6 @@ class GameRoom extends React.Component {
                                 : ''
 }
                             {/*<Chat/>*/}
-                        </div>
                     </div>
                 </div>
             </div>
