@@ -14,7 +14,8 @@ class Login extends React.Component {
         super(props);
         this.state = {
             email: 'user1@example.com',
-            password: '12345'
+            password: '12345',
+            message: ''
         };
 
         this.handleClick = this
@@ -38,11 +39,18 @@ class Login extends React.Component {
                     .props
                     .authenticate(myType, myName, myEmail);
                 console.log('user reconnected successful');
-            }else if(myType === 'admin'){
+            } else if(myType === 'admin'){
                 this
                     .props
                     .authenticate(myType, myName, myEmail);
                 console.log('admin reconnected successful');
+            } else if(myType === 'fail'){
+                this
+                    .props
+                    .authenticate(myType, myName, myEmail);
+                this.setState({
+                    message: 'Invalid username or password'
+                });
             }
         }
     }
@@ -125,6 +133,10 @@ class Login extends React.Component {
                             name='password'
                             onChange={this.handleChange}
                             value={this.state.password}/>
+                    </div>
+
+                    <div>
+                        <p>{this.state.message}</p>
                     </div>
 
                     <div>

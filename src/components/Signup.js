@@ -6,6 +6,7 @@ import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
 import {send_signupinfo} from '../api';
 import logo from '../resources/logo.png';
+import DialogWindow from './DialogWindow';
 
 class Signup extends React.Component {
     constructor(props) {
@@ -14,7 +15,9 @@ class Signup extends React.Component {
             message: '',
             username: '',
             email: '',
-            password: ''
+            password: '',
+            showConfirmDialog: false,
+            dialogMessage: ''
         };
 
         this.handleClick = this
@@ -55,9 +58,8 @@ class Signup extends React.Component {
                     message: 'username taken'
                 });
             } else if (loginInfo.type === 'signed') {
-                console.log("in")
-                let {history} = this.props;
-                history.push({pathname: '/Dashboard'});
+                this.toggleModal();
+                this.showDialogMessage('Account created successfully');
             } else if (loginInfo.type === 'email') {
                 this.setState({
                     message: 'invalid email format'
@@ -70,9 +72,17 @@ class Signup extends React.Component {
         });
     }
 
-    // handleForgotPassword(e) {
-    //     e.preventDefault();
-    // }
+    toggleModal = () => {
+        this.setState({
+            showConfirmDialog: !this.state.showConfirmDialog
+        });
+        // let {history} = this.props;
+        // history.push({pathname: '/'});
+    };
+
+    showDialogMessage = (data) => {
+        this.setState({dialogMessage: data});
+    }
 
     handleChange(e) {
         this.setState({
@@ -144,6 +154,10 @@ class Signup extends React.Component {
                     </div>
                     
                 </div>
+                <DialogWindow
+                    message={this.state.dialogMessage}
+                    show={this.state.showConfirmDialog}
+                    onClose={this.toggleModal}/>
             </div>
         );
     }
