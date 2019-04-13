@@ -201,6 +201,56 @@ let removeFromUserList = (roomId, username) => {
 	}
 };
 
+//------------------------- Helper function for answers ------------------------//
+//data contents: room id, username, answer
+let checkAnswer = (data) =>{
+	let rmAnswer = roomInfo[data.roomId].curAnswer;
+	let first = 5;
+	let second = 3;
+	let rest = 1;
+	let point = 0;
+	console.log("Checking "+rmAnswer+" with "+data.answer);
+	if(rmAnswer === data.answer){
+		console.log("Username: "+data.username+" | Answered correctly with "+rmAnswer);
+		// let user = userListPerRoom[data.roomId].find((data.username));
+		let ulRoom = userListPerRoom[data.roomId];
+		let user;
+		for(let i=0; i<ulRoom.length; i++){
+			if(ulRoom[i].username===data.username)
+				user = ulRoom[i];
+		}
+		console.log("Modifying data for user: "+user.userame);
+
+		if(!user.currentPoints)
+			user.currentPoints = 0;
+		if(!roomInfo[data.roomId].place){
+			roomInfo[data.roomId].place = 1;
+		}
+		// if(user.isHost)
+		// 	return {win:0};
+		if(!user.hasAnswered){
+			switch(roomInfo[data.roomId].place){
+				case 1:
+					user.currentPoints += first;
+					point = first;
+					break;
+				case 2:
+					user.currentPoints += second;
+					point = second;
+					break;
+				default:
+					user.currentPoints += rest;
+					point = rest;
+			}
+			console.log("User: "+user.username+" | Round Point: "+point+" | Total Points: "+user.currentPoints);
+			user.hasAnswered = true;
+			return { win: 1, points: point};
+		}
+		return { win: 1};		
+	}
+	else
+		return { win: 0};
+}
 
 //########----------- on socket connection --------------------###########/
 
@@ -547,15 +597,59 @@ io.on('connection', (socket) => {
 		//to room sockets
 		let rooms = Object.keys(socket.rooms);
 		console.log(rooms); // [ <socket.id>, 'room 237' ]
-
-		//io.in(data.roomId).emit('message', data);
-
+		//---- set message text to ***** if correct answer ----//
+		let answercheck = {
+			roomId : data.roomId,
+			username: data.username,
+			answer : data.message.text
+		}
+		let isWin = checkAnswer(answercheck);
+		console.log("Win flag: "+isWin.win);
+		if(isWin.win){
+			if(isWin.points){
+				data.message.text = "**** +"+isWin.points;
+			}
+			else{
+				data.message.text = "****";
+			}
+			console.log("Modifying text: "+data.message.text+" to ****"+isWin.points);
+		}
+		//---------------------------------------------------/
 		socket
 			.broadcast
 			.to(data.roomId)
 			.emit('message', data);
 		// socket.broadcast.emit('message', data);
+
+		//------- Broadcast user got answer --------/
+				//socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
+		//------------------------------------------//
 		//TODO - add function to check message with answer
+	});
+
+//--------------- Pick answer from picked category and save to server -------//
+	socket.on('pick-answer', (data)=>{
+		console.log("Picking answer from category: "+data.category);
+
+		let catclient = new MongoClient(uri, { useNewUrlParser: true });
+
+		catclient.connect(() => {
+			let catcollection = catclient
+				.db('pictionary')
+				.collection('categories');
+
+			catcollection.findOne({type: data.category}).then(function(document){
+				console.log(document.answers);
+				let answerList = document.answers;
+				let rnd = Math.floor(Math.random(answerList.length) * 10);
+				// let answer = document.answers[Math.random(rnd)];
+				let answer = answerList[rnd];
+				roomInfo[data.roomId].curAnswer = answer;
+				console.log("Picked answer: "+answer);
+				socket.emit('receive-answer', answer);
+			});			
+		});
+		catclient.close();
 	});
 
 	// //emits message to all users in the room //add functionality to verify answer

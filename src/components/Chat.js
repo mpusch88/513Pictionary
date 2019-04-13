@@ -115,7 +115,8 @@ class Chat extends React.Component{
                         sendMessage={this
                         .sendMessage
                         .bind(this)}
-                        messages={this.state.messages}/>
+                        messages={this.state.messages}
+                        ansFlg = {this.props.ansFlg}/>
                 </React.Fragment>
             </div>
         );
