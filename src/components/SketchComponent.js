@@ -56,7 +56,7 @@ class SketchComponent extends Component
 
         return (
             <div>
-                {this.props.drawFlg == true
+                {this.props.drawFlg === true
                     ? <div>
                             <div
                                 style={{
@@ -87,42 +87,42 @@ class SketchComponent extends Component
                                     marginBottom: 20
                                 }}>
                                     <button
-                                        style={tool == TOOL_PENCIL
+                                        style={tool === TOOL_PENCIL
                                         ? {
                                             fontWeight: 'bold'
                                         }
                                         : undefined}
-                                        className={tool == TOOL_PENCIL
+                                        className={tool === TOOL_PENCIL
                                         ? 'item-active'
                                         : 'item'}
                                         onClick={() => this.setState({tool: TOOL_PENCIL})}>Pencil</button>
                                     <button
-                                        style={tool == TOOL_LINE
+                                        style={tool === TOOL_LINE
                                         ? {
                                             fontWeight: 'bold'
                                         }
                                         : undefined}
-                                        className={tool == TOOL_LINE
+                                        className={tool === TOOL_LINE
                                         ? 'item-active'
                                         : 'item'}
                                         onClick={() => this.setState({tool: TOOL_LINE})}>Line</button>
                                     <button
-                                        style={tool == TOOL_ELLIPSE
+                                        style={tool === TOOL_ELLIPSE
                                         ? {
                                             fontWeight: 'bold'
                                         }
                                         : undefined}
-                                        className={tool == TOOL_ELLIPSE
+                                        className={tool === TOOL_ELLIPSE
                                         ? 'item-active'
                                         : 'item'}
                                         onClick={() => this.setState({tool: TOOL_ELLIPSE})}>Ellipse</button>
                                     <button
-                                        style={tool == TOOL_RECTANGLE
+                                        style={tool === TOOL_RECTANGLE
                                         ? {
                                             fontWeight: 'bold'
                                         }
                                         : undefined}
-                                        className={tool == TOOL_RECTANGLE
+                                        className={tool === TOOL_RECTANGLE
                                         ? 'item-active'
                                         : 'item'}
                                         onClick={() => this.setState({tool: TOOL_RECTANGLE})}>Rectangle</button>
@@ -157,7 +157,7 @@ class SketchComponent extends Component
                                         onChange={(e) => this.setState({color: e.target.value})}/>
                                 </div>
 
-                                {(this.state.tool == TOOL_ELLIPSE || this.state.tool == TOOL_RECTANGLE)
+                                {(this.state.tool === TOOL_ELLIPSE || this.state.tool === TOOL_RECTANGLE)
                                     ? <div>
                                             <label htmlFor="">fill in:</label>
                                             <input

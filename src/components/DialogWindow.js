@@ -32,7 +32,7 @@ class DialogWindow extends React.Component {
                     aria-describedby="alert-dialog-slide-description"
                 >
                     <DialogTitle id="alert-dialog-slide-title">
-                        {'Action Status'}
+                        {this.props.title ? this.props.title : 'Action Status'}
                     </DialogTitle>
 
                     <DialogContent>

@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
-import {send_signupinfo} from '../api';
+import {send_signupinfo, socket} from '../api';
 import logo from '../resources/logo.png';
 import DialogWindow from './DialogWindow';
 
@@ -34,19 +34,8 @@ class Signup extends React.Component {
         //     .bind(this);
     }
 
-    handleGoBack() {
-
-        let {history} = this.props;
-        history.push({pathname: '/'});
-    }
-
-    handleClick() {
-        send_signupinfo({
-            username: this.state.username,
-            email: this.state.email,
-            psw: this.state.password
-        }, loginInfo => {
-
+    componentDidMount() {
+        socket.on('signup_flag', loginInfo => {
             let userType = loginInfo.type
                 ? loginInfo.type
                 : '';
@@ -60,6 +49,7 @@ class Signup extends React.Component {
             } else if (loginInfo.type === 'signed') {
                 this.toggleModal();
                 this.showDialogMessage('Account created successfully');
+                
             } else if (loginInfo.type === 'email') {
                 this.setState({
                     message: 'invalid email format'
@@ -72,12 +62,25 @@ class Signup extends React.Component {
         });
     }
 
+    handleGoBack() {
+
+        let {history} = this.props;
+        history.push({pathname: '/'});
+    }
+
+    handleClick() {
+        send_signupinfo({
+            username: this.state.username,
+            email: this.state.email,
+            psw: this.state.password
+        });
+    }
+
     toggleModal = () => {
         this.setState({
             showConfirmDialog: !this.state.showConfirmDialog
         });
-        // let {history} = this.props;
-        // history.push({pathname: '/'});
+        
     };
 
     showDialogMessage = (data) => {
@@ -88,6 +91,12 @@ class Signup extends React.Component {
         this.setState({
             [e.target.name]: e.target.value
         });
+    }
+
+    handleDialogClose = () => {
+        this.toggleModal();
+        let {history} = this.props;
+        history.push({pathname: '/'});
     }
 
     render() {
@@ -157,7 +166,8 @@ class Signup extends React.Component {
                 <DialogWindow
                     message={this.state.dialogMessage}
                     show={this.state.showConfirmDialog}
-                    onClose={this.toggleModal}/>
+                    title={'Congradulations!'}
+                    onClose={this.handleDialogClose}/>
             </div>
         );
     }
