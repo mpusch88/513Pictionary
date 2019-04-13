@@ -9,9 +9,9 @@ let users = {};
 let userListPerRoom = {};
 let rooms = [];
 let roomInfo = {};
-let categories = [];
-let categoryTypes = [];
-let categoryToWords = {};
+var categories = [];
+var categoryTypes = [];
+var categoryToWords = {};
 
 app.use('/assets', express.static(__dirname + '/dist'));
 const io = require('socket.io')(server);
@@ -198,6 +198,50 @@ let removeFromUserList = (roomId, username) => {
         userListPerRoom[roomId] = list;
     }
 };
+
+//------------------------- Helper function for answers ------------------------//
+//data contents: room id, username, answer
+let checkAnswer = (data) =>{
+	let rmAnswer = roomInfo[data.roomId].curAnswer;
+	let first = 5;
+	let second = 3;
+	let rest = 1;
+	let point = 0;
+	console.log("Checking "+rmAnswer+" with "+data.answer);
+	if(rmAnswer === data.answer){
+		console.log("Username: "+data.username+" | Answered correctly with "+rmAnswer);
+		// let user = userListPerRoom[data.roomId].find((data.username));
+		let ulRoom = userListPerRoom[data.roomId];
+		let user;
+		for(let i=0; i<ulRoom.length; i++){
+			if(ulRoom[i].username===data.username)
+				user = ulRoom[i];
+		}
+		console.log("Modifying data for user: "+user.userame);
+
+		if(!user.currentPoints)
+			user.currentPoints = 0;
+		if(!roomInfo[data.roomId].place)
+			roomInfo[data.roomId].place = 1;
+		switch(roomInfo[data.roomId].place){
+			case 1:
+				user.currentPoints += first;
+				point = first;
+				break;
+			case 2:
+				user.currentPoints += second;
+				point = second;
+				break;
+			default:
+				user.currentPoints += rest;
+				point = rest;
+		}
+		console.log("User: "+user.username+" | Round Point: "+point+" | Total Points: "+user.currentPoints);
+		return { win: 1, points: point};
+	}
+	else
+		return { win: 0};
+}
 
 
 
@@ -480,11 +524,17 @@ io.on('connection', (socket) => {
 		//to room sockets
 		let rooms = Object.keys(socket.rooms);
 		console.log(rooms); // [ <socket.id>, 'room 237' ]
-
-		//io.in(data.roomId).emit('message', data);
 		//---- set message text to ***** if correct answer ----//
-		if(data.message.message.text === roomInfo[data.roomId].curAnswer){
-			data.message.message.text = "****";
+		let answercheck = {
+			roomId : data.roomId,
+			username: data.username,
+			answer : data.message.text
+		}
+		let isWin = checkAnswer(answercheck);
+		console.log("Win flag: "+isWin.win);
+		if(isWin.win){
+			console.log("Modifying text: "+data.message.text+" to **** +"+isWin.points);
+			data.message.text = "**** +"+isWin.points;
 		}
 		//---------------------------------------------------/
 		socket
@@ -494,41 +544,51 @@ io.on('connection', (socket) => {
 		// socket.broadcast.emit('message', data);
 
 		//------- Broadcast user got answer --------/
-		socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
+				//socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
 		//------------------------------------------//
 		//TODO - add function to check message with answer
 	});
 
-	// //emits message to all users in the room //add functionality to verify answer
-	// on each message receive socket.on('message', function(msg) { 	//
-	// io.in(room).emit('message',msg);
-	//
-	// 	socket.broadcast.to(msg.roomId).emit('message', msg.msq);
-	//
-	// 	//socket.broadcast.emit('message', msg); 	//TODO - add function to check
-	// message with answer }); Receives image from socket and emits to all other
-	// sockets in that room socket.on('receive image', function (image) {
-	// socket.broadcast.to(room).emit(image); }); Handles socket disconnection and
-	// possible room deletion when disconnecting socket is last one in room Updates
-	// users list on user disconnect
 	socket.on('disconnect', () => {
 		//	removeSocket(socket.id);
 		io.emit('updateUsersList', getUsers());
 	});
 
-	//--------------- Pick answer from picked category then emit back to room -------//
-	socket.on('pick-answer', (category)=>{
+	//--------------- Pick answer from picked category and save to server -------//
+	socket.on('pick-answer', (category, roomId)=>{
 		console.log("Picking answer from category: "+category);
-		let answer = '';
-		for(let i=0; i<categories.size; i++){
-			if(categories[i].type === category){
-				answer = categories[i].answers[Math.random(answers.size)];
-				console.log("Answer picked for room "+data.roomId+ ": "+answer);
-			}
-		}
-		// socket.broadcast.to(data.roomId).emit('receive-answer', categories[category].answers[Math.random(answers.size)]);
-		socket.emit('receive-answer', answer); //send answer to current drawer
-		roomInfo[data.roomId].curAnswer = answer;
+
+		let catclient = new MongoClient(uri, { useNewUrlParser: true });
+
+		catclient.connect(() => {
+			let catcollection = catclient
+				.db('pictionary')
+				.collection('categories');
+
+			catcollection.findOne({type:category}).then(function(document){
+				console.log(document.answers);
+				let answerList = document.answers;
+				let rnd = Math.floor(Math.random(answerList.length) * 10);
+				// let answer = document.answers[Math.random(rnd)];
+				let answer = answerList[rnd];
+				console.log("Picked answer: "+answer);
+				socket.emit('receive-answer', answer);
+				roomInfo[roomId].curAnswer = answer;
+			});
+			
+		});
+
+		// for(let i=0; i<categories.size; i++){
+		// 	if(categories[i].type === category){
+		// 		answer = categories[i].answers[Math.random(answers.size)];
+		// 		console.log("Answer picked for room "+data.roomId+ ": "+answer);
+		// 	}
+		// }
+		// // socket.broadcast.to(data.roomId).emit('receive-answer', categories[category].answers[Math.random(answers.size)]);
+		// console.log("Answer="+answer);
+		// socket.emit('receive-answer', answer); //send answer to current drawer
+		// roomInfo[data.roomId].curAnswer = answer;
+		catclient.close();
 	});
 	//-------------------------------------------------------------------------------//
 
@@ -635,8 +695,3 @@ io.on('connection', (socket) => {
 const port = 8000;
 io.listen(port);
 console.log('listening on port ', port);
-
-let testArray = {};
-testArray.one = 5;
-testArray.two = 6;
-console.log(testArray.two);

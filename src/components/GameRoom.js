@@ -66,7 +66,7 @@ import compose from 'recompose/compose';
     }
 
     setAnswer(){
-        socket.emit('pick-answer',this.props.roomCategory);
+        socket.emit('pick-answer',this.props.currentRoomCategory,this.props.currentRoomId);
     }
 
     gameStart() {
@@ -75,6 +75,9 @@ import compose from 'recompose/compose';
         this.triggerTimer();
         if(this.props.username === this.state.curDrawer){
             this.setAnswer();   //set current drawer's answer on start
+            socket.on('receive-answer', answer =>{
+                this.state.currentAnswer = answer;
+            })
             console.log('enable pad!');
             this.setState({isDrawer: true});
         }
@@ -117,6 +120,7 @@ import compose from 'recompose/compose';
         }else{
             this.nextDrawer();
             this.triggerTimer();
+            // this.setAnswer();
         }
     };
 
@@ -190,6 +194,11 @@ import compose from 'recompose/compose';
                 <Header home={'Room: ' + this.props.currentRoomName}
                         title={'Lets play words in category '+ this.props.currentRoomCategory.toUpperCase() + '!'}/>
                 <TimerProgressBar restartTrigger={this.restartRound} setReadyTrigger={func => this.triggerTimer = func}/>
+                {
+                    this.state.isDrawer?
+                    <div><p> You're drawing {this.state.currentAnswer}</p></div>: ''          
+                }
+            
                 <SketchComponent drawFlg={this.state.isDrawer}/>
                 {
                     gameProgress === 'notReady' ?

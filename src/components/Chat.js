@@ -8,7 +8,6 @@ class Chat extends React.Component{
 
     constructor(props){
         super(props);
-        //this.socket = null;
         this.state = {
             username: this.props.username ? this.props.username : 'DefaultUser',
             id : this.props.id? this.props.id : this.generateID(),
@@ -25,8 +24,6 @@ class Chat extends React.Component{
         for (let i = 0; i < 15; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-      //  localStorage.setItem('id', text);
-
         this.setState({id: text});
         console.log('ID not found, generating new id: ' + text);
         return text;
@@ -42,27 +39,11 @@ class Chat extends React.Component{
     }
 
     initChat() {
-     //   localStorage.setItem('username', this.state.username);
-
-        // change the uri to the host once it's set up might have to relocae this block
-        // to the after-login page
-        // this.socket = socketIOClient('ws://localhost:8000', {
-        //     query: 'username=' + this.state.username + '&id=' + this.state.id
-        // });
-
         initializeChat({username: this.state.username, id: this.state.id});
 
         updateUserList( list => {
-           // console.log(list);
             this.setState({users: list})
         });
-        // this
-        //
-        //     .socket
-        //     .on('updateUsersList', function (users) {
-        //         console.log(users);
-        //         this.setState({users: users});
-        //     }.bind(this));
 
         rcvMessage( message => {
             this.setState({
@@ -71,7 +52,6 @@ class Chat extends React.Component{
                     .messages
                     .concat([message])
             });
-            //this.scrollToBottom();
         });
     }
 
@@ -89,21 +69,12 @@ class Chat extends React.Component{
                     }
                 ])
         });
-
         sendMessageEvent({
             username: this.state.username,
             id: this.state.id,
             message: message,
             roomId: this.props.currentRoomId,
         });
-        // this
-        //     .socket
-        //     .emit('message', {
-        //         username: localStorage.getItem('username'),
-        //         id: localStorage.getItem('id'),
-        //         message: message,
-        //         roomId: this.props.currentRoomId
-        //     });
     }
 
     render() {
