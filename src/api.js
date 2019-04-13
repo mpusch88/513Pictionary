@@ -70,6 +70,9 @@ export function sendMessageEvent(data, cb) {
 }
 
 //----------------- Login -----------------//
+// function send_loginfo(info) {
+// 	socket.emit('new_loginfo', info);
+// }
 function send_loginfo(info) {
 	socket.emit('new_loginfo', info);
 }
@@ -79,12 +82,8 @@ function send_signupinfo(info) {
     socket.emit('new_signupinfo', info);
 }
 
-
-
 //--------------USER INFO--------------------//
-
-function update_userinfo(info, cb) {
-	socket.on('update_flag', updated_flag => cb(updated_flag));
+function update_userinfo(info) {
 	socket.emit('update_userinfo', info);
 }
 

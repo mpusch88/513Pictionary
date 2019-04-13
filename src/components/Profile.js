@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
 import {withRouter} from 'react-router-dom';
-import {update_userinfo} from '../api';
+import {update_userinfo, socket} from '../api';
 import Header from './Header';
 import SidebarGeneral from './SidebarGeneral';
 import Avatar from './Avatar';
@@ -29,15 +29,8 @@ class Profile extends React.Component {
             .bind(this);
     }
 
-    handleClick() {        
-        update_userinfo({
-            username: this.props.username,
-            nusername: this.state.new_username,
-            email: this.props.email,
-            psw: this.state.password,
-            npsw: this.state.new_password,
-            cpsw: this.state.conf_password
-        }, updateInfo => {
+    componentDidMount() {
+        socket.on('update_flag', updateInfo => {
 
             if (updateInfo.type === 'success') {
                 console.log('User info updated successfully!');
@@ -50,6 +43,17 @@ class Profile extends React.Component {
                 let {history} = this.props;
                 history.push({pathname: '/'});
             }
+        });
+    }
+
+    handleClick() {        
+        update_userinfo({
+            username: this.props.username,
+            nusername: this.state.new_username,
+            email: this.props.email,
+            psw: this.state.password,
+            npsw: this.state.new_password,
+            cpsw: this.state.conf_password
         });
     }
 
