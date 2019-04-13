@@ -314,7 +314,8 @@ io.on('connection', (socket) => {
 							socket.emit('login_flag', {
 								type: 'admin',
 								username: res[0].username,
-								email: res[0].email
+								email: res[0].email,
+								avatar: res[0].avatar
 							});
 
 							socket.username = res[0].username;
@@ -323,7 +324,8 @@ io.on('connection', (socket) => {
 							socket.emit('login_flag', {
 								type: 'user',
 								username: res[0].username,
-								email: res[0].email
+								email: res[0].email,
+								avatar: res[0].avatar
 							});
 
 							socket.username = res[0].username;
@@ -372,7 +374,7 @@ io.on('connection', (socket) => {
 				userListPerRoom[data.room.id] = userListPerRoom[data.room.id] ? userListPerRoom[data.room.id] : [];
 				//Add value to array
 				userListPerRoom[data.room.id].push(userInfo);
-				console.log("new join user, update list: ", userListPerRoom[data.room.id]);
+				console.log('new join user, update list: ', userListPerRoom[data.room.id]);
 				io.in(data.room.id).emit('entireUserList', userListPerRoom[data.room.id]);
 
 			} else if (roomsearch) {
@@ -411,17 +413,19 @@ io.on('connection', (socket) => {
 		console.log('created new room ' + roomId + ' :' + room.capacity);
 		socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
+
 		let userInfo = {
 			username: room.username,
 			score: 0,
 			isDrawer: false,
 			isReady: false
 		};
+		
 		//Make array for key if doesn't exist
 		userListPerRoom[roomId] = userListPerRoom[roomId] ? userListPerRoom[roomId] : [];
 		//Add value to array
 		userListPerRoom[roomId].push(userInfo);
-		console.log("create new room, list: ", userListPerRoom[roomId]);
+		console.log('create new room, list: ', userListPerRoom[roomId]);
 		socket.emit('entireUserList', userListPerRoom[roomId]);
 	});
 
@@ -601,11 +605,11 @@ io.on('connection', (socket) => {
 
 
 
-		console.log("inside disconnect");
+		console.log('inside disconnect');
 
 		// remove all rooms
-		console.log("Socket id: ", socket.id);
-		console.log("UserName : ", socket.username);
+		console.log('Socket id: ', socket.id);
+		console.log('UserName : ', socket.username);
 
 
 		for (const [roomId, userList] of Object.entries(userListPerRoom)) {
@@ -614,13 +618,13 @@ io.on('connection', (socket) => {
 			for (var i in userList) {
 				if (userList[i].username === socket.username) {
 
-					console.log("Before  logout: ", userListPerRoom[roomId]);
+					console.log('Before  logout: ', userListPerRoom[roomId]);
 					removeFromUserList(roomId, socket.username);
 
 					// inform other players in the room
 					io.in(roomId).emit('entireUserList', userListPerRoom[roomId]);
 
-					console.log("After logout: ", userListPerRoom[roomId]);
+					console.log('After logout: ', userListPerRoom[roomId]);
 				}
 
 			}

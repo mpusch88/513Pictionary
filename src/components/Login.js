@@ -29,23 +29,24 @@ class Login extends React.Component {
         let myName = $.cookie('user_name');
         let myType = $.cookie('user_type');
         let myEmail = $.cookie('user_email');
+        let myAvatar = $.cookie('user_avatar');
 
         if(myName && myType){   // has logged in before, route to dashboard/admin page
             if(myType === 'user'){
                 this
                     .props
-                    .authenticate(myType, myName, myEmail);
+                    .authenticate(myType, myName, myEmail, myAvatar);
                 console.log('user reconnected successful');
             }else if(myType === 'admin'){
                 this
                     .props
-                    .authenticate(myType, myName, myEmail);
+                    .authenticate(myType, myName, myEmail, myAvatar);
                 console.log('admin reconnected successful');
             }
         }
     }
 
-    handleClick() {
+    handleClick() {        
         send_loginfo({
             email: this.state.email,
             psw: this.state.password
@@ -66,6 +67,7 @@ class Login extends React.Component {
                 $.cookie('user_name', loginInfo.username);
                 $.cookie('user_type', loginInfo.type);
                 $.cookie('user_email', loginInfo.email);
+                $.cookie('user_avatar', loginInfo.avatar);
             } else if (loginInfo.type === 'admin') {
                 console.log('admin logged in successful');
                 let {history} = this.props;
@@ -73,6 +75,7 @@ class Login extends React.Component {
                 $.cookie('user_name', loginInfo.username);
                 $.cookie('user_type', loginInfo.type);
                 $.cookie('user_email', loginInfo.email);
+                $.cookie('user_avatar', loginInfo.avatar);
             } else if (loginInfo.type === 'fail') {
                 alert('Invalid email or password!');
                 let {history} = this.props;
