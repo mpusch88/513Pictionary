@@ -27,4 +27,4 @@ export const updateUserList = (newPlayer) => {
 		type: 'UPDATE_USERLIST',
 		newPlayer: newPlayer
 	};
-}
+};

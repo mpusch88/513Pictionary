@@ -1,0 +1,20 @@
+.sidebar-container {
+    width: 100%;
+    top: 0;
+    left: 0;
+	color: #ffffff;
+    background-color: #00000044;
+    padding: 15px;
+}
+
+.sidebar-container {
+	border-color: black;
+	background-color: #00000066;
+	border-width: 3px;
+	border-style: solid;
+	height: 100%;
+}
+
+.full {
+    height: 90vh;
+}
