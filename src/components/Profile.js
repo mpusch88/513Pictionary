@@ -7,8 +7,8 @@ import {update_userinfo} from '../api';
 import Header from './Header';
 import SidebarGeneral from './SidebarGeneral';
 import Avatar from './Avatar';
-import '../styles/sidebar.css';
 import '../styles/profile.css';
+import '../styles/sidebar.css';
 import '../styles/avatar.css';
 
 class Profile extends React.Component {
@@ -29,7 +29,7 @@ class Profile extends React.Component {
             .bind(this);
     }
 
-    handleClick() {
+    handleClick() {        
         update_userinfo({
             username: this.props.username,
             nusername: this.state.new_username,

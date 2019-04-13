@@ -189,17 +189,17 @@ let getUniqueId = function() {
 // ------------------- Helper function for Removing from userList ----------------------//
 
 let removeFromUserList = (roomId, username) => {
-    /// Remove from userList
-    if(userListPerRoom[roomId]){
-        let list = userListPerRoom[roomId];
-        for (var i in list) {
-            if (list[i].username === username) {
-                list.splice(i, 1);
-            }
-        }
+	/// Remove from userList
+	if (userListPerRoom[roomId]) {
+		let list = userListPerRoom[roomId];
+		for (var i in list) {
+			if (list[i].username === username) {
+				list.splice(i, 1);
+			}
+		}
 
-        userListPerRoom[roomId] = list;
-    }
+		userListPerRoom[roomId] = list;
+	}
 };
 
 
@@ -214,8 +214,7 @@ let removeFromUserList = (roomId, username) => {
 io.on('connection', (socket) => {
 	// TODO: check if it's a reconnection
 
-	socket.on('init-chat', (query) =>
-	{
+	socket.on('init-chat', (query) => {
 		//let query = socket.request._query,
 		let user = {
 			username: query.username,
@@ -246,7 +245,7 @@ io.on('connection', (socket) => {
 		console.log(info.email);
 		console.log(info.username);
 
-		if (info.cpsw === info.npsw) { //confirming passwords match
+		if (info.cpsw === info.npsw) {
 			var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
 			client1.connect(() => {
@@ -259,7 +258,29 @@ io.on('connection', (socket) => {
 					username: info.username
 				}).toArray(function(err, res) {
 
-					console.log(res[0].password);
+					if (res[0].password === info.psw) {
+						let updateresult = {};
+
+						updateresult = collection.updateOne( //update first entry that matches
+							{
+								'username': info.username,
+								'email': info.email
+							},
+
+							{
+								$set: { 'password': info.npsw }
+							});
+
+						if (updateresult) {
+							console.log('Update successful');
+							socket.emit('update_flag', { type: 'success' });
+						} else {
+							console.log('Update failed');
+							socket.emit('update_flag', { type: 'fail' });
+						}
+					} else {
+						socket.emit('update_flag', { type: 'fail' });
+					}
 				});
 			});
 		}
@@ -305,7 +326,7 @@ io.on('connection', (socket) => {
 								email: res[0].email
 							});
 
-                            socket.username = res[0].username;
+							socket.username = res[0].username;
 							console.log('User logged in');
 						}
 					} else {
@@ -326,21 +347,21 @@ io.on('connection', (socket) => {
 
 		console.log(roomsearch);
 
-        if(rooms.includes(data.room.id)) {
-            if (roomsearch && roomsearch.length < 5) {
-            	// join room
-                socket.join(data.room.id);
+		if (rooms.includes(data.room.id)) {
+			if (roomsearch && roomsearch.length < 5) {
+				// join room
+				socket.join(data.room.id);
 
-                // updating capacity
-                data.room.capacity = roomsearch.length + '/5';
+				// updating capacity
+				data.room.capacity = roomsearch.length + '/5';
 
-                console.log('joined successfully in existing room');
+				console.log('joined successfully in existing room');
 
-				let userInfo  = {
+				let userInfo = {
 					username: data.username,
-						score: 0,
-						isDrawer: false,
-						isReady: false
+					score: 0,
+					isDrawer: false,
+					isReady: false
 				};
 
 				// emiting to all sockets in room for new user joining in
@@ -351,46 +372,46 @@ io.on('connection', (socket) => {
 				userListPerRoom[data.room.id] = userListPerRoom[data.room.id] ? userListPerRoom[data.room.id] : [];
 				//Add value to array
 				userListPerRoom[data.room.id].push(userInfo);
-				console.log("new join user, update list: ",userListPerRoom[data.room.id]);
+				console.log("new join user, update list: ", userListPerRoom[data.room.id]);
 				io.in(data.room.id).emit('entireUserList', userListPerRoom[data.room.id]);
 
-            } else if (roomsearch) {
-                data.room.capacity = roomsearch.length + '/5';
-                socket.emit('full room', 'Room is full');
-            }
-        }
+			} else if (roomsearch) {
+				data.room.capacity = roomsearch.length + '/5';
+				socket.emit('full room', 'Room is full');
+			}
+		}
 
 		// socket.broadcast.to(data.room.id).emit('message',
 		// 	{type:'message', text: data.username + " just joined the room!"});
 
-        roomInfo[data.room.id] = data.room;
+		roomInfo[data.room.id] = data.room;
 
-        // to update capacity all sockets
-        io.emit('updateRoomInfo', data.room);
-    });
+		// to update capacity all sockets
+		io.emit('updateRoomInfo', data.room);
+	});
 
-    //joining the room, creating an entry in the list
-    socket.on('create-room', function (room) {
+	//joining the room, creating an entry in the list
+	socket.on('create-room', function(room) {
 		let roomId = getUniqueId();
 
-        while (rooms.includes(roomId)) {
-            roomId = getUniqueId();
-        }
+		while (rooms.includes(roomId)) {
+			roomId = getUniqueId();
+		}
 
-        //pushing it to room list
-        rooms.push(roomId);
-        //joining room
-        socket.join(roomId);
-        //setting the id on return data
+		//pushing it to room list
+		rooms.push(roomId);
+		//joining room
+		socket.join(roomId);
+		//setting the id on return data
 		room.id = roomId;
 		let roomsearch = io.sockets.adapter.rooms[room.id];
 		//should be 1
 		room.capacity = roomsearch.length + '/5';
 		roomInfo[roomId] = room;
-        console.log('created new room ' + roomId + ' :' + room.capacity);
-        socket.emit('sendRoomInfo', room);
+		console.log('created new room ' + roomId + ' :' + room.capacity);
+		socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
-		let userInfo  = {
+		let userInfo = {
 			username: room.username,
 			score: 0,
 			isDrawer: false,
@@ -402,7 +423,7 @@ io.on('connection', (socket) => {
 		userListPerRoom[roomId].push(userInfo);
 		console.log("create new room, list: ", userListPerRoom[roomId]);
 		socket.emit('entireUserList', userListPerRoom[roomId]);
-    });
+	});
 
 	//get all the rooms
 	socket.on('room-list', function(data) {
@@ -415,22 +436,22 @@ io.on('connection', (socket) => {
 	});
 
 
-    //leave game room event
-	socket.on('leave-room', function (data) {
+	//leave game room event
+	socket.on('leave-room', function(data) {
 		let roomsearch = io.sockets.adapter.rooms[data.id];
 		let room = roomInfo[data.id];
 
 		console.log('leaving room with id ' + data.id);
 
-		if(roomsearch){
-			room.capacity = roomsearch.length -1 + '/5' ;
+		if (roomsearch) {
+			room.capacity = roomsearch.length - 1 + '/5';
 			roomInfo[data.id] = room;
 			console.log('leaving room ' + room.capacity);
 		}
 
 
 		/// Remove from userList
-        removeFromUserList(data.id, data.username);
+		removeFromUserList(data.id, data.username);
 
 
 		//leave room
@@ -441,7 +462,7 @@ io.on('connection', (socket) => {
 
 		socket.emit('sendRoomInfo', room);
 
-        io.in(data.id).emit('entireUserList', userListPerRoom[data.id]);
+		io.in(data.id).emit('entireUserList', userListPerRoom[data.id]);
 
 		console.log('User leaves: ', userListPerRoom[data.id]);
 
@@ -466,7 +487,7 @@ io.on('connection', (socket) => {
 
 	// receive user ready event, emit to other players
 	socket.on('imReady', data => {
-		console.log('User: '+data.username+ ' is ready');
+		console.log('User: ' + data.username + ' is ready');
 		io.in(data.roomId).emit('newReadyPlayer', data.username);
 	});
 
@@ -546,32 +567,32 @@ io.on('connection', (socket) => {
 	// TODO: socket disconnection
 
 
-    //------------------------------ Logout ----------------------------------------------------//
+	//------------------------------ Logout ----------------------------------------------------//
 
-    socket.on('logout', (data) => {
+	socket.on('logout', (data) => {
 
-       let temp =  Object.keys( io.sockets.adapter.sids[socket.id] );
-        let allRoomsForSocket = temp.slice(1);
+		let temp = Object.keys(io.sockets.adapter.sids[socket.id]);
+		let allRoomsForSocket = temp.slice(1);
 
-        //console.log(allRoomsForSocket);
+		//console.log(allRoomsForSocket);
 
-       for( var i in allRoomsForSocket){
+		for (var i in allRoomsForSocket) {
 
-         //  console.log("Before  logout: ", userListPerRoom[allRoomsForSocket[i]]);
-           removeFromUserList(allRoomsForSocket[i], socket.username);
+			//  console.log("Before  logout: ", userListPerRoom[allRoomsForSocket[i]]);
+			removeFromUserList(allRoomsForSocket[i], socket.username);
 
-         //  console.log("After logout: ", userListPerRoom[allRoomsForSocket[i]]);
-           io.in(allRoomsForSocket[i]).emit('entireUserList', userListPerRoom[allRoomsForSocket[i]]);
-        }
-
-
-
-    });
+			//  console.log("After logout: ", userListPerRoom[allRoomsForSocket[i]]);
+			io.in(allRoomsForSocket[i]).emit('entireUserList', userListPerRoom[allRoomsForSocket[i]]);
+		}
 
 
 
+	});
 
-    ///---------------------------ON DISCONNECT ---------------------------------------------//
+
+
+
+	///---------------------------ON DISCONNECT ---------------------------------------------//
 
 
 	/// on disconnect , socket already leaves all the rooms it was in , no need to do it manually
@@ -590,8 +611,8 @@ io.on('connection', (socket) => {
 		for (const [roomId, userList] of Object.entries(userListPerRoom)) {
 			console.log(roomId);
 
-			for(var i in userList){
-				if(userList[i].username === socket.username){
+			for (var i in userList) {
+				if (userList[i].username === socket.username) {
 
 					console.log("Before  logout: ", userListPerRoom[roomId]);
 					removeFromUserList(roomId, socket.username);
@@ -607,9 +628,6 @@ io.on('connection', (socket) => {
 
 	});
 });
-
-
-
 
 const port = 8000;
 io.listen(port);
