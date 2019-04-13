@@ -24,7 +24,7 @@ class SketchComponent extends Component
 
     componentDidMount() {
         rcvStrokes(item => {
-            if (item) 
+            if (item)
                 this.setState({
                     items: this
                         .state
@@ -190,8 +190,8 @@ class SketchComponent extends Component
                             height={h}
                             animate={true}
                             size={size}
-                            color={'#ffffff'}
-                            fillColor={'#ffffff'}
+                            color={'rgba(255,255,255,0)'}
+                            fillColor={'rgba(255,255,255,0)'}
                             items={items}
                             tool={tool}
                             onCompleteItem={(i) => sndStrokes({item: i, roomId: this.props.currentRoomId})}/>
