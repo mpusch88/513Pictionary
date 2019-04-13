@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
-import {send_loginfo} from '../api';
+import {send_loginfo, socket} from '../api';
 import logo from '../resources/logo.png';
 import $ from 'jquery';
 // eslint-disable-next-line no-unused-vars
@@ -60,11 +60,8 @@ class Login extends React.Component {
         history.push({pathname: '/Signup'});
     }
 
-    handleClick() {
-        send_loginfo({
-            email: this.state.email,
-            psw: this.state.password
-        }, loginInfo => {
+    componentDidMount() {
+        socket.on('login_flag', loginInfo => {
 
             let userType = loginInfo.type
                 ? loginInfo.type
@@ -97,6 +94,13 @@ class Login extends React.Component {
                 history.push({pathname: '/'});
                 this.setState({message: 'Invalid email or password!'});
             }
+        });
+    }
+
+    handleClick() {
+        send_loginfo({
+            email: this.state.email,
+            psw: this.state.password
         });
     }
 

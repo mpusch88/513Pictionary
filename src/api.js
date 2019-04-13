@@ -70,16 +70,16 @@ export function sendMessageEvent(data, cb) {
 }
 
 //----------------- Login -----------------//
-function send_loginfo(info, cb) {
-	socket.on('login_flag', log_flag => cb(log_flag));
+function send_loginfo(info) {
 	socket.emit('new_loginfo', info);
 }
 
 //----------------- Sign Up -----------------//
-function send_signupinfo(info, cb) {
-    socket.on('signup_flag', log_flag => cb(log_flag));
+function send_signupinfo(info) {
     socket.emit('new_signupinfo', info);
 }
+
+
 
 //--------------USER INFO--------------------//
 
