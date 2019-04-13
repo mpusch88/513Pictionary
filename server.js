@@ -305,7 +305,8 @@ io.on('connection', (socket) => {
 						socket.emit('login_flag', {
 							type: 'admin',
 							username: res[0].username,
-							email: res[0].email
+							email: res[0].email,
+							avatar: res[0].avatar
 						});
 
 						socket.username = res[0].username;
@@ -314,7 +315,8 @@ io.on('connection', (socket) => {
 						socket.emit('login_flag', {
 							type: 'user',
 							username: res[0].username,
-							email: res[0].email
+							email: res[0].email,
+							avatar: res[0].avatar
 						});
 
 						socket.username = res[0].username;
