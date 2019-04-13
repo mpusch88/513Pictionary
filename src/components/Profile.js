@@ -29,7 +29,7 @@ class Profile extends React.Component {
             .bind(this);
     }
 
-    handleClick() {
+    handleClick() {        
         update_userinfo({
             username: this.props.username,
             nusername: this.state.new_username,
