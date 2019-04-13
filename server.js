@@ -185,7 +185,6 @@ let getUniqueId = function() {
 };
 
 
-
 // ------------------- Helper function for Removing from userList ----------------------//
 
 let removeFromUserList = (roomId, username) => {
@@ -201,12 +200,6 @@ let removeFromUserList = (roomId, username) => {
 		userListPerRoom[roomId] = list;
 	}
 };
-
-
-
-
-
-
 
 
 //########----------- on socket connection --------------------###########/
@@ -303,39 +296,83 @@ io.on('connection', (socket) => {
 				password: info.psw
 			};
 
-			collection
-				.find(myobj)
-				.toArray(function(err, res) {
-					if (res && res.length !== 0) {
-						if (res[0].isAdmin === '1') {
-							console.log('admin logged in');
-							console.log(res[0].email);
+			collection.find(myobj).toArray(function(err, res) {
+				if (res && res.length !== 0) {
+					if (res[0].isAdmin === '1') {
+						console.log('admin logged in');
+						console.log(res[0].email);
 
-							socket.emit('login_flag', {
-								type: 'admin',
-								username: res[0].username,
-								email: res[0].email,
-								avatar: res[0].avatar
-							});
+						socket.emit('login_flag', {
+							type: 'admin',
+							username: res[0].username,
+							email: res[0].email
+						});
 
-							socket.username = res[0].username;
+						socket.username = res[0].username;
 
-						} else if (res[0].isAdmin === '0') {
-							socket.emit('login_flag', {
-								type: 'user',
-								username: res[0].username,
-								email: res[0].email,
-								avatar: res[0].avatar
-							});
+					} else if (res[0].isAdmin === '0') {
+						socket.emit('login_flag', {
+							type: 'user',
+							username: res[0].username,
+							email: res[0].email
+						});
 
-							socket.username = res[0].username;
-							console.log('User logged in');
-						}
-					} else {
-						socket.emit('login_flag', { type: 'fail' });
-						console.log('failure');
+						socket.username = res[0].username;
+						console.log('User logged in');
 					}
-				});
+				} else {
+					socket.emit('login_flag', { type: 'fail' });
+					console.log('failure');
+				}
+			});
+		});
+	});
+
+	// Sign Up Handler
+	socket.on('new_signupinfo', (info) => {
+		console.log('signup');
+
+		var client1 = new MongoClient(uri, { useNewUrlParser: true });
+
+		client1.connect(err => {
+			const collection = client1
+				.db('pictionary')
+				.collection('users');
+
+			var myobj = { username: info.username };
+
+			// Checks if either username, email or password is empty
+			if (info.username.trim() === '' || info.email.trim() === '' || info.password === '') {
+				console.log('empty username, email or password');
+				socket.emit('signup_flag', { type: 'empty' });
+			} else {
+				// Javascript Email validation regex
+				// eslint-disable-next-line no-control-regex
+				var emailformat = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+				if (!emailformat.test(info.email)) {
+					socket.emit('signup_flag', { type: 'email' });
+				} else {
+					collection.find(myobj).toArray(function(err, res) {
+						if (res && res.length !== 0) { // checks if the username has been taken
+							console.log('username taken');
+							socket.emit('signup_flag', { type: 'taken' });
+						} else {
+							// generate a random number in-between 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 for the profile image
+							var min = 0;
+							var max = 10;
+							var random = Math.floor(Math.random() * (+max - +min)) + +min;
+
+							// insert data into the db
+							var myobj = { username: info.username, password: info.psw, email: info.email, wins: 0, gameplayed: 0, isAdmin: '0', avatar: random };
+							collection.insertOne(myobj, function(err, res) {
+								if (err) throw err;
+								console.log('inserted');
+								socket.emit('signup_flag', { type: 'signed' });
+							});
+						}
+					});
+				}
+			}
 		});
 	});
 
@@ -420,7 +457,7 @@ io.on('connection', (socket) => {
 			isDrawer: false,
 			isReady: false
 		};
-		
+
 		//Make array for key if doesn't exist
 		userListPerRoom[roomId] = userListPerRoom[roomId] ? userListPerRoom[roomId] : [];
 		//Add value to array
