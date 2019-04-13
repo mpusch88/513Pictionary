@@ -65,6 +65,10 @@ export function rcvMessage(cb) {
 	socket.on('message', data => cb(data));
 }
 
+export function rcvAnswer(cb){
+	socket.on('receive-answer', data => cb(data));
+}
+
 export function sendMessageEvent(data, cb) {
 	socket.emit('message', data);
 }

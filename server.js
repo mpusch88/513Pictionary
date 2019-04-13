@@ -27,19 +27,16 @@ client.connect(() => {
 		.db('pictionary')
 		.collection('categories');
 
-	let rawCategories = collection
-		.find()
-		.toArray((err, items) => {
+	collection.find().toArray((err, items) => {
 			categories = items;
 			items.forEach(function(arrayItem) {
 				categoryTypes.push(arrayItem.type);
 				categoryToWords[arrayItem.type] = arrayItem[arrayItem.type];
 			});
 		});
-
-	// not exported?
 	client.close();
 });
+
 
 let getUsers = () => {
 	return Object
@@ -485,12 +482,20 @@ io.on('connection', (socket) => {
 		console.log(rooms); // [ <socket.id>, 'room 237' ]
 
 		//io.in(data.roomId).emit('message', data);
-
+		//---- set message text to ***** if correct answer ----//
+		if(data.message.message.text === roomInfo[data.roomId].curAnswer){
+			data.message.message.text = "****";
+		}
+		//---------------------------------------------------/
 		socket
 			.broadcast
 			.to(data.roomId)
 			.emit('message', data);
 		// socket.broadcast.emit('message', data);
+
+		//------- Broadcast user got answer --------/
+		socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
+		//------------------------------------------//
 		//TODO - add function to check message with answer
 	});
 
@@ -510,6 +515,22 @@ io.on('connection', (socket) => {
 		//	removeSocket(socket.id);
 		io.emit('updateUsersList', getUsers());
 	});
+
+	//--------------- Pick answer from picked category then emit back to room -------//
+	socket.on('pick-answer', (category)=>{
+		console.log("Picking answer from category: "+category);
+		let answer = '';
+		for(let i=0; i<categories.size; i++){
+			if(categories[i].type === category){
+				answer = categories[i].answers[Math.random(answers.size)];
+				console.log("Answer picked for room "+data.roomId+ ": "+answer);
+			}
+		}
+		// socket.broadcast.to(data.roomId).emit('receive-answer', categories[category].answers[Math.random(answers.size)]);
+		socket.emit('receive-answer', answer); //send answer to current drawer
+		roomInfo[data.roomId].curAnswer = answer;
+	});
+	//-------------------------------------------------------------------------------//
 
 	// ---------------- Admin page --------------------// this is for testing right
 	// now, need to fetch from DB
@@ -614,3 +635,8 @@ io.on('connection', (socket) => {
 const port = 8000;
 io.listen(port);
 console.log('listening on port ', port);
+
+let testArray = {};
+testArray.one = 5;
+testArray.two = 6;
+console.log(testArray.two);

@@ -76,7 +76,7 @@ class Chat extends React.Component{
     }
 
     sendMessage(message) {
-        console.log(message);
+        console.log("Chat.js message value: "+message);
         this.setState({
             messages: this
                 .state
@@ -85,7 +85,7 @@ class Chat extends React.Component{
                     {
                         username: this.state.username,
                         id: this.state.id,
-                        message: message
+                        message: message,
                     }
                 ])
         });
@@ -94,7 +94,7 @@ class Chat extends React.Component{
             username: this.state.username,
             id: this.state.id,
             message: message,
-            roomId: this.props.currentRoomId
+            roomId: this.props.currentRoomId,
         });
         // this
         //     .socket

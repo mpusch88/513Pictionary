@@ -9,7 +9,7 @@ import {changeGameState} from '../actions/userAction.js';
 import {removeCurrentRoom} from '../actions/dashBoardAction';
 import { withRouter } from 'react-router-dom';
 
-import {game_myReady, leaveRoom, getNewUserJoin, getUserList, socket} from '../api';
+import {game_myReady, leaveRoom, getNewUserJoin, getUserList, socket, rcvAnswer} from '../api';
 import compose from 'recompose/compose';
 
 
@@ -21,7 +21,8 @@ import compose from 'recompose/compose';
             curDrawer: '',
             isDrawer: false,
             gameProgress: 'notReady', //ready, start
-            userList: []
+            userList: [],
+            curAnswer: ''
         };
 
         this.gameReady = this.gameReady.bind(this);
@@ -30,7 +31,7 @@ import compose from 'recompose/compose';
     componentDidMount() {
         socket.on('entireUserList', userList => {
             console.log("entireUserList", userList);
-            this.setState({userList: userList});
+            this.setState({userList: userList, curAnswer:''});
 
             if(!this.state.setUpFlg){
                 console.log("if drawer? "+this.props.username + userList[0].username);
@@ -64,11 +65,16 @@ import compose from 'recompose/compose';
         });
     }
 
-    gameStart() {
-        socket.emit('gameIsStarted', this.props.currentRoomId);
+    setAnswer(){
+        socket.emit('pick-answer',this.props.roomCategory);
+    }
 
+    gameStart() {
+        console.log("Answer: "+this.state.curAnswer);
+        socket.emit('gameIsStarted', this.props.currentRoomId);
         this.triggerTimer();
         if(this.props.username === this.state.curDrawer){
+            this.setAnswer();   //set current drawer's answer on start
             console.log('enable pad!');
             this.setState({isDrawer: true});
         }
@@ -193,7 +199,7 @@ import compose from 'recompose/compose';
                         </div> :
                         ''
                 }
-                {/*<Chat/>*/}
+                <Chat/>
             </div>
         );
     }
