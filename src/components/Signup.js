@@ -4,57 +4,42 @@ import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
 import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
-import {send_loginfo} from '../api';
+import {send_signupinfo} from '../api';
 import logo from '../resources/logo.png';
-import $ from 'jquery';
-// eslint-disable-next-line no-unused-vars
-import {cookie} from 'jquery.cookie';
 
-class Login extends React.Component {
+class Signup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: 'user1@example.com',
-            password: '12345'
+            message: '',
+            username: '',
+            email: '',
+            password: ''
         };
 
         this.handleClick = this
             .handleClick
             .bind(this);
-        this.handleClickSignUp = this
-            .handleClickSignUp
-            .bind(this);
         this.handleChange = this
             .handleChange
             .bind(this);
-
-        // get the cookie
-        let myName = $.cookie('user_name');
-        let myType = $.cookie('user_type');
-        let myEmail = $.cookie('user_email');
-
-        if(myName && myType){   // has logged in before, route to dashboard/admin page
-            if(myType === 'user'){
-                this
-                    .props
-                    .authenticate(myType, myName, myEmail);
-                console.log('user reconnected successful');
-            }else if(myType === 'admin'){
-                this
-                    .props
-                    .authenticate(myType, myName, myEmail);
-                console.log('admin reconnected successful');
-            }
-        }
+        this.handleGoBack = this
+            .handleGoBack
+            .bind(this);
+        // this.handleForgotPassword = this
+        //     .handleForgotPassword
+        //     .bind(this);
     }
 
-    handleClickSignUp() {
+    handleGoBack() {
+
         let {history} = this.props;
-        history.push({pathname: '/Signup'});
+        history.push({pathname: '/'});
     }
 
     handleClick() {
-        send_loginfo({
+        send_signupinfo({
+            username: this.state.username,
             email: this.state.email,
             psw: this.state.password
         }, loginInfo => {
@@ -62,34 +47,32 @@ class Login extends React.Component {
             let userType = loginInfo.type
                 ? loginInfo.type
                 : '';
+            console.log(loginInfo);
 
-            this
-                .props
-                .authenticate(userType, loginInfo.username, loginInfo.email);
-
-            if (loginInfo.type === 'user') {
-                console.log('user logged in successful');
+            this.props.authenticate(userType, loginInfo.username);
+            if (loginInfo.type === 'taken') {
+                this.setState({
+                    message: 'username taken'
+                });
+            } else if (loginInfo.type === 'signed') {
+                console.log("in")
                 let {history} = this.props;
                 history.push({pathname: '/Dashboard'});
-                $.cookie('user_name', loginInfo.username);
-                $.cookie('user_type', loginInfo.type);
-                $.cookie('user_email', loginInfo.email);
-            } else if (loginInfo.type === 'admin') {
-                console.log('admin logged in successful');
-                let {history} = this.props;
-                history.push({pathname: '/Admin'});
-                $.cookie('user_name', loginInfo.username);
-                $.cookie('user_type', loginInfo.type);
-                $.cookie('user_email', loginInfo.email);
-            } else if (loginInfo.type === 'fail') {
-                let {history} = this.props;
-                history.push({pathname: '/'});
+            } else if (loginInfo.type === 'email') {
                 this.setState({
-                    message: 'Invalid email or password!' 
-                 });
+                    message: 'invalid email format'
+                });
+            } else if (loginInfo.type === 'empty') {
+                this.setState({
+                    message: 'Please fill all the fields'
+                });
             }
         });
     }
+
+    // handleForgotPassword(e) {
+    //     e.preventDefault();
+    // }
 
     handleChange(e) {
         this.setState({
@@ -106,7 +89,23 @@ class Login extends React.Component {
                         <span className='subtitle'>Sign In Below!</span>
                     </div>
 
-                    <img src={logo} className="logo" alt="logo"/>
+                    <div>
+                        <h1>Let the journey begin</h1>
+                    </div>
+
+                    <img src={logo} className="logo" alt="logo" />
+
+                    
+
+                    <div className='input-group'>
+                        <span className='input-text-label'>User Name</span>
+                        <input
+                            className='input-field'
+                            type='text'
+                            name='username'
+                            onChange={this.handleChange}
+                            value={this.state.username}/>
+                    </div>
 
                     <div className='input-group'>
                         <span className='input-text-label'>Email</span>
@@ -129,16 +128,21 @@ class Login extends React.Component {
                     </div>
 
                     <div>
-                        <button className='login-button' onClick={this.handleClick}>
-                            Log In
-                        </button>
+                        <p>{this.state.message}</p>
                     </div>
 
                     <div>
-                        <button className="login-button" onClick={this.handleClickSignUp}>
+                        <button className='login-button' onClick={this.handleClick}>
                             Sign Up
                         </button>
                     </div>
+                    
+                    <div>
+                        <button className='login-button' onClick={this.handleGoBack}>
+                            Back
+                        </button>
+                    </div>
+                    
                 </div>
             </div>
         );
@@ -155,4 +159,4 @@ const matchDispatchToProps = (dispatch) => {
     }, dispatch);
 };
 
-export default withRouter(connect(mapStateToProps, matchDispatchToProps)(Login));
+export default withRouter(connect(mapStateToProps, matchDispatchToProps)(Signup));
