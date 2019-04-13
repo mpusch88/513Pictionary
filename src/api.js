@@ -146,6 +146,13 @@ function getAllExistingRooms(cb) {
 	});
 }
 
+export function setAnswer(data, cb){
+	socket.emit('pick-answer', data);
+	socket.on('receive-answer', (ans) => {
+		cb(ans)
+	})
+}
+
 /*--------------Cynthia updates--------------*/
 function joinRoomUpdateUserList(cb){
     socket.on('joinRoomUpdateUserList', username => {
