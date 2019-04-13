@@ -8,10 +8,11 @@ import {bindActionCreators} from 'redux';
 import {changeGameState} from '../actions/userAction.js';
 import {removeCurrentRoom} from '../actions/dashBoardAction';
 import {withRouter} from 'react-router-dom';
-
 import {game_myReady, leaveRoom, getNewUserJoin, getUserList, socket} from '../api';
 import compose from 'recompose/compose';
 import SidebarGame from './SidebarGame';
+
+// didn't import the css here but it works?! cool story
 
 class GameRoom extends React.Component {
     constructor(props) {
@@ -106,6 +107,7 @@ class GameRoom extends React.Component {
         console.log('curdrawer: ', this.state.curDrawer);
         console.log('userList: ', this.state.userList);
         console.log('last user in the user list:', this.state.userList[this.state.userList.length - 1]);
+
         if (this.state.curDrawer === this.state.userList[this.state.userList.length - 1].username) {
             console.log('game ends');
             // end game
@@ -162,7 +164,6 @@ class GameRoom extends React.Component {
                 .props
                 .changeGameState('ready');
         }
-
     }
 
     allUsersReady() {
@@ -190,7 +191,6 @@ class GameRoom extends React.Component {
         console.log('leaving game room' + this.props.currentRoomId);
         let {history} = this.props;
         history.push({pathname: '/Dashboard'});
-
     };
 
     // a little complicated to explain check out this:
@@ -210,7 +210,7 @@ class GameRoom extends React.Component {
                 <div className='row full'>
 
                     <div className='col-2'>
-                        <SidebarGame />
+                        <SidebarGame/>
                     </div>
 
                     <div className='col-10'>

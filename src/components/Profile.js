@@ -6,8 +6,11 @@ import {withRouter} from 'react-router-dom';
 import {update_userinfo} from '../api';
 import Header from './Header';
 import SidebarGeneral from './SidebarGeneral';
+import '../styles/sidebar.css';
 import '../styles/profile.css';
 import Avatar from './Avatar';
+import '../styles/avatar.css';
+
 
 class Profile extends React.Component {
     constructor(props) {
@@ -63,7 +66,7 @@ class Profile extends React.Component {
             
                 <Header title='User Profile'/>
 
-                <div className='row'>
+                <div className='row full'>
 
                     <div className='col-lg-2'>
                         <SidebarGeneral/>
