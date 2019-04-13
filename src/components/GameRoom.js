@@ -11,8 +11,7 @@ import {withRouter} from 'react-router-dom';
 import {game_myReady, leaveRoom, getNewUserJoin, getUserList, socket} from '../api';
 import compose from 'recompose/compose';
 import SidebarGame from './SidebarGame';
-
-// didn't import the css here but it works?! cool story
+import '../styles/sidebar.css';
 
 class GameRoom extends React.Component {
     constructor(props) {

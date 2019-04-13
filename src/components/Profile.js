@@ -7,8 +7,8 @@ import {update_userinfo} from '../api';
 import Header from './Header';
 import SidebarGeneral from './SidebarGeneral';
 import Avatar from './Avatar';
-import '../styles/sidebar.css';
 import '../styles/profile.css';
+import '../styles/sidebar.css';
 import '../styles/avatar.css';
 
 class Profile extends React.Component {
