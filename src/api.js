@@ -75,6 +75,12 @@ function send_loginfo(info, cb) {
 	socket.emit('new_loginfo', info);
 }
 
+//----------------- Sign Up -----------------//
+function send_signupinfo(info, cb) {
+    socket.on('signup_flag', log_flag => cb(log_flag));
+    socket.emit('new_signupinfo', info);
+}
+
 //--------------USER INFO--------------------//
 
 function update_userinfo(info, cb) {
@@ -159,6 +165,7 @@ export { game_myReady };
 export { game_otherReady };
 export { update_userinfo };
 export { send_loginfo };
+export { send_signupinfo };
 export { getCategories };
 export { checkIfCategoryExists };
 export { saveNewCategoryOrWord };

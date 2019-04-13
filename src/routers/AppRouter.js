@@ -2,11 +2,12 @@ import React from 'react';
 import {Route, Switch} from 'react-router-dom';
 import Login from '../components/Login';
 import GameRoom from '../components/GameRoom';
-import AdminHome from '../components/AdminHome';
-import Dashboard from '../components/Dashboard';
 import Profile from '../components/Profile';
 import requireAuth from '../components/requireAuth';
 import {connect} from 'react-redux';
+import Signup from '../components/Signup';
+import Dashboard from '../components/Dashboard';
+import AdminHome from '../components/AdminHome';
 
 class AppRouter extends React.Component {
     constructor(props) {
@@ -19,6 +20,7 @@ class AppRouter extends React.Component {
                 <Switch>
                     <Route path='/' component={Login} exact={true}/>
                     <Route path='/Login' component={Login} exact={true}/>
+                    <Route path='/Signup' component={Signup} exact={true}/>
                     <Route path='/Game' component={requireAuth(GameRoom, false)} exact={true}/>
                     <Route path='/Profile' component={requireAuth(Profile, false)} exact={true}/>
                     <Route

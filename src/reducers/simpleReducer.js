@@ -17,7 +17,8 @@ export default (state = initState, action) => {
 			return Object.assign({}, state, {
 				userType: action.userType,
 				username: action.username,
-				email: action.email
+				email: action.email,
+				avatar: action.avatar
 			});
 
 		case 'CHANGE_GAME_STATE':
@@ -50,7 +51,8 @@ export default (state = initState, action) => {
 			return {
 				...state,
 				PlayerList: state.PlayerList.concat(action.newPlayer)
-			}
+			};
+
 			// return Object.assign({}, state,{
 			// 	PlayerList: state.PlayerList.concat(action.newPlayer)
 			// });
