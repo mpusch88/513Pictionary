@@ -1,0 +1,7 @@
+.chatbox {
+	position: relative;
+	bottom: 0;
+	border-color: #000000cc;
+	border-style: inset;
+	border-width: 1px;
+}

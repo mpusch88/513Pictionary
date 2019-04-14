@@ -1,4 +1,6 @@
 import React from 'react';
+import Avatar from './Avatar';
+import {connect} from 'react-redux';
 import '../styles/sidebar.css';
 import SidebarStats from './SidebarStats.js';
 
@@ -19,4 +21,8 @@ class SidebarGeneral extends React.Component {
     }
 }
 
-export default SidebarGeneral;
+const mapStateToProps = (state) => {
+    return {username: state.username};
+};
+
+export default connect(mapStateToProps)(SidebarGeneral);

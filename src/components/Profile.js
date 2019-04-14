@@ -6,10 +6,8 @@ import {withRouter} from 'react-router-dom';
 import {update_userinfo, socket} from '../api';
 import Header from './Header';
 import SidebarGeneral from './SidebarGeneral';
-import Avatar from './Avatar';
 import '../styles/profile.css';
-import '../styles/sidebar.css';
-import '../styles/avatar.css';
+import '../styles/base.css';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -31,7 +29,6 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-
         socket.on('update_flag', updateInfo => {
             if (updateInfo.type === 'success') {
                 console.log('User info updated successfully!');
@@ -43,7 +40,7 @@ class Profile extends React.Component {
         });
     }
 
-    handleClick() {        
+    handleClick() {
         update_userinfo({
             username: this.props.username,
             nusername: this.state.new_username,
@@ -62,16 +59,16 @@ class Profile extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className='overflow-hidden'>
                 <Header title='User Profile'/>
 
                 <div className='row full'>
 
-                    <div className='col-lg-2'>
+                    <div className='col-sm-3'>
                         <SidebarGeneral/>
                     </div>
 
-                    <div className='col-lg-8'>
+                    <div className='col-sm-9'>
                         <div className='profile-outer'>
                             <div className='profile-container'>
 
@@ -130,14 +127,8 @@ class Profile extends React.Component {
                             </div>
                         </div>
                     </div>
-
-                    <div className='col-lg-2'>
-                        <Avatar />
-                    </div>
-
                 </div>
             </div>
-
         );
     }
 }
