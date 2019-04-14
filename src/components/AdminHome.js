@@ -85,10 +85,14 @@ class AdminHome extends React.Component {
     }
 
     triggerChange = (targetValue) => {
-        checkIfCategoryExists(targetValue, data => {
-            console.log(data);
-        });
-    }
+    //     checkIfCategoryExists(targetValue, data => {
+    //         console.log(data);
+    //         if(data.error === 'Category Already Exists'){
+    //             this.toggleModal();
+    //             this.showDialogMessage('Category Already exists');
+    //         }
+    //     });
+     }
 
     handleCategoryChange = event => {
         this.setState({currentCategory: event.target.value});
@@ -108,14 +112,41 @@ class AdminHome extends React.Component {
     saveForm = () => {
 
         if ((this.state.currentCategory || this.state.newCatVal) && this.state.word) {
-            saveNewCategoryOrWord({existingCategory: this.state.currentCategory, newCategory: this.state.newCatVal, word: this.state.word});
+
+            if (this.state.newCatVal) {
+                checkIfCategoryExists(this.state.newCatVal, data => {
+                    console.log(data);
+                    if (data.error === 'Category Already Exists') {
+                        this.toggleModal();
+                        this.showDialogMessage('Category Already exists');
+                    }
+
+                    return;
+                });
+            }
+
+
+            saveNewCategoryOrWord({
+                existingCategory: this.state.currentCategory,
+                newCategory: this.state.newCatVal,
+                word: this.state.word
+            });
+
             this.toggleModal();
+
+            if (this.state.currentCategory && this.state.word) {
+                this.showDialogMessage('New word was successfully added');
+            } else if (this.state.newCatVal && this.state.word) {
+                this.showDialogMessage('New category and word was successfully added');
+            }
+
             this.handleClear();
-            this.showDialogMessage('Category was successfully saved');
+            this.setState({isExistingDisabled: false, isNewDisabled: false});
         }
 
-        // this.toggleModal(); this.handleClear();
-    };
+    }
+
+
 
     toggleModal = () => {
         this.setState({
