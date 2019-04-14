@@ -275,11 +275,11 @@ class GameRoom extends React.Component {
                     .toUpperCase() + '!'}/>
                 <div className='row full'>
 
-                    <div className='col-2'>
-                        <SidebarGame users={this.state.userList}/>
+                    <div className='col-3'>
+                        <SidebarGame userList={this.state.userList} isDrawerToggled={this.state.isDrawer}/>
                     </div>
 
-                    <div className='col-10'>
+                    <div className='col-9'>
 
                             <TimerProgressBar
                                 restartTrigger={this.restartRound}
