@@ -212,19 +212,24 @@ let checkAnswer = (data) => {
 	let second = 3;
 	let rest = 1;
 	let point = 0;
+
 	if (roomInfo[data.roomId].curAnswer) {
 		rmAnswer = roomInfo[data.roomId].curAnswer;
 	}
+
 	console.log('Checking ' + rmAnswer + ' with ' + data.answer);
-	let regex = new RegExp('\\b' + rmAnswer + '\\b');
-	if (data.answer.match(data.regex)) {
+	let reg = new RegExp('\\b' + rmAnswer + '\\b');
+
+	if (data.answer.match(reg)) {
 		console.log('Username: ' + data.username + ' | Answered correctly with ' + rmAnswer);
 		let ulRoom = userListPerRoom[data.roomId];
 		let user;
+
 		for (let i = 0; i < ulRoom.length; i++) {
 			if (ulRoom[i].username === data.username)
 				user = ulRoom[i];
 		}
+
 		console.log('Modifying data for user: ' + user.userame);
 
 		if (!user.currentPoints)
@@ -232,6 +237,7 @@ let checkAnswer = (data) => {
 		if (!roomInfo[data.roomId].place) {
 			roomInfo[data.roomId].place = 1;
 		}
+
 		// if(user.isHost)
 		// 	return {win:0};
 		if (!user.hasAnswered) {
