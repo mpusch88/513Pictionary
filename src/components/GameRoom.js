@@ -73,6 +73,10 @@ class GameRoom extends React.Component {
                 this.gameStart();
             }
         });
+
+        socket.on('newScoreUpdate', data => {
+            this.updateUserStat(data.username, null, data.score, null);
+        });
     }
 
     updateUserStat(username, isDrawer, score, avatarId){
@@ -93,10 +97,12 @@ class GameRoom extends React.Component {
                 }
             }
         }
-        if(score !== null) tmp[i].score = score;
+        if(score !== null){
+            tmp[i].score = score;
+        }
         if(avatarId !== null) tmp[i].avatarId = avatarId;
         this.setState({userList: tmp});
-        this.props.updateUserList(this.state.userList);
+        this.props.updateUserList(tmp);
     }
 
     nextDrawer() {
@@ -298,7 +304,10 @@ class GameRoom extends React.Component {
                                     </div>
                                 : ''
 }
-                            <Chat ansFlg = {gameProgress !== 'notReady' && (this.startCountdown.wasDrawer || this.state.isDrawer)}/>
+                            <Chat
+                                updateScore={this.updateUserStat}
+                                ansFlg = {gameProgress !== 'notReady' && (this.startCountdown.wasDrawer || this.state.isDrawer)}
+                            />
                     </div>
                 </div>
             </div>

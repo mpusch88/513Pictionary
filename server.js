@@ -209,15 +209,18 @@ let removeFromUserList = (roomId, username) => {
 //------------------------- Helper function for answers ------------------------//
 //data contents: room id, username, answer
 let checkAnswer = (data) =>{
-	let rmAnswer = roomInfo[data.roomId].curAnswer;
+	let rmAnswer = '';
 	let first = 5;
 	let second = 3;
 	let rest = 1;
 	let point = 0;
-	console.log("Checking "+rmAnswer+" with "+data.answer);
-	if(rmAnswer === data.answer){
+	if(roomInfo[data.roomId].curAnswer){
+		rmAnswer = roomInfo[data.roomId].curAnswer;
+	}
+	console.log("Checking "+rmAnswer+" with "+data.answer)
+	let regex = new RegExp('\\b'+rmAnswer+'\\b');
+	if(data.answer.match(data.regex)){
 		console.log("Username: "+data.username+" | Answered correctly with "+rmAnswer);
-		// let user = userListPerRoom[data.roomId].find((data.username));
 		let ulRoom = userListPerRoom[data.roomId];
 		let user;
 		for(let i=0; i<ulRoom.length; i++){
@@ -248,10 +251,11 @@ let checkAnswer = (data) =>{
 					point = rest;
 			}
 			console.log("User: "+user.username+" | Round Point: "+point+" | Total Points: "+user.currentPoints);
+			io.in(data.roomId).emit('newScoreUpdate', {username: user.username, score: user.currentPoints});
 			user.hasAnswered = true;
 			return { win: 1, points: point};
 		}
-		return { win: 1};		
+		return { win: 1};
 	}
 	else
 		return { win: 0};
@@ -654,11 +658,13 @@ io.on('connection', (socket) => {
 				let answerList = document.answers;
 				let rnd = Math.floor(Math.random(answerList.length) * 10);
 				// let answer = document.answers[Math.random(rnd)];
+				console.log("List size: "+answerList.length);
+				console.log("Generate random number: "+rnd);
 				let answer = answerList[rnd];
 				roomInfo[data.roomId].curAnswer = answer;
 				console.log("Picked answer: "+answer);
 				socket.emit('receive-answer', answer);
-			});			
+			});
 		});
 		catclient.close();
 	});
