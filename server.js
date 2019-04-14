@@ -190,14 +190,19 @@ let getUniqueId = function() {
 let removeFromUserList = (roomId, username) => {
 	/// Remove from userList
 	if (userListPerRoom[roomId]) {
+		console.log("inside removeFrom user list")
 		let list = userListPerRoom[roomId];
 		for (var i in list) {
+			console.log(list[i].username);
 			if (list[i].username === username) {
+				console.log("inside removeFrom user list")
 				list.splice(i, 1);
 			}
 		}
 
+		console.log(list);
 		userListPerRoom[roomId] = list;
+
 	}
 };
 
@@ -453,7 +458,8 @@ io.on('connection', (socket) => {
 					username: data.username,
 					score: 0,
 					isDrawer: false,
-					isReady: false
+					isReady: false,
+					avatarId: data.avatar
 				};
 
 				// emiting to all sockets in room for new user joining in
@@ -511,7 +517,8 @@ io.on('connection', (socket) => {
 			username: room.username,
 			score: 0,
 			isDrawer: false,
-			isReady: false
+			isReady: false,
+			avatarId: room.avatar
 		};
 
 		//Make array for key if doesn't exist

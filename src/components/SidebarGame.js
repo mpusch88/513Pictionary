@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import BlockOutlined from '@material-ui/icons/BlockOutlined';
 import compose from "recompose/compose";
 import {connect} from "react-redux";
+import {leaveRoom} from "../api";
 
 
 
@@ -82,23 +83,25 @@ class SidebarGame extends React.Component {
     }
 
 
+     listItems = (userList) =>
 
-     listItems = (userList) => userList.map((userInfo) =>
+         userList.map((userInfo) =>
          <ListItem>
              <ListItemAvatar>
                  <Avatar className={ this.props.isDrawerToggled  && this.props.username === userInfo.username ? this.props.classes.avatarDrawer : null}>
-                     <Avatar className={this.props.classes.avatar} src={"images/" + 1 +".jpg"}/>
+                         <Avatar className={this.props.classes.avatar} src={"images/" + userInfo.avatarId + ".jpg"}/>
                  </Avatar>
              </ListItemAvatar>
              <ListItemText classes={{ primary: this.props.classes.userName, secondary: this.props.classes.score}}
                            primary={userInfo.username}
                            secondary={'Score: ' + userInfo.score}
              />
-             { this.props.isCurrentRoomHost && this.props.username !== userInfo.username && <ListItemSecondaryAction>
-                 <IconButton aria-label="Delete">
-                     <BlockOutlined />
-                 </IconButton>
-             </ListItemSecondaryAction>}
+             {/*{ this.props.isCurrentRoomHost && this.props.username !== userInfo.username &&*/}
+             {/*<ListItemSecondaryAction onClick={this.removeUserFromRoom(userInfo.username)}>*/}
+                 {/*<IconButton aria-label="Delete">*/}
+                     {/*<BlockOutlined />*/}
+                 {/*</IconButton>*/}
+             {/*</ListItemSecondaryAction>}*/}
          </ListItem>
     );
 
@@ -132,6 +135,7 @@ const mapStateToProps = (state) => {
     return {
         avatar: state.avatar,
         username: state.username,
+        currentRoomId: state.currentRoomId,
         isCurrentRoomHost: state.isCurrentRoomHost
     };
 };

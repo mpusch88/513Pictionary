@@ -214,7 +214,12 @@ class Dashboard extends React.Component {
         let roomList = this.state.roomList;
 
         if (this.state.newRoomName && this.state.roomCategory) {
-            createRoom({id: '', roomName: this.state.newRoomName, roomCategory: this.state.roomCategory, hostName: this.props.username, username: this.props.username});
+            createRoom({id: '',
+                roomName: this.state.newRoomName,
+                roomCategory: this.state.roomCategory,
+                hostName: this.props.username,
+                username: this.props.username,
+                avatar: this.props.avatar});
         }
 
         getRoomInfo({
@@ -271,16 +276,18 @@ class Dashboard extends React.Component {
         let room = this.state.roomObjMap[id];
 
 
-        socket.on("canJoinRoom", (data) => {
+        // socket.on("canJoinRoom", (data) => {
+        //
+        //     if(data.id === id){
+        //
+        //     }
+        //
+        // });
 
-            if(data.id === id){
 
-            }
-
-        });
-
-
-        joinRoom({room: room, username: this.props.username});
+        joinRoom({room: room,
+                        username: this.props.username,
+                        avatar: this.props.avatar});
 
         getRoomInfo({
             id: id,
@@ -469,7 +476,8 @@ const List = ({items, showJoinButton, onItemClick}) => (items.map((item, i) => <
 
 
 const mapStateToProps = (state) => {
-    return {username: state.username};
+    return {username: state.username,
+            avatar: state.avatar};
 };
 
 const matchDispatchToProps = (dispatch) => {
