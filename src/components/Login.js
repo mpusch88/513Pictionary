@@ -41,15 +41,15 @@ class Login extends React.Component {
                     .props
                     .authenticate(myType, myName, myEmail, myAvatar);
                 console.log('user reconnected successful');
-                let {history} = this.props;
-                history.push({pathname: '/Dashboard'});
+                // let {history} = this.props;
+                // history.push({pathname: '/Dashboard'});
             } else if (myType === 'admin') {
                 this
                     .props
                     .authenticate(myType, myName, myEmail, myAvatar);
                 console.log('admin reconnected successful');
-                let {history} = this.props;
-                history.push({pathname: '/Admin'});
+                // let {history} = this.props;
+                // history.push({pathname: '/Admin'});
             } else if (myType === 'fail') {
                 this
                     .props
@@ -74,8 +74,6 @@ class Login extends React.Component {
             this
                 .props
                 .authenticate(userType, loginInfo.username, loginInfo.email, loginInfo.avatar);
-
-                console.log('AVATAR # = ' + loginInfo.avatar);
 
             if (loginInfo.type === 'user') {
                 console.log('user logged in successful');
