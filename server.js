@@ -440,6 +440,25 @@ io.on('connection', (socket) => {
 		});
 	});
 
+
+	// ------ USER UPDATE --------------- //
+
+	socket.on('update_userhistory', (info) => {
+		var client1 = new MongoClient(uri, { useNewUrlParser: true });
+		client1.connect(err => {
+			const collection = client1
+				.db('pictionary')
+				.collection('users');
+
+			var myobj = { username: info.username };
+			collection.find(myobj).toArray(function(err, res) {
+				if (err) throw err;
+				console.log(res[0].username);
+				socket.emit('signup_flag', { username: res[0].username });
+			});
+		});
+	});
+
 	// ------------------------- Login -------------------------//
 	// ---------------------------- creating and join room
 	// -----------------------------------------// lets socket join a room or create
@@ -648,13 +667,13 @@ io.on('connection', (socket) => {
 
 
 		// to reset the flag that hasAnswered
-			let userList = userListPerRoom[data.roomId];
-			for (var i in userList) {
-				userList[i].hasAnswered = false;
+		let userList = userListPerRoom[data.roomId];
+		for (var i in userList) {
+			userList[i].hasAnswered = false;
 
-			}
+		}
 
-			console.log(userList);
+		console.log(userList);
 		userListPerRoom[data.roomId] = userList;
 
 
@@ -729,23 +748,13 @@ io.on('connection', (socket) => {
 		}
 	});
 
-
 	socket.on('gameIsStarted', (data) => {
-
-
-		io.emit('updateRoomAvail', {id: data, isAvailable: false} )
-
-
+		io.emit('updateRoomAvail', { id: data, isAvailable: false });
 	});
-
 
 	socket.on('gameIsEnded', (data) => {
-
-		io.emit('updateRoomAvail', {id: data.roomId, isAvailable: true} )
-
+		io.emit('updateRoomAvail', { id: data.roomId, isAvailable: true });
 	});
-
-
 
 
 	// -----------------  Dashboard ---------------------------//
