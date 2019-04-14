@@ -190,17 +190,15 @@ let getUniqueId = function() {
 let removeFromUserList = (roomId, username) => {
 	/// Remove from userList
 	if (userListPerRoom[roomId]) {
-		console.log("inside removeFrom user list")
 		let list = userListPerRoom[roomId];
 		for (var i in list) {
-			console.log(list[i].username);
+
 			if (list[i].username === username) {
 				console.log("inside removeFrom user list")
 				list.splice(i, 1);
 			}
 		}
 
-		console.log(list);
 		userListPerRoom[roomId] = list;
 
 	}
@@ -445,8 +443,6 @@ io.on('connection', (socket) => {
 	socket.on('join-room', function(data) {
 		let roomsearch = io.sockets.adapter.rooms[data.room.id];
 
-		console.log(roomsearch);
-
 		if (rooms.includes(data.room.id)) {
 			if (roomsearch && roomsearch.length < 5) {
 				// join room
@@ -479,7 +475,7 @@ io.on('connection', (socket) => {
 
 
 			} else if (roomsearch && roomsearch.length  === 5) {
-				console.log("room capacity is: " , data.room.capacity);
+
 				io.emit('updateRoomAvail', {id: data.room, isAvailable: false} )
 				data.room.capacity = roomsearch.length + '/5';
 				socket.emit('full room', 'Room is full');
@@ -746,14 +742,13 @@ io.on('connection', (socket) => {
 		let temp = Object.keys(io.sockets.adapter.sids[socket.id]);
 		let allRoomsForSocket = temp.slice(1);
 
-		//console.log(allRoomsForSocket);
 
 		for (var i in allRoomsForSocket) {
 
-			//  console.log("Before  logout: ", userListPerRoom[allRoomsForSocket[i]]);
+
 			removeFromUserList(allRoomsForSocket[i], socket.username);
 
-			//  console.log("After logout: ", userListPerRoom[allRoomsForSocket[i]]);
+
 			io.in(allRoomsForSocket[i]).emit('entireUserList', userListPerRoom[allRoomsForSocket[i]]);
 		}
 
@@ -775,15 +770,7 @@ io.on('connection', (socket) => {
 
 		console.log('inside disconnect');
 
-		// remove all rooms
-		console.log('Socket id: ', socket.id);
-		console.log('UserName : ', socket.username);
 
-
-		console.log(userListPerRoom);
-		Object.keys(userListPerRoom).forEach(function(roomId) {
-			console.log(roomId, userListPerRoom[roomId]);
-		});
 
 		for (const [roomId, userList] of Object.entries(userListPerRoom)) {
 			console.log(roomId);
@@ -791,13 +778,13 @@ io.on('connection', (socket) => {
 			for (var i in userList) {
 				if (userList[i].username === socket.username) {
 
-					console.log('Before  logout: ', userListPerRoom[roomId]);
+					console.log('Before  disconnect: ', userListPerRoom[roomId]);
 					removeFromUserList(roomId, socket.username);
 
 					// inform other players in the room
 					io.in(roomId).emit('entireUserList', userListPerRoom[roomId]);
 
-					console.log('After logout: ', userListPerRoom[roomId]);
+					console.log('After disconnect: ', userListPerRoom[roomId]);
 				}
 
 			}

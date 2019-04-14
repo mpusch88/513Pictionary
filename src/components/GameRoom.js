@@ -254,7 +254,7 @@ class GameRoom extends React.Component {
     }
 
     leaveRoom = () => {
-        leaveRoom({id: this.props.currentRoomId});
+        leaveRoom({id: this.props.currentRoomId, username: this.props.username});
         this
             .props
             .removeCurrentRoom();
