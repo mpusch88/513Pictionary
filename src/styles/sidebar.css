@@ -3,22 +3,26 @@
 	top: 0;
 	left: 0;
 	color: #ffffff;
-	padding: 15px;
 	border-color: black;
 	background-color: #00000066;
 	border-width: 3px;
 	border-style: solid;
 	height: 100%;
+	position: relative;
 }
 
 .profile_title {
-	font-size: 2em;
+	font-size: 1.5em;
 }
 
-.avatar_area{
-
+.avatar_area {
+	margin: 20px;
+	margin-top: 5px;
 }
 
-.stats_area{
-
+.stats_area {
+	display: flex;
+	width: 100%;
+	background-color: black;
+	height: 100%;
 }

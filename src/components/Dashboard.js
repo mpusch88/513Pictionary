@@ -15,7 +15,6 @@ import {
     createRoom,
     getRoomInfo,
     getAllExistingRooms,
-    updateRoomInfo,
     socket
 } from '../api';
 import {withRouter} from 'react-router-dom';
@@ -32,7 +31,7 @@ import SidebarGeneral from './SidebarGeneral';
 import '../styles/sidebar.css';
 import '../styles/base.css';
 
-const styles = theme => ({
+const styles = () => ({
     button: {
         width: 100,
         height: 100,
@@ -100,8 +99,6 @@ class Dashboard extends React.Component {
 
         getAllExistingRooms(data => {
             if (data) {
-                // console.log(data);
-
                 this.setState({
                     roomList: this
                         .state
@@ -116,9 +113,9 @@ class Dashboard extends React.Component {
                     let room = data[key];
                     map[(data[key].id)] = data[key];
 
-                    if(room.capacity ===  '5/5') {
+                    if (room.capacity === '5/5') {
                         roomAvailable[(data[key].id)] = false;
-                    }else{
+                    } else {
                         roomAvailable[(data[key].id)] = true;
                     }
 
@@ -183,15 +180,12 @@ class Dashboard extends React.Component {
         });
 
         socket.on('updateRoomAvail', (data) => {
-
             let nextStateForAvailale = this.state.roomAvailable;
             nextStateForAvailale[data.id] = data.isAvailable;
             this.setState({roomAvailable: nextStateForAvailale});
 
             console.log("inside update room available now");
             console.log(this.state.roomAvailable[data.id]);
-
-
         });
     }
 
@@ -215,12 +209,14 @@ class Dashboard extends React.Component {
         let roomList = this.state.roomList;
 
         if (this.state.newRoomName && this.state.roomCategory) {
-            createRoom({id: '',
+            createRoom({
+                id: '',
                 roomName: this.state.newRoomName,
                 roomCategory: this.state.roomCategory,
                 hostName: this.props.username,
                 username: this.props.username,
-                avatar: this.props.avatar});
+                avatar: this.props.avatar
+            });
         }
 
         getRoomInfo({
@@ -241,15 +237,13 @@ class Dashboard extends React.Component {
             let map = this.state.roomObjMap;
             map[info.id] = newRoom;
 
-
             let prevState = this.state;
-            this.setState(
-                prevState => ({
-                    roomAvailable: {
-                        ...prevState.roomAvailable,
-                        [prevState.roomAvailable[info.id]]: true,
-                    }
-                }));
+            this.setState(prevState => ({
+                roomAvailable: {
+                    ...prevState.roomAvailable,
+                    [prevState.roomAvailable[info.id]]: true
+                }
+            }));
 
             this
                 .props
@@ -276,7 +270,6 @@ class Dashboard extends React.Component {
         let id = e.target.id;
         let room = this.state.roomObjMap[id];
 
-
         // socket.on("canJoinRoom", (data) => {
         //
         //     if(data.id === id){
@@ -285,10 +278,7 @@ class Dashboard extends React.Component {
         //
         // });
 
-
-        joinRoom({room: room,
-                        username: this.props.username,
-                        avatar: this.props.avatar});
+        joinRoom({room: room, username: this.props.username, avatar: this.props.avatar});
 
         getRoomInfo({
             id: id,
@@ -351,11 +341,11 @@ class Dashboard extends React.Component {
                 <Header title='Welcome'/>
 
                 <div className='row full'>
-                    <div className='col-3'>
+                    <div className='col-sm-3'>
                         <SidebarGeneral/>
                     </div>
 
-                    <div className='col-9'>
+                    <div className='col-sm-9'>
                         <div className={classes.search}>
                             <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
                                 Create New Game Room
@@ -427,9 +417,10 @@ class Dashboard extends React.Component {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <List items={roomList}
-                                      showJoinButton={this.state.roomAvailable}
-                                      onItemClick={this.handleJoinRoomClick}/>
+                                <List
+                                    items={roomList}
+                                    showJoinButton={this.state.roomAvailable}
+                                    onItemClick={this.handleJoinRoomClick}/>
                             </TableBody>
                         </Table>
                     </div>
@@ -438,7 +429,6 @@ class Dashboard extends React.Component {
         );
     }
 }
-
 
 const CustomTableCell = withStyles(theme => ({
     head: {
@@ -450,7 +440,14 @@ const CustomTableCell = withStyles(theme => ({
     }
 }))(TableCell);
 
-const ListItem = ({id, name, category, capacity, onClick, showJoinButton}) => (
+const ListItem = ({
+    id,
+    name,
+    category,
+    capacity,
+    onClick,
+    showJoinButton
+}) => (
     <TableRow className={styles.row} key={id}>
         <CustomTableCell component="th" scope="row">
             {name}
@@ -458,7 +455,7 @@ const ListItem = ({id, name, category, capacity, onClick, showJoinButton}) => (
         <CustomTableCell align="right">{category}</CustomTableCell>
         <CustomTableCell align="right">{capacity}</CustomTableCell>
         <CustomTableCell align="right">
-            { showJoinButton &&  <button id={id} onClick={onClick}>
+            {showJoinButton && <button id={id} onClick={onClick}>
                 Join Room
             </button>}
         </CustomTableCell>
@@ -474,11 +471,8 @@ const List = ({items, showJoinButton, onItemClick}) => (items.map((item, i) => <
     onClick={onItemClick}
     showJoinButton={showJoinButton[item.id]}/>));
 
-
-
 const mapStateToProps = (state) => {
-    return {username: state.username,
-            avatar: state.avatar};
+    return {username: state.username, avatar: state.avatar};
 };
 
 const matchDispatchToProps = (dispatch) => {

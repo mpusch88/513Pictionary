@@ -45,6 +45,13 @@
 	display: flex;
 }
 
+.input-group-signup {
+	margin: 2px;
+	padding: 5px;
+	width: 100%;
+	display: flex;
+}
+
 .input-text-label {
 	display: block;
 	margin: 5px;
@@ -75,6 +82,21 @@
 	border: none;
 	margin-top: 10px;
 	margin-bottom: 10px;
+	position: relative;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.login-button-signup {
+	width: 100%;
+	background-color: #1554dbbe;
+	color: white;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	outline: none !important;
+	border: none;
+	margin-top: 5px;
+	margin-bottom: 5px;
 	position: relative;
 	font-size: 16px;
 	font-weight: bold;

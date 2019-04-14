@@ -69,25 +69,14 @@ class SidebarGame extends React.Component {
             secondary: this.props.classes.score
         }}
             primary={userInfo.username}
-            secondary={'Score: ' + userInfo.score}/> {/*{ this.props.isCurrentRoomHost && this.props.username !== userInfo.username &&*/
-    }
-    {/*<ListItemSecondaryAction onClick={this.removeUserFromRoom(userInfo.username)}>*/
-    }
-    {/*<IconButton aria-label="Delete">*/
-    }
-    {/*<BlockOutlined />*/
-    }
-    {/*</IconButton>*/
-    }
-    {/*</ListItemSecondaryAction>}*/}
-    
+            secondary={'Score: ' + userInfo.score}/>
     </ListItem>);
 
     render() {
         const {classes} = this.props;
         console.log(this.props.userList);
         return (
-            <div className="sidebar-container ">
+            <div className="sidebar-container text-center">
                 <Typography variant="h6" className={classes.title}>
                     Users
                 </Typography>

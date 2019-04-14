@@ -30,7 +30,6 @@ class Profile extends React.Component {
 
     componentDidMount() {
         socket.on('update_flag', updateInfo => {
-
             if (updateInfo.type === 'success') {
                 console.log('User info updated successfully!');
                 this.setState({message: 'User info updated successfully!'});
@@ -65,11 +64,11 @@ class Profile extends React.Component {
 
                 <div className='row full'>
 
-                    <div className='col-3'>
+                    <div className='col-sm-3'>
                         <SidebarGeneral/>
                     </div>
 
-                    <div className='col-9'>
+                    <div className='col-sm-9'>
                         <div className='profile-outer'>
                             <div className='profile-container'>
 
