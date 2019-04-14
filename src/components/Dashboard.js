@@ -413,7 +413,9 @@ class Dashboard extends React.Component {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <List items={roomList} onItemClick={this.handleJoinRoomClick}/>
+                                <List items={roomList}
+                                      showJoinButton={this.state.roomAvailable}
+                                      onItemClick={this.handleJoinRoomClick}/>
                             </TableBody>
                         </Table>
                     </div>

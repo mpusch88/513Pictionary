@@ -261,7 +261,7 @@ class GameRoom extends React.Component {
                 <div className='row full'>
 
                     <div className='col-2'>
-                        <SidebarGame/>
+                        <SidebarGame users={this.state.userList}/>
                     </div>
 
                     <div className='col-10'>
