@@ -203,33 +203,37 @@ let removeFromUserList = (roomId, username) => {
 
 //------------------------- Helper function for answers ------------------------//
 //data contents: room id, username, answer
-let checkAnswer = (data) =>{
-	let rmAnswer = roomInfo[data.roomId].curAnswer;
+let checkAnswer = (data) => {
+	let rmAnswer = '';
 	let first = 5;
 	let second = 3;
 	let rest = 1;
 	let point = 0;
-	console.log("Checking "+rmAnswer+" with "+data.answer);
-	if(rmAnswer === data.answer){
-		console.log("Username: "+data.username+" | Answered correctly with "+rmAnswer);
+
+	if (roomInfo[data.roomId].curAnswer) {
+		rmAnswer = roomInfo[data.roomId].curAnswer;
+	}
+
+	if (rmAnswer === data.answer) {
+		console.log("Username: " + data.username + " | Answered correctly with " + rmAnswer);
 		// let user = userListPerRoom[data.roomId].find((data.username));
 		let ulRoom = userListPerRoom[data.roomId];
 		let user;
-		for(let i=0; i<ulRoom.length; i++){
-			if(ulRoom[i].username===data.username)
+		for (let i = 0; i < ulRoom.length; i++) {
+			if (ulRoom[i].username === data.username)
 				user = ulRoom[i];
 		}
-		console.log("Modifying data for user: "+user.userame);
+		console.log("Modifying data for user: " + user.userame);
 
-		if(!user.currentPoints)
+		if (!user.currentPoints)
 			user.currentPoints = 0;
-		if(!roomInfo[data.roomId].place){
+		if (!roomInfo[data.roomId].place) {
 			roomInfo[data.roomId].place = 1;
 		}
 		// if(user.isHost)
 		// 	return {win:0};
-		if(!user.hasAnswered){
-			switch(roomInfo[data.roomId].place){
+		if (!user.hasAnswered) {
+			switch (roomInfo[data.roomId].place) {
 				case 1:
 					user.currentPoints += first;
 					point = first;
@@ -242,14 +246,13 @@ let checkAnswer = (data) =>{
 					user.currentPoints += rest;
 					point = rest;
 			}
-			console.log("User: "+user.username+" | Round Point: "+point+" | Total Points: "+user.currentPoints);
+			console.log("User: " + user.username + " | Round Point: " + point + " | Total Points: " + user.currentPoints);
 			user.hasAnswered = true;
-			return { win: 1, points: point};
+			return { win: 1, points: point };
 		}
-		return { win: 1};		
-	}
-	else
-		return { win: 0};
+		return { win: 1 };
+	} else
+		return { win: 0 };
 }
 
 //########----------- on socket connection --------------------###########/
@@ -468,9 +471,9 @@ io.on('connection', (socket) => {
 				io.in(data.room.id).emit('entireUserList', userListPerRoom[data.room.id]);
 
 
-			} else if (roomsearch && roomsearch.length  === 5) {
-				console.log("room capacity is: " , data.room.capacity);
-				io.emit('updateRoomAvail', {id: data.room, isAvailable: false} )
+			} else if (roomsearch && roomsearch.length === 5) {
+				console.log("room capacity is: ", data.room.capacity);
+				io.emit('updateRoomAvail', { id: data.room, isAvailable: false })
 				data.room.capacity = roomsearch.length + '/5';
 				socket.emit('full room', 'Room is full');
 			}
@@ -603,20 +606,19 @@ io.on('connection', (socket) => {
 		console.log(rooms); // [ <socket.id>, 'room 237' ]
 		//---- set message text to ***** if correct answer ----//
 		let answercheck = {
-			roomId : data.roomId,
+			roomId: data.roomId,
 			username: data.username,
-			answer : data.message.text
+			answer: data.message.text
 		}
 		let isWin = checkAnswer(answercheck);
-		console.log("Win flag: "+isWin.win);
-		if(isWin.win){
-			if(isWin.points){
-				data.message.text = "**** +"+isWin.points;
-			}
-			else{
+		console.log("Win flag: " + isWin.win);
+		if (isWin.win) {
+			if (isWin.points) {
+				data.message.text = "**** +" + isWin.points;
+			} else {
 				data.message.text = "****";
 			}
-			console.log("Modifying text: "+data.message.text+" to ****"+isWin.points);
+			console.log("Modifying text: " + data.message.text + " to ****" + isWin.points);
 		}
 		//---------------------------------------------------/
 		socket
@@ -626,14 +628,14 @@ io.on('connection', (socket) => {
 		// socket.broadcast.emit('message', data);
 
 		//------- Broadcast user got answer --------/
-				//socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
+		//socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
 		//------------------------------------------//
 		//TODO - add function to check message with answer
 	});
 
-//--------------- Pick answer from picked category and save to server -------//
-	socket.on('pick-answer', (data)=>{
-		console.log("Picking answer from category: "+data.category);
+	//--------------- Pick answer from picked category and save to server -------//
+	socket.on('pick-answer', (data) => {
+		console.log("Picking answer from category: " + data.category);
 
 		let catclient = new MongoClient(uri, { useNewUrlParser: true });
 
@@ -642,16 +644,16 @@ io.on('connection', (socket) => {
 				.db('pictionary')
 				.collection('categories');
 
-			catcollection.findOne({type: data.category}).then(function(document){
+			catcollection.findOne({ type: data.category }).then(function(document) {
 				console.log(document.answers);
 				let answerList = document.answers;
 				let rnd = Math.floor(Math.random(answerList.length) * 10);
 				// let answer = document.answers[Math.random(rnd)];
 				let answer = answerList[rnd];
 				roomInfo[data.roomId].curAnswer = answer;
-				console.log("Picked answer: "+answer);
+				console.log("Picked answer: " + answer);
 				socket.emit('receive-answer', answer);
-			});			
+			});
 		});
 		catclient.close();
 	});
@@ -706,7 +708,7 @@ io.on('connection', (socket) => {
 
 	socket.on('gameIsStarted', (data) => {
 
-		io.emit('updateRoomAvail', {id: data, isAvailable: false} )
+		io.emit('updateRoomAvail', { id: data, isAvailable: false })
 
 
 	});
@@ -714,7 +716,7 @@ io.on('connection', (socket) => {
 
 	socket.on('gameIsEnded', (data) => {
 
-		io.emit('updateRoomAvail', {id: data, isAvailable: true} )
+		io.emit('updateRoomAvail', { id: data, isAvailable: true })
 
 	});
 

@@ -11,7 +11,8 @@ import {withRouter} from 'react-router-dom';
 import {leaveRoom, socket, setAnswer} from '../api';
 import compose from 'recompose/compose';
 import SidebarGame from './SidebarGame';
-import '../styles/sidebar.css';
+import '../styles/gameroom.css';
+import '../styles/base.css';
 
 class GameRoom extends React.Component {
     constructor(props) {
@@ -35,7 +36,9 @@ class GameRoom extends React.Component {
     componentDidMount() {
         socket.on('entireUserList', userList => {
             this.setState({userList: userList});
-            this.props.updateUserList(this.state.userList);
+            this
+                .props
+                .updateUserList(this.state.userList);
 
             if (!this.state.setUpFlg) {
                 this.setState({setUpFlg: true});
@@ -55,12 +58,14 @@ class GameRoom extends React.Component {
         socket.on('newReadyPlayer', username => {
             let tmp = this.state.userList;
             tmp.forEach(function (ele) {
-                if (ele.username === username)
+                if (ele.username === username) 
                     ele.isReady = true;
                 }
             );
             this.setState({userList: tmp});
-            this.props.updateUserList(this.state.userList);
+            this
+                .props
+                .updateUserList(this.state.userList);
             console.log(username + ' is ready');
 
             //check for all the uesrs ready status in the uesrlist
@@ -75,28 +80,34 @@ class GameRoom extends React.Component {
         });
     }
 
-    updateUserStat(username, isDrawer, score, avatarId){
+    updateUserStat(username, isDrawer, score, avatarId) {
         // search for the username in the userlist
         let i;
         let tmp = this.state.userList;
-        for(i=0; i<this.state.userList.length; i++){
-            if(this.state.userList[i].username === username){
+        for (i = 0; i < this.state.userList.length; i++) {
+            if (this.state.userList[i].username === username) {
                 break;
             }
         }
-        if(i>=this.state.userList.length)return;
-        if(isDrawer !== null){
+        if (i >= this.state.userList.length) 
+            return;
+        if (isDrawer !== null) {
             tmp[i].isDrawer = isDrawer;
-            if(isDrawer === true){  // set other to non drawer
-                for(let j=0; j<tmp.length; j++){
-                    if(j !== i) tmp[j].isDrawer = false;
+            if (isDrawer === true) { // set other to non drawer
+                for (let j = 0; j < tmp.length; j++) {
+                    if (j !== i) 
+                        tmp[j].isDrawer = false;
+                    }
                 }
-            }
         }
-        if(score !== null) tmp[i].score = score;
-        if(avatarId !== null) tmp[i].avatarId = avatarId;
+        if (score !== null) 
+            tmp[i].score = score;
+        if (avatarId !== null) 
+            tmp[i].avatarId = avatarId;
         this.setState({userList: tmp});
-        this.props.updateUserList(this.state.userList);
+        this
+            .props
+            .updateUserList(this.state.userList);
     }
 
     nextDrawer() {
@@ -111,9 +122,9 @@ class GameRoom extends React.Component {
 
                 if (this.state.curDrawer === this.props.username) {
                     this.setState({isDrawer: true});
-                } else
+                } else 
                     this.setState({isDrawer: false});
-
+                
                 break;
             }
         }
@@ -126,28 +137,28 @@ class GameRoom extends React.Component {
 
         this.setState({newRound: false});
         if (this.props.username === this.state.curDrawer) {
-                    console.log('enable pad!');
-                    this.setState({isDrawer: true});
+            console.log('enable pad!');
+            this.setState({isDrawer: true});
         }
         this.startCountdown();
     }
 
-
     startCountdown() {
         this.setState({cdFlg: true});
-        if(this.state.isDrawer ===  true){
+        if (this.state.isDrawer === true) {
             this.setState({isDrawer: false});
             this.setState({wasDrawer: true});
         }
         console.log("Before Current Drawer");
-        if(this.state.wasDrawer){
-            let sendData = {category : this.props.currentRoomCategory, roomId : this.props.currentRoomId};
+        if (this.state.wasDrawer) {
+            let sendData = {
+                category: this.props.currentRoomCategory,
+                roomId: this.props.currentRoomId
+            };
             console.log("Current Drawer");
             setAnswer(sendData, ans => {
                 console.log(ans);
-                this.setState({
-                    currentAnswer: ans
-                });
+                this.setState({currentAnswer: ans});
             });
         }
         this.triggerCountdown();
@@ -155,7 +166,7 @@ class GameRoom extends React.Component {
 
     countdownFinish = () => {
         this.setState({cdFlg: false});
-        if(this.state.wasDrawer === true){
+        if (this.state.wasDrawer === true) {
             this.setState({isDrawer: true});
             this.setState({wasDrawer: false});
         }
@@ -195,13 +206,15 @@ class GameRoom extends React.Component {
             ele.isReady = false;
         });
         this.setState({userList: tmp});
-        this.props.updateUserList(this.state.userList);
+        this
+            .props
+            .updateUserList(this.state.userList);
     }
 
     setUserToReady(username) {
         let tmp = this.state.userList;
         tmp.forEach(function (ele) {
-            if (ele.username === username)
+            if (ele.username === username) 
                 ele.isReady = true;
             }
         );
@@ -266,39 +279,42 @@ class GameRoom extends React.Component {
     render() {
         const {gameProgress} = this.state;
         return (
-            <div>
+            <div className='gameroom overflow-hidden'>
                 <Header
                     home={'Room: ' + this.props.currentRoomName}
                     title={'Lets play words in category ' + this
                     .props
                     .currentRoomCategory
                     .toUpperCase() + '!'}/>
-                <div className='row full'>
+                <div className='row'>
 
                     <div className='col-3'>
-                        <SidebarGame userList={this.state.userList} isDrawerToggled={this.state.isDrawer}/>
+                        <SidebarGame
+                            userList={this.state.userList}
+                            isDrawerToggled={this.state.isDrawer}/>
                     </div>
 
-                    <div className='col-9'>
+                    <div className='col-6'>
+                        <TimerProgressBar
+                            restartTrigger={this.restartRound}
+                            setReadyTrigger={func => this.triggerTimer = func}
+                            setCountdownTrigger={func => this.triggerCountdown = func}
+                            countdownFinishTrigger={this.countdownFinish}
+                            cdFlg={this.state.cdFlg}
+                            ansFlg={this.state.wasDrawer || this.state.isDrawer}
+                            ans={this.state.currentAnswer}/>
+                        <SketchComponent drawFlg={this.state.isDrawer}/> {gameProgress === 'notReady'
+                            ? <div className='buttons'>
+                                    <button onClick={this.gameReady}>Ready</button>
+                                    <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
+                                </div>
+                            : ''}
+                    </div>
 
-                            <TimerProgressBar
-                                restartTrigger={this.restartRound}
-                                setReadyTrigger={func => this.triggerTimer = func}
-                                setCountdownTrigger={func => this.triggerCountdown = func}
-                                countdownFinishTrigger={this.countdownFinish}
-                                cdFlg={this.state.cdFlg}
-                                ansFlg={this.state.wasDrawer || this.state.isDrawer}
-                                ans={this.state.currentAnswer}
-                            />
-                            <SketchComponent drawFlg={this.state.isDrawer}/>
-                            {gameProgress === 'notReady'
-                                ? <div>
-                                        <button onClick={this.gameReady}>Ready</button>
-                                        <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
-                                    </div>
-                                : ''
-}
-                            <Chat ansFlg = {gameProgress !== 'notReady' && (this.startCountdown.wasDrawer || this.state.isDrawer)}/>
+                    <div className='col-3'>
+                        <Chat
+                            ansFlg=
+                            {gameProgress !== 'notReady' && (this.startCountdown.wasDrawer || this.state.isDrawer)}/>
                     </div>
                 </div>
             </div>

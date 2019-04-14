@@ -1,0 +1,14 @@
+.chat-container {
+	border-style: inset;
+	border-color: #000000cc;
+	border-width: 1px;
+
+	width: 100%;
+    top: 0;
+	right: 0;
+}
+
+.messages {
+	height: 300px;
+	overflow: auto;
+}

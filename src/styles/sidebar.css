@@ -1,13 +1,9 @@
 .sidebar-container {
-    width: 100%;
-    top: 0;
-    left: 0;
+	width: 100%;
+	top: 0;
+	left: 0;
 	color: #ffffff;
-    background-color: #00000044;
-    padding: 15px;
-}
-
-.sidebar-container {
+	padding: 15px;
 	border-color: black;
 	background-color: #00000066;
 	border-width: 3px;
@@ -15,6 +11,14 @@
 	height: 100%;
 }
 
-.full {
-    height: 85vh;
+.profile_title {
+	font-size: 2em;
+}
+
+.avatar_area{
+
+}
+
+.stats_area{
+
 }

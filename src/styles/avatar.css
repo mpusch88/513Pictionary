@@ -1,22 +1,8 @@
-.avatar-container {
-    width: 100%;
-    top: 0;
-    right: 0;
-	color: #ffffff;
-    background-color: #00000044;
-    padding: 15px;
-}
-
-.avatar-container {
-	border-color: black;
-	background-color: #00000066;
-	border-width: 3px;
-	border-style: solid;
-	height: 100%;
-}
-
 .avatar {
+    display: block;
+    margin: auto;
     max-width: 100%;
+    max-height: 50%;
     margin-top: 5px;
     border-style: inset;
     border-color: #000000cc;

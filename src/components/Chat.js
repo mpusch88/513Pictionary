@@ -3,15 +3,21 @@ import Users from "./Users";
 import Messages from "./Messages";
 import {updateUserList, rcvMessage, sendMessageEvent, initializeChat} from "../api";
 import {connect} from "react-redux";
+import '../styles/chat.css';
 
-class Chat extends React.Component{
+class Chat extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         //this.socket = null;
+        
         this.state = {
-            username: this.props.username ? this.props.username : 'DefaultUser',
-            id : this.props.id? this.props.id : this.generateID(),
+            username: this.props.username
+                ? this.props.username
+                : 'DefaultUser',
+            id: this.props.id
+                ? this.props.id
+                : this.generateID(),
             chat_read: false,
             users: [],
             messages: [],
@@ -25,7 +31,7 @@ class Chat extends React.Component{
         for (let i = 0; i < 15; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-      //  localStorage.setItem('id', text);
+        //  localStorage.setItem('id', text);
 
         this.setState({id: text});
         console.log('ID not found, generating new id: ' + text);
@@ -42,29 +48,23 @@ class Chat extends React.Component{
     }
 
     initChat() {
-     //   localStorage.setItem('username', this.state.username);
-
-        // change the uri to the host once it's set up might have to relocae this block
-        // to the after-login page
-        // this.socket = socketIOClient('ws://localhost:8000', {
-        //     query: 'username=' + this.state.username + '&id=' + this.state.id
-        // });
+        //   localStorage.setItem('username', this.state.username); change the uri to
+        // the host once it's set up might have to relocae this block to the after-login
+        // page this.socket = socketIOClient('ws://localhost:8000', {     query:
+        // 'username=' + this.state.username + '&id=' + this.state.id });
 
         initializeChat({username: this.state.username, id: this.state.id});
 
-        updateUserList( list => {
-           // console.log(list);
+        updateUserList(list => {
+            // console.log(list);
             this.setState({users: list})
         });
         // this
         //
-        //     .socket
-        //     .on('updateUsersList', function (users) {
-        //         console.log(users);
-        //         this.setState({users: users});
-        //     }.bind(this));
+        //     .socket     .on('updateUsersList', function (users) {
+        // console.log(users);         this.setState({users: users});     }.bind(this));
 
-        rcvMessage( message => {
+        rcvMessage(message => {
             this.setState({
                 messages: this
                     .state
@@ -90,43 +90,31 @@ class Chat extends React.Component{
                 ])
         });
 
-        sendMessageEvent({
-            username: this.state.username,
-            id: this.state.id,
-            message: message,
-            roomId: this.props.currentRoomId
-        });
-        // this
-        //     .socket
-        //     .emit('message', {
-        //         username: localStorage.getItem('username'),
-        //         id: localStorage.getItem('id'),
-        //         message: message,
-        //         roomId: this.props.currentRoomId
-        //     });
+        sendMessageEvent({username: this.state.username, id: this.state.id, message: message, roomId: this.props.currentRoomId});
+        // this     .socket     .emit('message', {         username:
+        // localStorage.getItem('username'),         id: localStorage.getItem('id'),
+        //     message: message,         roomId: this.props.currentRoomId     });
     }
 
     render() {
         return (
             <div className="chat-container">
-                <React.Fragment>
-                    {/*<Users users={this.state.users}/>*/}
-                    <Messages
-                        sendMessage={this
-                        .sendMessage
-                        .bind(this)}
-                        messages={this.state.messages}
-                        ansFlg = {this.props.ansFlg}/>
-                </React.Fragment>
+                <Messages
+                    sendMessage={this
+                    .sendMessage
+                    .bind(this)}
+                    messages={this.state.messages}
+                    ansFlg={this.props.ansFlg}/>
+
+
+                    
             </div>
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    return {
-        username: state.username,
-        currentRoomId: state.currentRoomId}
+    return {username: state.username, currentRoomId: state.currentRoomId};
 };
 
 export default connect(mapStateToProps)(Chat);

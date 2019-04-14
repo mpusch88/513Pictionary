@@ -30,6 +30,7 @@ import {connect} from 'react-redux';
 import compose from 'recompose/compose';
 import SidebarGeneral from './SidebarGeneral';
 import '../styles/sidebar.css';
+import '../styles/base.css';
 
 const styles = theme => ({
     button: {
@@ -339,15 +340,15 @@ class Dashboard extends React.Component {
         // console.log(roomList);
 
         return (
-            <div>
+            <div className='overflow-hidden'>
                 <Header title='Welcome'/>
 
                 <div className='row full'>
-                    <div className='col-lg-2'>
+                    <div className='col-3'>
                         <SidebarGeneral/>
                     </div>
 
-                    <div className='col-lg-10'>
+                    <div className='col-9'>
                         <div className={classes.search}>
                             <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
                                 Create New Game Room
