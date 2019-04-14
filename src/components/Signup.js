@@ -11,6 +11,7 @@ import DialogWindow from './DialogWindow';
 class Signup extends React.Component {
     constructor(props) {
         super(props);
+        
         this.state = {
             message: '',
             username: '',
@@ -29,9 +30,7 @@ class Signup extends React.Component {
         this.handleGoBack = this
             .handleGoBack
             .bind(this);
-        // this.handleForgotPassword = this
-        //     .handleForgotPassword
-        //     .bind(this);
+        // this.handleForgotPassword = this     .handleForgotPassword     .bind(this);
     }
 
     componentDidMount() {
@@ -41,46 +40,37 @@ class Signup extends React.Component {
                 : '';
             console.log(loginInfo);
 
-            this.props.authenticate(userType, loginInfo.username);
+            this
+                .props
+                .authenticate(userType, loginInfo.username);
             if (loginInfo.type === 'taken') {
-                this.setState({
-                    message: 'username taken'
-                });
+                this.setState({message: 'username taken'});
             } else if (loginInfo.type === 'signed') {
                 this.toggleModal();
                 this.showDialogMessage('Account created successfully');
-                
+
             } else if (loginInfo.type === 'email') {
-                this.setState({
-                    message: 'invalid email format'
-                });
+                this.setState({message: 'invalid email format'});
             } else if (loginInfo.type === 'empty') {
-                this.setState({
-                    message: 'Please fill all the fields'
-                });
+                this.setState({message: 'Please fill all the fields'});
             }
         });
     }
 
     handleGoBack() {
-
         let {history} = this.props;
         history.push({pathname: '/'});
     }
 
     handleClick() {
-        send_signupinfo({
-            username: this.state.username,
-            email: this.state.email,
-            psw: this.state.password
-        });
+        send_signupinfo({username: this.state.username, email: this.state.email, psw: this.state.password});
     }
 
     toggleModal = () => {
         this.setState({
             showConfirmDialog: !this.state.showConfirmDialog
         });
-        
+
     };
 
     showDialogMessage = (data) => {
@@ -112,11 +102,9 @@ class Signup extends React.Component {
                         <h1>Let the journey begin</h1>
                     </div>
 
-                    <img src={logo} className="logo" alt="logo" />
+                    <img src={logo} className="logo" alt="logo"/>
 
-                    
-
-                    <div className='input-group'>
+                    <div className='input-group-signup'>
                         <span className='input-text-label'>User Name</span>
                         <input
                             className='input-field'
@@ -126,7 +114,7 @@ class Signup extends React.Component {
                             value={this.state.username}/>
                     </div>
 
-                    <div className='input-group'>
+                    <div className='input-group-signup'>
                         <span className='input-text-label'>Email</span>
                         <input
                             className='input-field'
@@ -136,7 +124,7 @@ class Signup extends React.Component {
                             value={this.state.email}/>
                     </div>
 
-                    <div className='input-group'>
+                    <div className='input-group-signup'>
                         <span className='input-text-label'>Password</span>
                         <input
                             className='input-field'
@@ -151,17 +139,17 @@ class Signup extends React.Component {
                     </div>
 
                     <div>
-                        <button className='login-button' onClick={this.handleClick}>
+                        <button className='login-button-signup' onClick={this.handleClick}>
                             Sign Up
                         </button>
                     </div>
-                    
+
                     <div>
-                        <button className='login-button' onClick={this.handleGoBack}>
+                        <button className='login-button-signup' onClick={this.handleGoBack}>
                             Back
                         </button>
                     </div>
-                    
+
                 </div>
                 <DialogWindow
                     message={this.state.dialogMessage}

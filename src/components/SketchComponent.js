@@ -55,8 +55,8 @@ class SketchComponent extends Component
                                 marginBottom: 20
                             }}>
                                 <SketchPad
-                                    width={500}
-                                    height={400}
+                                    width={400}
+                                    height={300}
                                     animate={true}
                                     size={size}
                                     color={color}
@@ -177,8 +177,8 @@ class SketchComponent extends Component
                         marginBottom: 20
                     }}>
                         <SketchPad
-                            width={500}
-                            height={400}
+                            width={400}
+                            height={300}
                             animate={true}
                             size={size}
                             color={'rgba(255,255,255,0)'}
