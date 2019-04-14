@@ -5,19 +5,15 @@ import {withStyles} from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import BlockOutlined from '@material-ui/icons/BlockOutlined';
 import compose from 'recompose/compose';
 import {connect} from 'react-redux';
 
 const styles = theme => ({
     root: {
         flex: 1,
-
         width: '100%'
     },
     list: {
@@ -50,30 +46,21 @@ const styles = theme => ({
     }
 });
 
-function generate(element) {
-    return [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5
-    ].map(value => React.cloneElement(element, {key: value}),);
-}
-
 class SidebarGame extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
     }
 
-    listItems = (userList) => userList.map((userInfo) => <ListItem key={userInfo.userName}>
+    listItems = (userList) => userList.map((userInfo) => <ListItem key={userInfo.username}>
         <ListItemAvatar>
             <Avatar
                 className={this.props.isDrawerToggled && this.props.username === userInfo.username
                 ? this.props.classes.avatarDrawer
                 : null}>
-                <Avatar className={this.props.classes.avatar} src={'images/' + 1 + '.jpg'}/>
+                <Avatar
+                    className={this.props.classes.avatar}
+                    src={'images/' + userInfo.avatarId + '.jpg'}/>
             </Avatar>
         </ListItemAvatar>
         <ListItemText
@@ -82,11 +69,18 @@ class SidebarGame extends React.Component {
             secondary: this.props.classes.score
         }}
             primary={userInfo.username}
-            secondary={'Score: ' + userInfo.score}/> {this.props.isCurrentRoomHost && this.props.username !== userInfo.username && <ListItemSecondaryAction>
-            <IconButton aria-label="Delete">
-                <BlockOutlined/>
-            </IconButton>
-        </ListItemSecondaryAction>}
+            secondary={'Score: ' + userInfo.score}/> {/*{ this.props.isCurrentRoomHost && this.props.username !== userInfo.username &&*/
+    }
+    {/*<ListItemSecondaryAction onClick={this.removeUserFromRoom(userInfo.username)}>*/
+    }
+    {/*<IconButton aria-label="Delete">*/
+    }
+    {/*<BlockOutlined />*/
+    }
+    {/*</IconButton>*/
+    }
+    {/*</ListItemSecondaryAction>}*/}
+    
     </ListItem>);
 
     render() {
@@ -112,7 +106,7 @@ SidebarGame.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-    return {avatar: state.avatar, username: state.username, isCurrentRoomHost: state.isCurrentRoomHost};
+    return {avatar: state.avatar, username: state.username, currentRoomId: state.currentRoomId, isCurrentRoomHost: state.isCurrentRoomHost};
 };
 
 export default compose(withStyles(styles), connect(mapStateToProps))(SidebarGame);
