@@ -25,9 +25,9 @@ export const changeGameState = (gameState) => {
 	};
 };
 
-export const updateUserList = (newPlayer) => {
+export const updateUserList = (newList) => {
 	return {
 		type: 'UPDATE_USERLIST',
-		newPlayer: newPlayer
+		userList: newList
 	};
 };

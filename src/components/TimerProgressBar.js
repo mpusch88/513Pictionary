@@ -96,6 +96,10 @@ export default class TimerProgressBar extends Component {
                         <Line strokeWidth="4" percent={Math.fround(this.state.percent * 20.0)}/>
                     </div>
                 }
+                {
+                     this.props.ansFlg?
+                     <div><p>You're drawing {this.props.ans}</p></div>:''
+                }
             </div>
         );
     }

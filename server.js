@@ -201,6 +201,56 @@ let removeFromUserList = (roomId, username) => {
 	}
 };
 
+//------------------------- Helper function for answers ------------------------//
+//data contents: room id, username, answer
+let checkAnswer = (data) =>{
+	let rmAnswer = roomInfo[data.roomId].curAnswer;
+	let first = 5;
+	let second = 3;
+	let rest = 1;
+	let point = 0;
+	console.log("Checking "+rmAnswer+" with "+data.answer);
+	if(rmAnswer === data.answer){
+		console.log("Username: "+data.username+" | Answered correctly with "+rmAnswer);
+		// let user = userListPerRoom[data.roomId].find((data.username));
+		let ulRoom = userListPerRoom[data.roomId];
+		let user;
+		for(let i=0; i<ulRoom.length; i++){
+			if(ulRoom[i].username===data.username)
+				user = ulRoom[i];
+		}
+		console.log("Modifying data for user: "+user.userame);
+
+		if(!user.currentPoints)
+			user.currentPoints = 0;
+		if(!roomInfo[data.roomId].place){
+			roomInfo[data.roomId].place = 1;
+		}
+		// if(user.isHost)
+		// 	return {win:0};
+		if(!user.hasAnswered){
+			switch(roomInfo[data.roomId].place){
+				case 1:
+					user.currentPoints += first;
+					point = first;
+					break;
+				case 2:
+					user.currentPoints += second;
+					point = second;
+					break;
+				default:
+					user.currentPoints += rest;
+					point = rest;
+			}
+			console.log("User: "+user.username+" | Round Point: "+point+" | Total Points: "+user.currentPoints);
+			user.hasAnswered = true;
+			return { win: 1, points: point};
+		}
+		return { win: 1};		
+	}
+	else
+		return { win: 0};
+}
 
 //########----------- on socket connection --------------------###########/
 
@@ -394,7 +444,8 @@ io.on('connection', (socket) => {
 				socket.join(data.room.id);
 
 				// updating capacity
-				data.room.capacity = roomsearch.length + '/5';
+
+				data.room.capacity = (roomsearch.length) + '/5';
 
 				console.log('joined successfully in existing room');
 
@@ -416,7 +467,10 @@ io.on('connection', (socket) => {
 				console.log('new join user, update list: ', userListPerRoom[data.room.id]);
 				io.in(data.room.id).emit('entireUserList', userListPerRoom[data.room.id]);
 
-			} else if (roomsearch) {
+
+			} else if (roomsearch && roomsearch.length  === 5) {
+				console.log("room capacity is: " , data.room.capacity);
+				io.emit('updateRoomAvail', {id: data.room, isAvailable: false} )
 				data.room.capacity = roomsearch.length + '/5';
 				socket.emit('full room', 'Room is full');
 			}
@@ -547,15 +601,59 @@ io.on('connection', (socket) => {
 		//to room sockets
 		let rooms = Object.keys(socket.rooms);
 		console.log(rooms); // [ <socket.id>, 'room 237' ]
-
-		//io.in(data.roomId).emit('message', data);
-
+		//---- set message text to ***** if correct answer ----//
+		let answercheck = {
+			roomId : data.roomId,
+			username: data.username,
+			answer : data.message.text
+		}
+		let isWin = checkAnswer(answercheck);
+		console.log("Win flag: "+isWin.win);
+		if(isWin.win){
+			if(isWin.points){
+				data.message.text = "**** +"+isWin.points;
+			}
+			else{
+				data.message.text = "****";
+			}
+			console.log("Modifying text: "+data.message.text+" to ****"+isWin.points);
+		}
+		//---------------------------------------------------/
 		socket
 			.broadcast
 			.to(data.roomId)
 			.emit('message', data);
 		// socket.broadcast.emit('message', data);
+
+		//------- Broadcast user got answer --------/
+				//socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
+		//------------------------------------------//
 		//TODO - add function to check message with answer
+	});
+
+//--------------- Pick answer from picked category and save to server -------//
+	socket.on('pick-answer', (data)=>{
+		console.log("Picking answer from category: "+data.category);
+
+		let catclient = new MongoClient(uri, { useNewUrlParser: true });
+
+		catclient.connect(() => {
+			let catcollection = catclient
+				.db('pictionary')
+				.collection('categories');
+
+			catcollection.findOne({type: data.category}).then(function(document){
+				console.log(document.answers);
+				let answerList = document.answers;
+				let rnd = Math.floor(Math.random(answerList.length) * 10);
+				// let answer = document.answers[Math.random(rnd)];
+				let answer = answerList[rnd];
+				roomInfo[data.roomId].curAnswer = answer;
+				console.log("Picked answer: "+answer);
+				socket.emit('receive-answer', answer);
+			});			
+		});
+		catclient.close();
 	});
 
 	// //emits message to all users in the room //add functionality to verify answer
@@ -569,11 +667,11 @@ io.on('connection', (socket) => {
 	// sockets in that room socket.on('receive image', function (image) {
 	// socket.broadcast.to(room).emit(image); }); Handles socket disconnection and
 	// possible room deletion when disconnecting socket is last one in room Updates
-	// users list on user disconnect
-	socket.on('disconnect', () => {
-		//	removeSocket(socket.id);
-		io.emit('updateUsersList', getUsers());
-	});
+	// // users list on user disconnect
+	// socket.on('disconnect', () => {
+	// 	//	removeSocket(socket.id);
+	// 	io.emit('updateUsersList', getUsers());
+	// });
 
 	// ---------------- Admin page --------------------// this is for testing right
 	// now, need to fetch from DB
@@ -604,6 +702,24 @@ io.on('connection', (socket) => {
 			storeCategoryAndWord({ category: data.newCategory, word: data.word });
 		}
 	});
+
+
+	socket.on('gameIsStarted', (data) => {
+
+		io.emit('updateRoomAvail', {id: data, isAvailable: false} )
+
+
+	});
+
+
+	socket.on('gameIsEnded', (data) => {
+
+		io.emit('updateRoomAvail', {id: data, isAvailable: true} )
+
+	});
+
+
+
 
 	// -----------------  Dashboard ---------------------------//
 
@@ -651,9 +767,14 @@ io.on('connection', (socket) => {
 		console.log('UserName : ', socket.username);
 
 
+		console.log(userListPerRoom);
+		Object.keys(userListPerRoom).forEach(function(roomId) {
+			console.log(roomId, userListPerRoom[roomId]);
+		});
+
 		for (const [roomId, userList] of Object.entries(userListPerRoom)) {
 			console.log(roomId);
-
+			console.log(userList);
 			for (var i in userList) {
 				if (userList[i].username === socket.username) {
 

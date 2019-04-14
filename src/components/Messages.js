@@ -27,8 +27,9 @@ class Messages extends React.Component {
                         return (<Message key={i} message={message}/>);
                     }))
                     : <div className="no-message">Welcome to the Room!</div>
-}
-                <ChatBox sendMessage={this.props.sendMessage}/>
+}               
+                {this.props.ansFlg?'':<div><ChatBox sendMessage={this.props.sendMessage}/></div>}
+                
             </div>
         );
     }

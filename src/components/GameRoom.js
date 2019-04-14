@@ -5,10 +5,10 @@ import TimerProgressBar from './TimerProgressBar';
 import Chat from './Chat';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {changeGameState} from '../actions/userAction.js';
+import {changeGameState, updateUserList} from '../actions/userAction.js';
 import {removeCurrentRoom} from '../actions/dashBoardAction';
 import {withRouter} from 'react-router-dom';
-import {game_myReady, leaveRoom, getNewUserJoin, getUserList, socket} from '../api';
+import {leaveRoom, socket, setAnswer} from '../api';
 import compose from 'recompose/compose';
 import SidebarGame from './SidebarGame';
 import '../styles/sidebar.css';
@@ -34,18 +34,19 @@ class GameRoom extends React.Component {
 
     componentDidMount() {
         socket.on('entireUserList', userList => {
-            console.log("entireUserList", userList);
             this.setState({userList: userList});
+            this.props.updateUserList(this.state.userList);
 
             if (!this.state.setUpFlg) {
-                console.log("if drawer? " + this.props.username + userList[0].username);
                 this.setState({setUpFlg: true});
                 if (userList[0].username === this.props.username) {
                     // set myself to drawer
                     console.log(this.props.username + ' is the drawer');
                     this.setState({curDrawer: this.props.username});
+                    this.updateUserStat(this.state.curDrawer, true, null, null);
                 } else {
                     this.setState({curDrawer: userList[0].username});
+                    this.updateUserStat(this.state.curDrawer, true, null, null);
                     console.log(this.state.curDrawer + ' is the drawer');
                 }
             }
@@ -59,6 +60,7 @@ class GameRoom extends React.Component {
                 }
             );
             this.setState({userList: tmp});
+            this.props.updateUserList(this.state.userList);
             console.log(username + ' is ready');
 
             //check for all the uesrs ready status in the uesrlist
@@ -73,6 +75,30 @@ class GameRoom extends React.Component {
         });
     }
 
+    updateUserStat(username, isDrawer, score, avatarId){
+        // search for the username in the userlist
+        let i;
+        let tmp = this.state.userList;
+        for(i=0; i<this.state.userList.length; i++){
+            if(this.state.userList[i].username === username){
+                break;
+            }
+        }
+        if(i>=this.state.userList.length)return;
+        if(isDrawer !== null){
+            tmp[i].isDrawer = isDrawer;
+            if(isDrawer === true){  // set other to non drawer
+                for(let j=0; j<tmp.length; j++){
+                    if(j !== i) tmp[j].isDrawer = false;
+                }
+            }
+        }
+        if(score !== null) tmp[i].score = score;
+        if(avatarId !== null) tmp[i].avatarId = avatarId;
+        this.setState({userList: tmp});
+        this.props.updateUserList(this.state.userList);
+    }
+
     nextDrawer() {
         console.log('calc nextDrawer');
         for (let i = 0; i < this.state.userList.length; i++) {
@@ -81,6 +107,8 @@ class GameRoom extends React.Component {
                 this.setState({
                     curDrawer: this.state.userList[i + 1].username
                 });
+                this.updateUserStat(this.state.curDrawer, true, null, null);
+
                 if (this.state.curDrawer === this.props.username) {
                     this.setState({isDrawer: true});
                 } else
@@ -97,19 +125,30 @@ class GameRoom extends React.Component {
         socket.emit('gameIsStarted', this.props.currentRoomId);
 
         this.setState({newRound: false});
+        if (this.props.username === this.state.curDrawer) {
+                    console.log('enable pad!');
+                    this.setState({isDrawer: true});
+        }
         this.startCountdown();
-        // this.triggerTimer();
-        // if (this.props.username === this.state.curDrawer) {
-        //     console.log('enable pad!');
-        //     this.setState({isDrawer: true});
-        // }
     }
+
 
     startCountdown() {
         this.setState({cdFlg: true});
         if(this.state.isDrawer ===  true){
             this.setState({isDrawer: false});
             this.setState({wasDrawer: true});
+        }
+        console.log("Before Current Drawer");
+        if(this.state.wasDrawer){
+            let sendData = {category : this.props.currentRoomCategory, roomId : this.props.currentRoomId};
+            console.log("Current Drawer");
+            setAnswer(sendData, ans => {
+                console.log(ans);
+                this.setState({
+                    currentAnswer: ans
+                });
+            });
         }
         this.triggerCountdown();
     }
@@ -120,15 +159,7 @@ class GameRoom extends React.Component {
             this.setState({isDrawer: true});
             this.setState({wasDrawer: false});
         }
-        if(this.state.newRound === false){
-            this.triggerTimer();
-            if (this.props.username === this.state.curDrawer) {
-                console.log('enable pad!');
-                this.setState({isDrawer: true});
-            }
-        }else{
-            this.triggerTimer();
-        }
+        this.triggerTimer();
     }
 
     restartRound = () => {
@@ -145,16 +176,16 @@ class GameRoom extends React.Component {
             this.setState({setUpFlg: false});
             this.setState({gameProgress: 'notReady'});
             this.clearReadyState();
-            // set myself to drawer
+
             console.log(this.state.userList[0].username + ' is the drawer of next game');
             this.setState({curDrawer: this.state.userList[0].username});
+            this.updateUserStat(this.state.curDrawer, true, null, null);
             this.setState({isDrawer: false});
         } else {
             this.setState({newRound: true});
             this.nextDrawer();
             this.setState({newRound: true});
             this.startCountdown();
-            // this.triggerTimer();
         }
     };
 
@@ -164,6 +195,7 @@ class GameRoom extends React.Component {
             ele.isReady = false;
         });
         this.setState({userList: tmp});
+        this.props.updateUserList(this.state.userList);
     }
 
     setUserToReady(username) {
@@ -243,11 +275,11 @@ class GameRoom extends React.Component {
                     .toUpperCase() + '!'}/>
                 <div className='row full'>
 
-                    <div className='col-2'>
-                        <SidebarGame/>
+                    <div className='col-3'>
+                        <SidebarGame userList={this.state.userList} isDrawerToggled={this.state.isDrawer}/>
                     </div>
 
-                    <div className='col-10'>
+                    <div className='col-9'>
 
                             <TimerProgressBar
                                 restartTrigger={this.restartRound}
@@ -255,6 +287,8 @@ class GameRoom extends React.Component {
                                 setCountdownTrigger={func => this.triggerCountdown = func}
                                 countdownFinishTrigger={this.countdownFinish}
                                 cdFlg={this.state.cdFlg}
+                                ansFlg={this.state.wasDrawer || this.state.isDrawer}
+                                ans={this.state.currentAnswer}
                             />
                             <SketchComponent drawFlg={this.state.isDrawer}/>
                             {gameProgress === 'notReady'
@@ -264,7 +298,7 @@ class GameRoom extends React.Component {
                                     </div>
                                 : ''
 }
-                            {/*<Chat/>*/}
+                            <Chat ansFlg = {gameProgress !== 'notReady' && (this.startCountdown.wasDrawer || this.state.isDrawer)}/>
                     </div>
                 </div>
             </div>
@@ -280,14 +314,15 @@ const mapStateToProps = (state) => {
         currentRoomCategory: state.currentRoomCategory,
         currentRoomName: state.currentRoomName,
         username: state.username,
-        PlayerList: state.PlayerList
+        userList: state.userList
     };
 };
 
 const matchDispatchToProps = (dispatch) => {
     return bindActionCreators({
         changeGameState: changeGameState,
-        removeCurrentRoom: removeCurrentRoom
+        removeCurrentRoom: removeCurrentRoom,
+        updateUserList: updateUserList
     }, dispatch);
 };
 

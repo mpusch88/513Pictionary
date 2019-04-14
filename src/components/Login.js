@@ -79,8 +79,6 @@ class Login extends React.Component {
                 .props
                 .authenticate(userType, loginInfo.username, loginInfo.email, loginInfo.avatar);
 
-                console.log('AVATAR # = ' + loginInfo.avatar);
-
             if (loginInfo.type === 'user') {
                 console.log('user logged in successful');
                 let {history} = this.props;
