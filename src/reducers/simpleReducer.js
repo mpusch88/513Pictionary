@@ -3,7 +3,7 @@ const initState = {
 	username: '',
 	email: '',
 	gameState: 'notReady',
-	PlayerList: [],
+	userList: [],
 	currentRoomId: '',
 	currentRoomName: '',
 	currentRoomCategory: '',
@@ -48,14 +48,9 @@ export default (state = initState, action) => {
 			});
 
 		case 'UPDATE_USERLIST':
-			return {
-				...state,
-				PlayerList: state.PlayerList.concat(action.newPlayer)
-			};
-
-			// return Object.assign({}, state,{
-			// 	PlayerList: state.PlayerList.concat(action.newPlayer)
-			// });
+			return Object.assign({}, state, {
+				userList: action.userList
+			});
 		default:
 			return state;
 	}
