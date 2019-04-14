@@ -96,7 +96,7 @@ class Avatar extends React.Component {
                 </div>
             );
 
-        } else if (this.props.avatar == 0) {
+        } else if (this.props.avatar == 9) {
             return (
                 <div className="avatar-container">
                     <span>Avatar</span>

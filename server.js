@@ -448,7 +448,8 @@ io.on('connection', (socket) => {
 				socket.join(data.room.id);
 
 				// updating capacity
-				data.room.capacity = roomsearch.length + '/5';
+
+				data.room.capacity = (roomsearch.length) + '/5';
 
 				console.log('joined successfully in existing room');
 
@@ -470,7 +471,10 @@ io.on('connection', (socket) => {
 				console.log('new join user, update list: ', userListPerRoom[data.room.id]);
 				io.in(data.room.id).emit('entireUserList', userListPerRoom[data.room.id]);
 
-			} else if (roomsearch) {
+
+			} else if (roomsearch && roomsearch.length  === 5) {
+				console.log("room capacity is: " , data.room.capacity);
+				io.emit('updateRoomAvail', {id: data.room, isAvailable: false} )
 				data.room.capacity = roomsearch.length + '/5';
 				socket.emit('full room', 'Room is full');
 			}
@@ -669,11 +673,11 @@ io.on('connection', (socket) => {
 	// sockets in that room socket.on('receive image', function (image) {
 	// socket.broadcast.to(room).emit(image); }); Handles socket disconnection and
 	// possible room deletion when disconnecting socket is last one in room Updates
-	// users list on user disconnect
-	socket.on('disconnect', () => {
-		//	removeSocket(socket.id);
-		io.emit('updateUsersList', getUsers());
-	});
+	// // users list on user disconnect
+	// socket.on('disconnect', () => {
+	// 	//	removeSocket(socket.id);
+	// 	io.emit('updateUsersList', getUsers());
+	// });
 
 	// ---------------- Admin page --------------------// this is for testing right
 	// now, need to fetch from DB
@@ -769,9 +773,14 @@ io.on('connection', (socket) => {
 		console.log('UserName : ', socket.username);
 
 
+		console.log(userListPerRoom);
+		Object.keys(userListPerRoom).forEach(function(roomId) {
+			console.log(roomId, userListPerRoom[roomId]);
+		});
+
 		for (const [roomId, userList] of Object.entries(userListPerRoom)) {
 			console.log(roomId);
-
+			console.log(userList);
 			for (var i in userList) {
 				if (userList[i].username === socket.username) {
 

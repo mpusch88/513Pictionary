@@ -112,8 +112,14 @@ class Dashboard extends React.Component {
                 let roomAvailable = {};
 
                 for (var key in data) {
+                    let room = data[key];
                     map[(data[key].id)] = data[key];
-                    roomAvailable[(data[key].id)] = true;
+
+                    if(room.capacity ===  '5/5') {
+                        roomAvailable[(data[key].id)] = false;
+                    }else{
+                        roomAvailable[(data[key].id)] = true;
+                    }
 
                 }
 

@@ -10,8 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import avatar2 from '../resources/avatars/1.jpg';
-import DeleteIcon from '@material-ui/icons/Delete';
+import BlockOutlined from '@material-ui/icons/BlockOutlined';
 import compose from "recompose/compose";
 import {connect} from "react-redux";
 
@@ -21,26 +20,47 @@ import {connect} from "react-redux";
 
 const styles = theme => ({
     root: {
-        flexGrow: 1,
-        maxWidth: 752,
+        flex: 1,
+
+        width: '100%'
     },
-    demo: {
-        color:'#ffffff'
+
+
+    list:{
+        width: '100%',
     },
+
+
     title: {
         color:'#ffffff',
+        align: 'center',
         margin: `${theme.spacing.unit * 4}px 0 ${theme.spacing.unit * 2}px`,
     },
 
     userName: {
+        fontSize: 22,
+        fontFamily: 'Verdana',
         color:'#ffffff',
+    },
+
+    score: {
+        fontSize: 15,
+        color:'purple',
     },
 
     avatar: {
         margin: 10,
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 30,
     },
+
+    avatarBackground: {
+        backgroundColor: 'purple'
+    },
+
+    avatarDrawer: {
+        backgroundColor: 'green'
+    }
 });
 
 function generate(element) {
@@ -57,12 +77,7 @@ class SidebarGame extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {dense: false,
-            secondary: false,
-            userList: [{username: 'mary', score: 10},
-                {username: 'jason', score: 10},
-                {username: 'cammy', score: 14},
-                {username: 'noah', score: 10},]};
+        this.state = { }
 
     }
 
@@ -71,17 +86,17 @@ class SidebarGame extends React.Component {
      listItems = (userList) => userList.map((userInfo) =>
          <ListItem>
              <ListItemAvatar>
-                 <Avatar>
-                     <Avatar  src={avatar2} />
+                 <Avatar className={ this.props.isDrawerToggled  && this.props.username === userInfo.username ? this.props.classes.avatarDrawer : null}>
+                     <Avatar className={this.props.classes.avatar} src={"images/" + 1 +".jpg"}/>
                  </Avatar>
              </ListItemAvatar>
-             <ListItemText
+             <ListItemText classes={{ primary: this.props.classes.userName, secondary: this.props.classes.score}}
                            primary={userInfo.username}
-                           secondary={userInfo.score}
+                           secondary={'Score: ' + userInfo.score}
              />
-             { this.props.isCurrentRoomHost && <ListItemSecondaryAction>
+             { this.props.isCurrentRoomHost && this.props.username !== userInfo.username && <ListItemSecondaryAction>
                  <IconButton aria-label="Delete">
-                     <DeleteIcon />
+                     <BlockOutlined />
                  </IconButton>
              </ListItemSecondaryAction>}
          </ListItem>
@@ -91,17 +106,15 @@ class SidebarGame extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const { dense, secondary} = this.state;
-
-        //console.log(this.props.users);
+        console.log(this.props.userList)
         return (
             <div className="sidebar-container ">
                     <Typography variant="h6" className={classes.title}>
                         Users
                     </Typography>
-                    <div className={classes.demo}>
-                        <List dense='false'>
-                            {this.listItems(this.state.userList)}
+                    <div className={classes.root}>
+                        <List className={classes.list}>
+                            {this.listItems(this.props.userList)}
                         </List>
                     </div>
 
@@ -126,5 +139,3 @@ const mapStateToProps = (state) => {
 export  default compose(withStyles(styles), connect(mapStateToProps))(SidebarGame);
 
 
-
-//export default SidebarGame;
