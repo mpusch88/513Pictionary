@@ -29,27 +29,38 @@ class Login extends React.Component {
             .handleChange
             .bind(this);
 
+        
+    }
+
+    handleClickSignUp() {
+        let {history} = this.props;
+        history.push({pathname: '/Signup'});
+    }
+    
+
+    componentDidMount() {
+
         // get the cookie
         let myName = $.cookie('user_name');
         let myType = $.cookie('user_type');
         let myEmail = $.cookie('user_email');
         let myAvatar = $.cookie('user_avatar');
 
-        if (myName && myType) { // has logged in before, route to dashboard/admin page
+        if (myName && myType) {     // has logged in before, route to dashboard/admin page
             if (myType === 'user') {
                 this
                     .props
                     .authenticate(myType, myName, myEmail, myAvatar);
                 console.log('user reconnected successful');
-                let {history} = this.props;
-                history.push({pathname: '/Dashboard'});
+                // let {history} = this.props;
+                // history.push({pathname: '/Dashboard'});
             } else if (myType === 'admin') {
                 this
                     .props
                     .authenticate(myType, myName, myEmail, myAvatar);
                 console.log('admin reconnected successful');
-                let {history} = this.props;
-                history.push({pathname: '/Admin'});
+                // let {history} = this.props;
+                // history.push({pathname: '/Admin'});
             } else if (myType === 'fail') {
                 this
                     .props
@@ -57,14 +68,7 @@ class Login extends React.Component {
                 this.setState({message: 'Invalid username or password'});
             }
         }
-    }
 
-    handleClickSignUp() {
-        let {history} = this.props;
-        history.push({pathname: '/Signup'});
-    }
-
-    componentDidMount() {
         socket.on('login_flag', loginInfo => {
 
             let userType = loginInfo.type
@@ -105,9 +109,7 @@ class Login extends React.Component {
         send_loginfo({
             email: this.state.email,
             psw: this.state.password
-        });
-
-        
+        });       
     }
 
     handleChange(e) {

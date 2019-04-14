@@ -18,7 +18,8 @@ class Profile extends React.Component {
         this.state = {
             status: '',
             new_password: '',
-            conf_password: ''
+            conf_password: '',
+            message: ''
         };
 
         this.handleClick = this
@@ -34,14 +35,10 @@ class Profile extends React.Component {
 
             if (updateInfo.type === 'success') {
                 console.log('User info updated successfully!');
-                let {history} = this.props;
-                alert('Updated successfully!');
-                history.push({pathname: '/Dashboard'});
+                this.setState({message: 'User info updated successfully!'});
             } else if (updateInfo.type === 'fail') {
-                console.log('Log in failed!');
-                alert('Update failed!');
-                let {history} = this.props;
-                history.push({pathname: '/'});
+                console.log('Update failed!');
+                this.setState({message: 'Update failed!'});
             }
         });
     }
@@ -119,6 +116,10 @@ class Profile extends React.Component {
                                         name='conf_password'
                                         onChange={this.handleChange}
                                         value={this.state.conf_password}/>
+                                </div>
+
+                                <div>
+                                    <p>{this.state.message}</p>
                                 </div>
 
                                 <div>
