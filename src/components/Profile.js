@@ -2,15 +2,24 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {authenticate} from '../actions/userAction.js';
-import '../styles/login.css';
 import {withRouter} from 'react-router-dom';
-import {send_loginfo} from '../api';
-import logo from '../resources/logo.png';
+import {update_userinfo, socket} from '../api';
+import Header from './Header';
+import SidebarGeneral from './SidebarGeneral';
+import Avatar from './Avatar';
+import '../styles/profile.css';
+import '../styles/sidebar.css';
+import '../styles/avatar.css';
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+
+        this.state = {
+            status: '',
+            new_password: '',
+            conf_password: ''
+        };
 
         this.handleClick = this
             .handleClick
@@ -20,39 +29,32 @@ class Profile extends React.Component {
             .bind(this);
     }
 
-    handleClick() {
-        send_loginfo({
-            email: this.state.email,
-            psw: this.state.password
-        }, loginInfo => {
+    componentDidMount() {
+        socket.on('update_flag', updateInfo => {
 
-            let userType = loginInfo.type
-                ? loginInfo.type
-                : '';
-            console.log(loginInfo);
-
-            this
-                .props
-                .authenticate(userType, loginInfo.username);
-            if (loginInfo.type === 'user') {
-                console.log('user logged in successful');
+            if (updateInfo.type === 'success') {
+                console.log('User info updated successfully!');
                 let {history} = this.props;
+                alert('Updated successfully!');
                 history.push({pathname: '/Dashboard'});
-            } else if (loginInfo.type === 'admin') {
-                console.log('admin logged in successful');
-                let {history} = this.props;
-                history.push({pathname: '/Admin'});
-            } else if (loginInfo.type === 'fail') {
-                alert('Invalid email or password!');
+            } else if (updateInfo.type === 'fail') {
+                console.log('Log in failed!');
+                alert('Update failed!');
                 let {history} = this.props;
                 history.push({pathname: '/'});
-                console.log('failed to log in');
             }
         });
     }
 
-    handleForgotPassword(e) {
-        e.preventDefault();
+    handleClick() {        
+        update_userinfo({
+            username: this.props.username,
+            nusername: this.state.new_username,
+            email: this.props.email,
+            psw: this.state.password,
+            npsw: this.state.new_password,
+            cpsw: this.state.conf_password
+        });
     }
 
     handleChange(e) {
@@ -63,48 +65,84 @@ class Profile extends React.Component {
 
     render() {
         return (
-            <div className='login-outer'>
-                <div className='login-container'>
-                    <div className='titles'>
-                        <span className='title'>513Pictionary</span>
-                        <span className='subtitle'>Sign In Below!</span>
+            <div>
+                <Header title='User Profile'/>
+
+                <div className='row full'>
+
+                    <div className='col-lg-2'>
+                        <SidebarGeneral/>
                     </div>
 
-                    <img src={logo} className="logo" alt="logo" />
+                    <div className='col-lg-8'>
+                        <div className='profile-outer'>
+                            <div className='profile-container'>
 
-                    <div className='input-group'>
-                        <span className='input-text-label'>Email</span>
-                        <input
-                            className='input-field'
-                            type='text'
-                            name='email'
-                            onChange={this.handleChange}
-                            value={this.state.email}/>
+                                <span className='desc'>Modify your account password below!</span>
+                                <div className='status'>{this.state.status}</div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>User Name</span>
+                                    <span className='input-text-label'>{this.props.username}</span>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>Email</span>
+                                    <span className='input-text-label'>{this.props.email}</span>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>Current Password</span>
+                                    <input
+                                        className='input-field'
+                                        type='password'
+                                        name='password'
+                                        onChange={this.handleChange}
+                                        value={this.state.password}/>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>New Password</span>
+                                    <input
+                                        className='input-field'
+                                        type='password'
+                                        name='new_password'
+                                        onChange={this.handleChange}
+                                        value={this.state.new_password}/>
+                                </div>
+
+                                <div className='input-group'>
+                                    <span className='input-text-label'>Confirm Password</span>
+                                    <input
+                                        className='input-field'
+                                        type='password'
+                                        name='conf_password'
+                                        onChange={this.handleChange}
+                                        value={this.state.conf_password}/>
+                                </div>
+
+                                <div>
+                                    <button className='update-button' onClick={this.handleClick}>
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className='input-group'>
-                        <span className='input-text-label'>Password</span>
-                        <input
-                            className='input-field'
-                            type='password'
-                            name='password'
-                            onChange={this.handleChange}
-                            value={this.state.password}/>
+                    <div className='col-lg-2'>
+                        <Avatar />
                     </div>
 
-                    <div>
-                        <button className='login-button' onClick={this.handleClick}>
-                            Log In
-                        </button>
-                    </div>
                 </div>
             </div>
+
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    return {userType: state.userType};
+    return {userType: state.userType, username: state.username, email: state.email};
 };
 
 const matchDispatchToProps = (dispatch) => {

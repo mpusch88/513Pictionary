@@ -53,7 +53,7 @@ class Chat extends React.Component{
         initializeChat({username: this.state.username, id: this.state.id});
 
         updateUserList( list => {
-            console.log(list);
+           // console.log(list);
             this.setState({users: list})
         });
         // this
@@ -110,12 +110,13 @@ class Chat extends React.Component{
         return (
             <div className="chat-container">
                 <React.Fragment>
-                    <Users users={this.state.users}/>
+                    {/*<Users users={this.state.users}/>*/}
                     <Messages
                         sendMessage={this
                         .sendMessage
                         .bind(this)}
-                        messages={this.state.messages}/>
+                        messages={this.state.messages}
+                        ansFlg = {this.props.ansFlg}/>
                 </React.Fragment>
             </div>
         );
