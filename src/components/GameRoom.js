@@ -168,6 +168,22 @@ class GameRoom extends React.Component {
         this.triggerTimer();
     }
 
+    findScoreByName(username){
+        return this.state.userList.forEach(function(ele){
+            if(ele.username === username){
+                return ele.score;
+            }
+        });
+    }
+
+    clearAllScore() {
+        let tmp = this.state.userList;
+        tmp.forEach(function(ele){
+            ele.score = 0;
+        });
+        this.setState({userList: tmp});
+    }
+
     restartRound = () => {
         // TODO: check it game ends
         console.log('restartRound entry!');
@@ -178,7 +194,12 @@ class GameRoom extends React.Component {
         if (this.state.curDrawer === this.state.userList[this.state.userList.length - 1].username) {
             console.log('game ends');
             // end game
-            socket.emit('gameIsEnded', this.props.currentRoomId);
+            socket.emit('gameIsEnded', {
+                roomId: this.props.currentRoomId,
+                username: this.props.username,
+                score: this.findScoreByName(this.props.username)
+            });
+            this.clearAllScore();
             this.setState({setUpFlg: false});
             this.setState({gameProgress: 'notReady'});
             this.clearReadyState();
