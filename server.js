@@ -330,10 +330,7 @@ io.on('connection', (socket) => {
 	});
 
 	//------------------------- Login -------------------------//
-
 	socket.on('new_loginfo', (info) => {
-		console.log('login req');
-
 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
 		client1.connect(err => {
@@ -380,10 +377,8 @@ io.on('connection', (socket) => {
 		});
 	});
 
-	// Sign Up Handler
+	//------------------------- Sign Up -------------------------//
 	socket.on('new_signupinfo', (info) => {
-		console.log('signup');
-
 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
 		client1.connect(err => {
@@ -426,6 +421,23 @@ io.on('connection', (socket) => {
 				}
 			}
 		});
+	});
+
+	socket.on('update_userhistory', (info) => {
+		var client1 = new MongoClient(uri, { useNewUrlParser: true });
+		client1.connect(err => {
+			const collection = client1
+				.db('pictionary')
+				.collection('users');
+
+			var myobj = { username: info.username };
+			collection.find(myobj).toArray(function(err, res) {	
+				if (err) throw err;
+				console.log(res[0].username);
+				socket.emit('signup_flag', { username: res[0].username });
+			});
+		});
+
 	});
 
 	// ------------------------- Login -------------------------//

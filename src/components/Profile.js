@@ -31,8 +31,8 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-        socket.on('update_flag', updateInfo => {
 
+        socket.on('update_flag', updateInfo => {
             if (updateInfo.type === 'success') {
                 console.log('User info updated successfully!');
                 this.setState({message: 'User info updated successfully!'});

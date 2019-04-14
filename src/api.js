@@ -70,9 +70,6 @@ export function sendMessageEvent(data, cb) {
 }
 
 //----------------- Login -----------------//
-// function send_loginfo(info) {
-// 	socket.emit('new_loginfo', info);
-// }
 function send_loginfo(info) {
 	socket.emit('new_loginfo', info);
 }
@@ -86,6 +83,15 @@ function send_signupinfo(info) {
 function update_userinfo(info) {
 	socket.emit('update_userinfo', info);
 }
+
+//--------------USER HISTORY--------------------//
+function update_userhistory(info, cb) {
+	socket.emit('update_userhistory', info);
+	socket.on('receive-answer', (ans) => {
+		cb(ans);
+	});
+}
+
 
 //------------------ Admin page-----------------//
 function getCategories(cb) {
@@ -149,8 +155,8 @@ function getAllExistingRooms(cb) {
 export function setAnswer(data, cb){
 	socket.emit('pick-answer', data);
 	socket.on('receive-answer', (ans) => {
-		cb(ans)
-	})
+		cb(ans);
+	});
 }
 
 /*--------------Cynthia updates--------------*/
@@ -170,6 +176,7 @@ export { sndStrokes };
 export { game_myReady };
 export { game_otherReady };
 export { update_userinfo };
+export { update_userhistory };
 export { send_loginfo };
 export { send_signupinfo };
 export { getCategories };
