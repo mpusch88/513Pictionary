@@ -244,6 +244,7 @@ class GameRoom extends React.Component {
             this.setState({curDrawer: this.state.userList[0].username});
             this.updateUserStat(this.state.curDrawer, true, null, null);
             this.setState({isDrawer: false});
+            this.props.updateUserList(this.state.userList);
         } else {
             this.setState({newRound: true});
             this.nextDrawer();

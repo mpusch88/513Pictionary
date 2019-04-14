@@ -33,7 +33,7 @@ client.connect(() => {
 			categories = items;
 			items.forEach(function(arrayItem) {
 				categoryTypes.push(arrayItem.type);
-				categoryToWords[arrayItem.type] = arrayItem[arrayItem.type];
+				categoryToWords[arrayItem.type] = arrayItem.answers;
 			});
 		});
 
@@ -129,7 +129,7 @@ let storeCategoryAndWord = (data) => {
 
 		var obj = {
 			type: type,
-			[type]: word
+			answers: word
 		};
 
 		collection.insertOne(obj, function(err, res) {
@@ -158,7 +158,7 @@ let addWordToExistingCategory = (data) => {
 			obj
 		}, {
 			$addToSet: {
-				[type]: word
+				answers: word
 			}
 		}, function(err, res) {
 			if (err)
@@ -658,6 +658,18 @@ io.on('connection', (socket) => {
 	socket.on('pick-answer', (data) => {
 		console.log('Picking answer from category: ' + data.category);
 
+
+		// to reset the flag that hasAnswered
+			let userList = userListPerRoom[data.roomId];
+			for (var i in userList) {
+				userList[i].hasAnswered = false;
+
+			}
+
+			console.log(userList);
+		userListPerRoom[data.roomId] = userList;
+
+
 		let catclient = new MongoClient(uri, { useNewUrlParser: true });
 
 		catclient.connect(() => {
@@ -719,8 +731,9 @@ io.on('connection', (socket) => {
 		console.log(data);
 
 		if (data.existingCategory) {
+
 			if (!categoryToWords[data.existingCategory].includes(data.word)) {
-				console.log(data.word);
+
 				addWordToExistingCategory({ category: data.existingCategory, word: data.word });
 			}
 		} else {
@@ -731,7 +744,8 @@ io.on('connection', (socket) => {
 
 	socket.on('gameIsStarted', (data) => {
 
-		io.emit('updateRoomAvail', { id: data, isAvailable: false });
+
+		io.emit('updateRoomAvail', {id: data, isAvailable: false} )
 
 
 	});
@@ -739,7 +753,7 @@ io.on('connection', (socket) => {
 
 	socket.on('gameIsEnded', (data) => {
 
-		io.emit('updateRoomAvail', { id: data, isAvailable: true });
+		io.emit('updateRoomAvail', {id: data.roomId, isAvailable: true} )
 
 	});
 

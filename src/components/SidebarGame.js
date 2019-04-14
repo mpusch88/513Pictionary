@@ -95,7 +95,16 @@ SidebarGame.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-    return {avatar: state.avatar, username: state.username, currentRoomId: state.currentRoomId, isCurrentRoomHost: state.isCurrentRoomHost};
+    return {
+        avatar: state.avatar,
+        username: state.username,
+        currentRoomId: state.currentRoomId,
+        isCurrentRoomHost: state.isCurrentRoomHost,
+        userList: state.userList
+
+    };
 };
 
-export default compose(withStyles(styles), connect(mapStateToProps))(SidebarGame);
+export  default compose(withStyles(styles), connect(mapStateToProps))(SidebarGame);
+
+
