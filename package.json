@@ -6,10 +6,10 @@
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
-    "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
+    "jquery": "^3.3.1",
+    "jquery.cookie": "^1.4.1",
     "mongodb": "^3.2.2",
-    "promise": "^8.0.3",
     "prop-types": "^15.7.2",
     "rc-progress": "^2.3.0",
     "react": "^16.8.4",
@@ -22,11 +22,8 @@
     "recompose": "^0.30.0",
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.8",
-    "redux-thunk": "^2.3.0",
     "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0",
-    "jquery": "^3.3.1",
-    "jquery.cookie": "^1.4.1"
+    "socket.io-client": "^2.2.0"
   },
   "scripts": {
     "server": "node server.js",

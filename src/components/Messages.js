@@ -43,7 +43,7 @@ class Messages extends React.Component {
                 }     
                 <div ref={this.messagesEnd} />          
             </div>
-            {this.props.a1nsFlg?'':<div><ChatBox sendMessage={this.props.sendMessage}/></div>}
+            {this.props.ansFlg?'':<div><ChatBox sendMessage={this.props.sendMessage}/></div>}
             </div>
         );
     }
