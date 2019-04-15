@@ -1,12 +1,5 @@
 import openSocket from 'socket.io-client';
-export const socket = openSocket('http://10.13.129.81:8000');
-// export const socket = openSocket('http://localhost:8000');
-
-//----------------- Example -----------------//
-function subscribeToTimer(cb) { // cb stands for callback function
-    socket.on('timer', timestamp => cb(null, timestamp));
-    socket.emit('subscribeToTimer', 1000);
-}
+export const socket = openSocket('http://localhost:8000');
 
 
 
@@ -71,9 +64,7 @@ export function sendMessageEvent(data, cb) {
 }
 
 //----------------- Login -----------------//
-// function send_loginfo(info) {
-// 	socket.emit('new_loginfo', info);
-// }
+
 function send_loginfo(info) {
 	socket.emit('new_loginfo', info);
 }
@@ -172,8 +163,6 @@ function joinRoomUpdateUserList(cb){
 /*--------------Cynthia updates--------------*/
 
 
-
-export { subscribeToTimer };
 export { rcvStrokes };
 export { sndStrokes };
 export { game_myReady };

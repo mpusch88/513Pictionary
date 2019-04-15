@@ -20,7 +20,7 @@ class SidebarStats extends React.Component {
     render() {
         return (
             <div className="stats-container">
-                <span>SidebarGeneral</span>
+
             </div>
         );
     }

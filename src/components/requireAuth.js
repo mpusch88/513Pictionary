@@ -18,14 +18,11 @@ export default function requireAuth(Component, adminOnly) {
             this.checkAuth();
         }
 
-        checkAuth() {
-            console.log('inside' + this.props.userType);
-            if (this.props.userType === 'user' && !adminOnly) {
 
-                // const location = this.props.location; const redirect = location.pathname +
-                // location.search;
-                //
-                // this.props.router.push(`/login?redirect=${redirect}`);
+        // function that checks the user is of right type to view a page
+        checkAuth() {
+
+            if (this.props.userType === 'user' && !adminOnly) {
 
                 this.setState({showComponent: true});
 

@@ -1,3 +1,4 @@
+//action for adding current room info to store
 export const addRoomInfo = (room) => {
     return {
         type: 'ADD_CURRENT_ROOM',
@@ -8,6 +9,8 @@ export const addRoomInfo = (room) => {
 
 };
 
+
+// action for removing current room
 export const removeCurrentRoom = () => {
     return {
         type: 'REMOVE_CURRENT_ROOM',
@@ -19,6 +22,8 @@ export const removeCurrentRoom = () => {
 
 };
 
+
+//action for setting room host to store
 export const setRoomHost = (isHost) => {
     return {
         type: 'SET_HOST',

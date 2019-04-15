@@ -30,7 +30,7 @@ class Signup extends React.Component {
         this.handleGoBack = this
             .handleGoBack
             .bind(this);
-        // this.handleForgotPassword = this     .handleForgotPassword     .bind(this);
+
     }
 
     componentDidMount() {
@@ -38,7 +38,7 @@ class Signup extends React.Component {
             let userType = loginInfo.type
                 ? loginInfo.type
                 : '';
-            console.log(loginInfo);
+
 
             this
                 .props
@@ -162,7 +162,7 @@ class Signup extends React.Component {
                 <DialogWindow
                     message={this.state.dialogMessage}
                     show={this.state.showConfirmDialog}
-                    title={'Congradulations!'}
+                    title={'Congratulations!'}
                     onClose={this.handleDialogClose}/>
             </div>
         );

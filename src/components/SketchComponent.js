@@ -6,6 +6,9 @@ import {bindActionCreators} from 'redux';
 import {changeGameState} from '../actions/userAction';
 import {connect} from 'react-redux';
 
+
+
+//this is the component for Drawing Canvas
 class SketchComponent extends Component
 {
     constructor(props) {

@@ -13,13 +13,17 @@ let categories = [];
 let categoryTypes = [];
 let categoryToWords = {};
 
+
 app.use('/assets', express.static(__dirname + '/dist'));
 const io = require('socket.io')(server);
+
 
 // connect to mongo and store all categories w/ answers in categories list
 const uri = 'mongodb+srv://513Administrator:zAiKscXwdMZaX7FP@513cluster-qiybs.mongodb.net/tes' +
 	't?retryWrites=true';
 const client = new MongoClient(uri, { useNewUrlParser: true });
+
+
 
 // getting all categories from database
 client.connect(() => {
@@ -37,10 +41,11 @@ client.connect(() => {
 			});
 		});
 
-	// not exported?
 	client.close();
 });
 
+
+// get all users
 let getUsers = () => {
 	return Object
 		.keys(users)
@@ -153,7 +158,6 @@ let addWordToExistingCategory = (data) => {
 			type: type
 		};
 
-		console.log(obj);
 		collection.updateOne({
 			obj
 		}, {
@@ -194,7 +198,6 @@ let removeFromUserList = (roomId, username) => {
 		for (var i in list) {
 
 			if (list[i].username === username) {
-				console.log('inside removeFrom user list');
 				list.splice(i, 1);
 			}
 		}
@@ -217,11 +220,11 @@ let checkAnswer = (data) => {
 		rmAnswer = roomInfo[data.roomId].curAnswer;
 	}
 	if(rmAnswer !== '') {
-		console.log('Checking ' + rmAnswer + ' with ' + data.answer);
+
 		let reg = new RegExp('\\b' + rmAnswer + '\\b');
 
 		if (data.answer.match(reg)) {
-			console.log('Username: ' + data.username + ' | Answered correctly with ' + rmAnswer);
+
 			let ulRoom = userListPerRoom[data.roomId];
 			let user;
 
@@ -230,7 +233,6 @@ let checkAnswer = (data) => {
 					user = ulRoom[i];
 			}
 
-			console.log('Modifying data for user: ' + user.userame);
 
 			if (!user.currentPoints)
 				user.currentPoints = 0;
@@ -254,7 +256,7 @@ let checkAnswer = (data) => {
 						user.currentPoints += rest;
 						point = rest;
 				}
-				console.log('User: ' + user.username + ' | Round Point: ' + point + ' | Total Points: ' + user.currentPoints);
+
 				io.in(data.roomId).emit('newScoreUpdate', {username: user.username, score: user.currentPoints});
 				user.hasAnswered = true;
 				return {win: 1, points: point};
@@ -284,13 +286,10 @@ io.on('connection', (socket) => {
 		// otherwise, use the fetched data and update the userlist
 		if (users[user.id] !== undefined) {
 
-			// console.log("USER ID: " + user.id); console.log("Users list: " +
-			// users[user.id]);
 			createSocket(user);
 			socket.emit('updateUsersList', getUsers());
 		} else {
 
-			// console.log("Creating new user: " + user + " with id of: " + user.id);
 			createUser(user);
 			io.emit('updateUsersList', getUsers());
 		}
@@ -299,9 +298,7 @@ io.on('connection', (socket) => {
 	//--------------UPDATE USER INFO---------------------//
 
 	socket.on('update_userinfo', (info) => {
-		console.log('User info update requested!');
-		console.log(info.email);
-		console.log(info.username);
+
 
 		if (info.cpsw === info.npsw) {
 			var client1 = new MongoClient(uri, { useNewUrlParser: true });
@@ -330,10 +327,8 @@ io.on('connection', (socket) => {
 							});
 
 						if (updateresult) {
-							console.log('Update successful');
 							socket.emit('update_flag', { type: 'success' });
 						} else {
-							console.log('Update failed');
 							socket.emit('update_flag', { type: 'fail' });
 						}
 					} else {
@@ -346,7 +341,6 @@ io.on('connection', (socket) => {
 
 	//------------------------- Login -------------------------//
 	socket.on('new_loginfo', (info) => {
-		console.log('login req');
 
 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
@@ -363,8 +357,6 @@ io.on('connection', (socket) => {
 			collection.find(myobj).toArray(function(err, res) {
 				if (res && res.length !== 0) {
 					if (res[0].isAdmin === '1') {
-						console.log('admin logged in');
-						console.log(res[0].email);
 
 						socket.emit('login_flag', {
 							type: 'admin',
@@ -384,11 +376,9 @@ io.on('connection', (socket) => {
 						});
 
 						socket.username = res[0].username;
-						console.log('User logged in');
 					}
 				} else {
 					socket.emit('login_flag', { type: 'fail' });
-					console.log('failure');
 				}
 			});
 		});
@@ -396,7 +386,7 @@ io.on('connection', (socket) => {
 
 	// Sign Up Handler
 	socket.on('new_signupinfo', (info) => {
-		console.log('signup');
+
 
 		var client1 = new MongoClient(uri, { useNewUrlParser: true });
 
@@ -409,7 +399,7 @@ io.on('connection', (socket) => {
 
 			collection.find(myobj).toArray(function(err, res) {
 				if (res && res.length !== 0) { // checks if the username has been taken
-					console.log('username taken');
+
 					socket.emit('signup_flag', { type: 'taken' });
 				} else {
 					// generate a random number in-between 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 for the profile image
@@ -421,7 +411,7 @@ io.on('connection', (socket) => {
 					var myobj = { username: info.username, password: info.psw, email: info.email, wins: 0, gameplayed: 0, isAdmin: '0', avatar: random };
 					collection.insertOne(myobj, function(err, res) {
 						if (err) throw err;
-						console.log('inserted');
+
 						socket.emit('signup_flag', { type: 'signed' });
 					});
 				}
@@ -432,23 +422,6 @@ io.on('connection', (socket) => {
 	});
 
 
-	// ------ USER UPDATE --------------- //
-
-	socket.on('update_userhistory', (info) => {
-		// var client1 = new MongoClient(uri, { useNewUrlParser: true });
-		// client1.connect(err => {
-		// 	const collection = client1
-		// 		.db('pictionary')
-		// 		.collection('users');
-		//
-		// 	var myobj = { username: info.username };
-		// 	collection.find(myobj).toArray(function(err, res) {
-		// 		if (err) throw err;
-		// 		// console.log(res[0].username);
-		// 		socket.emit('signup_flag', { username: res[0].username });
-		// 	});
-		// });
-	});
 
 	// ------------------------- Login -------------------------//
 	// ---------------------------- creating and join room
@@ -467,7 +440,6 @@ io.on('connection', (socket) => {
 
 				data.room.capacity = (roomsearch.length) + '/5';
 
-				console.log('joined successfully in existing room');
 
 				let userInfo = {
 					username: data.username,
@@ -477,15 +449,13 @@ io.on('connection', (socket) => {
 					avatarId: data.avatar
 				};
 
-				// emiting to all sockets in room for new user joining in
-				// io.in(data.room.id).emit('newUserInRoom', userInfo);
 
 				// adding user to room user list
 				//Make array for key if doesn't exist
 				userListPerRoom[data.room.id] = userListPerRoom[data.room.id] ? userListPerRoom[data.room.id] : [];
 				//Add value to array
 				userListPerRoom[data.room.id].push(userInfo);
-				console.log('new join user, update list: ', userListPerRoom[data.room.id]);
+
 				io.in(data.room.id).emit('entireUserList', userListPerRoom[data.room.id]);
 
 
@@ -497,14 +467,13 @@ io.on('connection', (socket) => {
 			}
 		}
 
-		// socket.broadcast.to(data.room.id).emit('message',
-		// 	{type:'message', text: data.username + " just joined the room!"});
 
 		roomInfo[data.room.id] = data.room;
 
 		// to update capacity all sockets
 		io.emit('updateRoomInfo', data.room);
 	});
+
 
 	//joining the room, creating an entry in the list
 	socket.on('create-room', function(room) {
@@ -521,10 +490,10 @@ io.on('connection', (socket) => {
 		//setting the id on return data
 		room.id = roomId;
 		let roomsearch = io.sockets.adapter.rooms[room.id];
-		//should be 1
+
 		room.capacity = roomsearch.length + '/5';
 		roomInfo[roomId] = room;
-		console.log('created new room ' + roomId + ' :' + room.capacity);
+
 		socket.emit('sendRoomInfo', room);
 		socket.broadcast.emit('newRoom', room);
 
@@ -540,7 +509,7 @@ io.on('connection', (socket) => {
 		userListPerRoom[roomId] = userListPerRoom[roomId] ? userListPerRoom[roomId] : [];
 		//Add value to array
 		userListPerRoom[roomId].push(userInfo);
-		console.log('create new room, list: ', userListPerRoom[roomId]);
+
 		socket.emit('entireUserList', userListPerRoom[roomId]);
 	});
 
@@ -560,12 +529,10 @@ io.on('connection', (socket) => {
 		let roomsearch = io.sockets.adapter.rooms[data.id];
 		let room = roomInfo[data.id];
 
-		console.log('leaving room with id ' + data.id);
 
 		if (roomsearch) {
 			room.capacity = roomsearch.length - 1 + '/5';
 			roomInfo[data.id] = room;
-			console.log('leaving room ' + room.capacity);
 		}
 
 
@@ -583,7 +550,6 @@ io.on('connection', (socket) => {
 
 		io.in(data.id).emit('entireUserList', userListPerRoom[data.id]);
 
-		console.log('User leaves: ', userListPerRoom[data.id]);
 
 	});
 
@@ -591,7 +557,7 @@ io.on('connection', (socket) => {
 
 
 	socket.on('getUserList', (data) => {
-		console.log('send user list', userListPerRoom[data.id]);
+
 		socket.emit('userList', userListPerRoom[data.id]);
 	});
 
@@ -606,23 +572,21 @@ io.on('connection', (socket) => {
 
 	// receive user ready event, emit to other players
 	socket.on('imReady', data => {
-		console.log('User: ' + data.username + ' is ready');
+
 		io.in(data.roomId).emit('newReadyPlayer', data.username);
 	});
 
 	// emits message to all users in the room add functionality to verify answer on
 	// each message receive
 	socket.on('message', function(data) {
-		console.log('room id passed in : ' + data.roomId);
-		console.log(socket.id);
+
 
 		let roomsearch = io.sockets.adapter.rooms[data.roomId];
 
-		console.log(roomsearch);
 
 		//to room sockets
 		let rooms = Object.keys(socket.rooms);
-		console.log(rooms); // [ <socket.id>, 'room 237' ]
+
 		//---- set message text to ***** if correct answer ----//
 		let answercheck = {
 			roomId: data.roomId,
@@ -630,14 +594,14 @@ io.on('connection', (socket) => {
 			answer: data.message.text
 		};
 		let isWin = checkAnswer(answercheck);
-		console.log('Win flag: ' + isWin.win);
+
 		if (isWin.win) {
 			if (isWin.points) {
 				data.message.text = '**** +' + isWin.points;
 			} else {
 				data.message.text = '****';
 			}
-			console.log('Modifying text: ' + data.message.text + ' to ****' + isWin.points);
+
 		}
 		//---------------------------------------------------/
 		socket
@@ -646,15 +610,10 @@ io.on('connection', (socket) => {
 			.emit('message', data);
 		// socket.broadcast.emit('message', data);
 
-		//------- Broadcast user got answer --------/
-		//socket.broadcast.to(data.roomId).emit('server-message', data.username+" has correctly guessed the answer!");
-		//------------------------------------------//
-		//TODO - add function to check message with answer
 	});
 
 	//--------------- Pick answer from picked category and save to server -------//
 	socket.on('pick-answer', (data) => {
-		console.log('Picking answer from category: ' + data.category);
 
 
 		// to reset the flag that hasAnswered
@@ -664,7 +623,6 @@ io.on('connection', (socket) => {
 
 		}
 
-		console.log(userList);
 		userListPerRoom[data.roomId] = userList;
 
 
@@ -676,38 +634,21 @@ io.on('connection', (socket) => {
 				.collection('categories');
 
 			catcollection.findOne({ type: data.category }).then(function(document) {
-				console.log(document.answers);
+
 				let answerList = document.answers;
 				//let rnd = Math.floor(Math.random(answerList.length) * 10);
 				let rnd = Math.floor(Math.random()*(answerList.length));
 				// let answer = document.answers[Math.random(rnd)];
-				console.log('List size: ' + answerList.length);
-				console.log('Generate random number: ' + rnd);
+
 				let answer = answerList[rnd];
 				roomInfo[data.roomId].curAnswer = answer;
-				console.log('Picked answer: ' + answer);
+
 				socket.emit('receive-answer', answer);
 			});
 		});
 		catclient.close();
 	});
 
-	// //emits message to all users in the room //add functionality to verify answer
-	// on each message receive socket.on('message', function(msg) { 	//
-	// io.in(room).emit('message',msg);
-	//
-	// 	socket.broadcast.to(msg.roomId).emit('message', msg.msq);
-	//
-	// 	//socket.broadcast.emit('message', msg); 	//TODO - add function to check
-	// message with answer }); Receives image from socket and emits to all other
-	// sockets in that room socket.on('receive image', function (image) {
-	// socket.broadcast.to(room).emit(image); }); Handles socket disconnection and
-	// possible room deletion when disconnecting socket is last one in room Updates
-	// // users list on user disconnect
-	// socket.on('disconnect', () => {
-	// 	//	removeSocket(socket.id);
-	// 	io.emit('updateUsersList', getUsers());
-	// });
 
 	// ---------------- Admin page --------------------// this is for testing right
 	// now, need to fetch from DB
@@ -727,7 +668,6 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('storeNewCategory', (data) => {
-		console.log(data);
 
 		if (data.existingCategory) {
 
@@ -748,10 +688,6 @@ io.on('connection', (socket) => {
 		io.emit('updateRoomAvail', { id: data.roomId, isAvailable: true });
 	});
 
-
-	// -----------------  Dashboard ---------------------------//
-
-	// TODO: socket disconnection
 
 
 	//------------------------------ Logout ----------------------------------------------------//
@@ -783,27 +719,17 @@ io.on('connection', (socket) => {
 
 	/// on disconnect , socket already leaves all the rooms it was in , no need to do it manually
 	socket.on('disconnect', (data) => {
-		// socket disconnected, set a timeout for reconnection
-
-
-
-		console.log('inside disconnect');
-
 
 
 		for (const [roomId, userList] of Object.entries(userListPerRoom)) {
-			console.log(roomId);
-			console.log(userList);
 			for (var i in userList) {
 				if (userList[i].username === socket.username) {
 
-					console.log('Before  disconnect: ', userListPerRoom[roomId]);
 					removeFromUserList(roomId, socket.username);
 
 					// inform other players in the room
 					io.in(roomId).emit('entireUserList', userListPerRoom[roomId]);
 
-					console.log('After disconnect: ', userListPerRoom[roomId]);
 				}
 
 			}

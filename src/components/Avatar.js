@@ -12,6 +12,8 @@ import avatar9 from '../resources/avatars/9.jpg';
 import avatar10 from '../resources/avatars/10.jpg';
 import '../styles/avatar.css';
 
+
+// this component is used for rendering the avatar on side bar for profile page and dashboard
 class Avatar extends React.Component {
     constructor(props) {
         super(props);

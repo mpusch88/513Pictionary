@@ -11,6 +11,9 @@ function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
+
+
+//this component can be used as a dialog notification box
 class DialogWindow extends React.Component {
     constructor(){
         super();
@@ -27,7 +30,6 @@ class DialogWindow extends React.Component {
                     open={this.props.show}
                     TransitionComponent={Transition}
                     keepMounted
-                    //onClose={this.props.handleShowDialog}
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                 >

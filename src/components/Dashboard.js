@@ -31,6 +31,8 @@ import SidebarGeneral from './SidebarGeneral';
 import '../styles/sidebar.css';
 import '../styles/base.css';
 
+
+
 const styles = () => ({
     button: {
         width: 100,
@@ -69,6 +71,8 @@ const styles = () => ({
     }
 });
 
+
+// this is the main page that has the game list and create game room button
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
@@ -166,7 +170,7 @@ class Dashboard extends React.Component {
                         .roomList
                         .map(item => {
                             if (item.id === info.id) {
-                                // console.log('inside same id');
+
                                 item.capacity = info.capacity;
                             }
                         });
@@ -184,8 +188,6 @@ class Dashboard extends React.Component {
             nextStateForAvailale[data.id] = data.isAvailable;
             this.setState({roomAvailable: nextStateForAvailale});
 
-            console.log("inside update room available now");
-            console.log(this.state.roomAvailable[data.id]);
         });
     }
 
@@ -270,13 +272,6 @@ class Dashboard extends React.Component {
         let id = e.target.id;
         let room = this.state.roomObjMap[id];
 
-        // socket.on("canJoinRoom", (data) => {
-        //
-        //     if(data.id === id){
-        //
-        //     }
-        //
-        // });
 
         joinRoom({room: room, username: this.props.username, avatar: this.props.avatar});
 
@@ -300,7 +295,7 @@ class Dashboard extends React.Component {
                     .roomList
                     .map(item => {
                         if (item.id === info.id) {
-                            // console.log('inside same id');
+
                             item.capacity = info.capacity;
                         }
                     });
@@ -334,7 +329,6 @@ class Dashboard extends React.Component {
         const {classes} = this.props;
         const {roomList} = this.state;
 
-        // console.log(roomList);
 
         return (
             <div className='overflow-hidden'>

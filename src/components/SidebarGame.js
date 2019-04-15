@@ -46,6 +46,8 @@ const styles = theme => ({
     }
 });
 
+
+//Component to show userList on Game room
 class SidebarGame extends React.Component {
     constructor(props) {
         super(props);
@@ -92,7 +94,7 @@ class SidebarGame extends React.Component {
 
     render() {
         const {classes} = this.props;
-        console.log(this.props.userList);
+
         return (
             <div className="sidebar-container text-center">
                 <Typography variant="h6" className={classes.title}>

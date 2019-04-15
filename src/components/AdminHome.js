@@ -68,13 +68,14 @@ class AdminHome extends React.Component {
 
     timer = null
 
+
+    // adding new category to db
     handleNewCategory = event => {
         clearTimeout(this.timer);
         let value = event.target.value;
         this.setState({newCatVal: value});
 
         this.timer = setTimeout(() => {
-            this.triggerChange(value);
         }, 1000);
 
         if (!value) {
@@ -82,21 +83,12 @@ class AdminHome extends React.Component {
         } else {
             this.setState({isExistingDisabled: true, isNewDisabled: false});
         }
-    }
+    };
 
-    triggerChange = (targetValue) => {
-    //     checkIfCategoryExists(targetValue, data => {
-    //         console.log(data);
-    //         if(data.error === 'Category Already Exists'){
-    //             this.toggleModal();
-    //             this.showDialogMessage('Category Already exists');
-    //         }
-    //     });
-     }
 
     handleCategoryChange = event => {
         this.setState({currentCategory: event.target.value});
-        console.log('current value ' + event.target.value);
+
 
         if (!event.target.value) {
             this.setState({isExistingDisabled: false, isNewDisabled: false});
@@ -115,7 +107,7 @@ class AdminHome extends React.Component {
 
             if (this.state.newCatVal) {
                 checkIfCategoryExists(this.state.newCatVal, data => {
-                    console.log(data);
+
                     if (data.error === 'Category Already Exists') {
                         this.toggleModal();
                         this.showDialogMessage('Category Already exists');
@@ -144,7 +136,7 @@ class AdminHome extends React.Component {
             this.setState({isExistingDisabled: false, isNewDisabled: false});
         }
 
-    }
+    };
 
 
 
@@ -156,7 +148,7 @@ class AdminHome extends React.Component {
 
     showDialogMessage = (data) => {
         this.setState({dialogMessage: data});
-    }
+    };
 
     handleClear = () => {
 

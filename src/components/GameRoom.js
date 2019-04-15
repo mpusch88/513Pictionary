@@ -13,6 +13,8 @@ import compose from 'recompose/compose';
 import SidebarGame from './SidebarGame';
 import '../styles/base.css';
 
+
+// this component contains all the inside game UI elements and logic for front end
 class GameRoom extends React.Component {
     constructor(props) {
         super(props);
@@ -46,13 +48,13 @@ class GameRoom extends React.Component {
 
                 if (userList[0].username === this.props.username) {
                     // set myself to drawer
-                    console.log(this.props.username + ' is the drawer');
+
                     this.setState({curDrawer: this.props.username});
                     this.updateUserStat(this.state.curDrawer, true, null, null);
                 } else {
                     this.setState({curDrawer: userList[0].username});
                     this.updateUserStat(this.state.curDrawer, true, null, null);
-                    console.log(this.state.curDrawer + ' is the drawer');
+
                 }
             }
         });
@@ -71,7 +73,7 @@ class GameRoom extends React.Component {
                 .props
                 .updateUserList(this.state.userList);
 
-            console.log(username + ' is ready');
+
 
             //check for all the uesrs ready status in the uesrlist
             if (this.allUsersReady()) {
@@ -129,10 +131,10 @@ class GameRoom extends React.Component {
     }
 
     nextDrawer() {
-        console.log('calc nextDrawer');
+
 
         for (let i = 0; i < this.state.userList.length; i++) {
-            console.log(i + ': ' + this.state.userList[i].username);
+
 
             if (this.state.curDrawer === this.state.userList[i].username) {
                 this.setState({
@@ -150,7 +152,6 @@ class GameRoom extends React.Component {
             }
         }
 
-        console.log('next drawer is ' + this.state.curDrawer);
     }
 
     gameStart() {
@@ -159,7 +160,7 @@ class GameRoom extends React.Component {
         this.setState({newRound: false});
 
         if (this.props.username === this.state.curDrawer) {
-            console.log('enable pad!');
+
             this.setState({isDrawer: true});
         }
 
@@ -175,7 +176,7 @@ class GameRoom extends React.Component {
             this.setState({isDrawer: false});
             this.setState({wasDrawer: true});
         }
-        console.log('Before Current Drawer');
+
 
         if (this.state.wasDrawer) {
             let sendData = {
@@ -183,10 +184,10 @@ class GameRoom extends React.Component {
                 roomId: this.props.currentRoomId
             };
 
-            console.log('Current Drawer');
+
 
             setAnswer(sendData, ans => {
-                console.log(ans);
+
                 this.setState({currentAnswer: ans});
             });
         }
@@ -225,13 +226,10 @@ class GameRoom extends React.Component {
 
     restartRound = () => {
         // TODO: check it game ends
-        console.log('restartRound entry!');
-        console.log('cur drawer: ', this.state.curDrawer);
-        console.log('userList: ', this.state.userList);
-        console.log('last user in the user list:', this.state.userList[this.state.userList.length - 1]);
+
 
         if (this.state.curDrawer === this.state.userList[this.state.userList.length - 1].username) {
-            console.log('game ends');
+
 
             // end game
             socket.emit('gameIsEnded', {
@@ -239,12 +237,11 @@ class GameRoom extends React.Component {
                 username: this.props.username,
                 score: this.findScoreByName(this.props.username)
             });
-            this.clearAllScore();
+           // this.clearAllScore();
             this.setState({setUpFlg: false});
             this.setState({gameProgress: 'notReady'});
             this.clearReadyState();
 
-            console.log(this.state.userList[0].username + ' is the drawer of next game');
 
             this.setState({curDrawer: this.state.userList[0].username});
             this.updateUserStat(this.state.curDrawer, true, null, null);
@@ -330,7 +327,6 @@ class GameRoom extends React.Component {
             .props
             .removeCurrentRoom();
 
-        console.log('leaving game room' + this.props.currentRoomId);
         let {history} = this.props;
         history.push({pathname: '/Dashboard'});
     };

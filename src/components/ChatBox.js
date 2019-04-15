@@ -1,6 +1,8 @@
 import React from 'react';
 import '../styles/chatbox.css';
 
+
+//this component is the input bar in chat
 class ChatBox extends React.Component {
     constructor(props) {
         super(props);
@@ -10,7 +12,7 @@ class ChatBox extends React.Component {
     }
 
     componentDidMount() {
-        console.log('ChatBox mounted');
+
     }
 
     onChange(e) {

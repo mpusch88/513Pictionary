@@ -7,9 +7,10 @@ import {withRouter} from 'react-router-dom';
 import {send_loginfo, socket} from '../api';
 import logo from '../resources/logo.png';
 import $ from 'jquery';
-// eslint-disable-next-line no-unused-vars
 import {cookie} from 'jquery.cookie';
 
+
+//this is the login component
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -51,16 +52,13 @@ class Login extends React.Component {
                 this
                     .props
                     .authenticate(myType, myName, myEmail, myAvatar);
-                console.log('user reconnected successful');
-                // let {history} = this.props;
-                // history.push({pathname: '/Dashboard'});
+
+
             } else if (myType === 'admin') {
                 this
                     .props
                     .authenticate(myType, myName, myEmail, myAvatar);
-                console.log('admin reconnected successful');
-                // let {history} = this.props;
-                // history.push({pathname: '/Admin'});
+
             } else if (myType === 'fail') {
                 this
                     .props
@@ -80,7 +78,7 @@ class Login extends React.Component {
                 .authenticate(userType, loginInfo.username, loginInfo.email, loginInfo.avatar);
 
             if (loginInfo.type === 'user') {
-                console.log('user logged in successful');
+
                 let {history} = this.props;
                 history.push({pathname: '/Dashboard'});
                 $.cookie('user_name', loginInfo.username);
@@ -88,7 +86,7 @@ class Login extends React.Component {
                 $.cookie('user_email', loginInfo.email);
                 $.cookie('user_avatar', loginInfo.avatar);
             } else if (loginInfo.type === 'admin') {
-                console.log('admin logged in successful');
+
                 let {history} = this.props;
                 history.push({pathname: '/Admin'});
                 $.cookie('user_name', loginInfo.username);

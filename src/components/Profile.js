@@ -31,10 +31,10 @@ class Profile extends React.Component {
     componentDidMount() {
         socket.on('update_flag', updateInfo => {
             if (updateInfo.type === 'success') {
-                console.log('User info updated successfully!');
+
                 this.setState({message: 'User info updated successfully!'});
             } else if (updateInfo.type === 'fail') {
-                console.log('Update failed!');
+
                 this.setState({message: 'Update failed!'});
             }
         });

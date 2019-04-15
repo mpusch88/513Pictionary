@@ -31,6 +31,8 @@ const styles = {
     }
 };
 
+
+// this header component is used in all the pages with props passed in for title
 class Header extends React.Component {
     state = {
         auth: true,

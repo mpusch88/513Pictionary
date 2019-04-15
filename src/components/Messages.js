@@ -19,7 +19,7 @@ class Messages extends React.Component {
     messagesEnd = React.createRef()
 
     componentDidMount() {
-        console.log('Messages mounted');
+
         this.scrollToBottom();
 
     }
