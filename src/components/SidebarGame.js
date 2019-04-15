@@ -49,13 +49,21 @@ const styles = theme => ({
 class SidebarGame extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {userList: []};
     }
+
+
+    componentDidMount() {
+        console.log("Inside component did mount")
+        console.log(this.props.userList);
+        this.setState({userList: this.props.userList})
+    }
+
 
     listItems = (userList) => userList.map((userInfo) => <ListItem key={userInfo.username}>
         <ListItemAvatar>
             <Avatar
-                className={this.props.isDrawerToggled && this.props.username === userInfo.username
+                className={userInfo.isDrawer
                 ? this.props.classes.avatarDrawer
                 : null}>
                 <Avatar

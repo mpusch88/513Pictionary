@@ -351,8 +351,7 @@ class GameRoom extends React.Component {
 
                     <div className='col-sm-3'>
                         <SidebarGame
-                            userList={this.state.userList}
-                            isDrawerToggled={this.state.isDrawer}/>
+                            isDrawerToggled={this.state.isDrawer || this.state.wasDrawer}/>
                     </div>
 
                     <div className='col-sm-6 '>

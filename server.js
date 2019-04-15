@@ -216,52 +216,55 @@ let checkAnswer = (data) => {
 	if (roomInfo[data.roomId].curAnswer) {
 		rmAnswer = roomInfo[data.roomId].curAnswer;
 	}
+	if(rmAnswer !== '') {
+		console.log('Checking ' + rmAnswer + ' with ' + data.answer);
+		let reg = new RegExp('\\b' + rmAnswer + '\\b');
 
-	console.log('Checking ' + rmAnswer + ' with ' + data.answer);
-	let reg = new RegExp('\\b' + rmAnswer + '\\b');
+		if (data.answer.match(reg)) {
+			console.log('Username: ' + data.username + ' | Answered correctly with ' + rmAnswer);
+			let ulRoom = userListPerRoom[data.roomId];
+			let user;
 
-	if (data.answer.match(reg)) {
-		console.log('Username: ' + data.username + ' | Answered correctly with ' + rmAnswer);
-		let ulRoom = userListPerRoom[data.roomId];
-		let user;
-
-		for (let i = 0; i < ulRoom.length; i++) {
-			if (ulRoom[i].username === data.username)
-				user = ulRoom[i];
-		}
-
-		console.log('Modifying data for user: ' + user.userame);
-
-		if (!user.currentPoints)
-			user.currentPoints = 0;
-		if (!roomInfo[data.roomId].place) {
-			roomInfo[data.roomId].place = 1;
-		}
-
-		// if(user.isHost)
-		// 	return {win:0};
-		if (!user.hasAnswered) {
-			switch (roomInfo[data.roomId].place) {
-				case 1:
-					user.currentPoints += first;
-					point = first;
-					break;
-				case 2:
-					user.currentPoints += second;
-					point = second;
-					break;
-				default:
-					user.currentPoints += rest;
-					point = rest;
+			for (let i = 0; i < ulRoom.length; i++) {
+				if (ulRoom[i].username === data.username)
+					user = ulRoom[i];
 			}
-			console.log('User: ' + user.username + ' | Round Point: ' + point + ' | Total Points: ' + user.currentPoints);
-			io.in(data.roomId).emit('newScoreUpdate', { username: user.username, score: user.currentPoints });
-			user.hasAnswered = true;
-			return { win: 1, points: point };
-		}
-		return { win: 1 };
-	} else
-		return { win: 0 };
+
+			console.log('Modifying data for user: ' + user.userame);
+
+			if (!user.currentPoints)
+				user.currentPoints = 0;
+			if (!roomInfo[data.roomId].place) {
+				roomInfo[data.roomId].place = 1;
+			}
+
+			// if(user.isHost)
+			// 	return {win:0};
+			if (!user.hasAnswered) {
+				switch (roomInfo[data.roomId].place) {
+					case 1:
+						user.currentPoints += first;
+						point = first;
+						break;
+					case 2:
+						user.currentPoints += second;
+						point = second;
+						break;
+					default:
+						user.currentPoints += rest;
+						point = rest;
+				}
+				console.log('User: ' + user.username + ' | Round Point: ' + point + ' | Total Points: ' + user.currentPoints);
+				io.in(data.roomId).emit('newScoreUpdate', {username: user.username, score: user.currentPoints});
+				user.hasAnswered = true;
+				return {win: 1, points: point};
+			}
+			return {win: 1};
+		} else
+			return {win: 0};
+	}
+
+	return {win: 0};
 };
 
 //########----------- on socket connection --------------------###########/
