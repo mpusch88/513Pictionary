@@ -49,10 +49,6 @@ class Signup extends React.Component {
                 this.toggleModal();
                 this.showDialogMessage('Account created successfully');
 
-            } else if (loginInfo.type === 'email') {
-                this.setState({message: 'invalid email format'});
-            } else if (loginInfo.type === 'empty') {
-                this.setState({message: 'Please fill all the fields'});
             }
         });
     }
@@ -63,7 +59,19 @@ class Signup extends React.Component {
     }
 
     handleClick() {
-        send_signupinfo({username: this.state.username, email: this.state.email, psw: this.state.password});
+       
+        if(this.state.username.trim() === '' || this.state.email.trim() === '' || this.state.password.trim() === '' ){
+            this.setState({message: 'Please fill all the fields'});
+        }else {
+            // Javascript Email validation regex
+            // eslint-disable-next-line no-control-regex
+            var emailformat = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+            if (!emailformat.test(this.state.email)) {
+                this.setState({message: 'invalid email format'});
+            } else {
+                send_signupinfo({username: this.state.username, email: this.state.email, psw: this.state.password});
+            }
+        }
     }
 
     toggleModal = () => {

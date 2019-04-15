@@ -14,7 +14,9 @@ class SidebarStats extends React.Component {
             username: this.props.username
         };
 
-        update_userhistory(sendData, ans => {});
+        update_userhistory(sendData, ans => {
+            
+        });
     }
 
     render() {

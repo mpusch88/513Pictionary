@@ -104,10 +104,15 @@ class Login extends React.Component {
     }
 
     handleClick() {
-        send_loginfo({
-            email: this.state.email,
-            psw: this.state.password
-        });       
+        if(this.state.email.trim() === '' || this.state.password.trim() === ''){
+            this.setState({message: 'Please fill all the fields'});
+        } else {
+            send_loginfo({
+                email: this.state.email,
+                psw: this.state.password
+            }); 
+        }
+              
     }
 
     handleChange(e) {
