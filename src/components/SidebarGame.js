@@ -49,13 +49,31 @@ const styles = theme => ({
 class SidebarGame extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {userList: []};
     }
+
+
+    componentDidMount() {
+
+        this.props.updateUserList(this.getList())
+    }
+
+
+
+    getList = () => {
+        return (
+            <List className={this.props.classes.list}>
+                {this.listItems(this.props.userList)}
+            </List>
+        )
+    }
+
+
 
     listItems = (userList) => userList.map((userInfo) => <ListItem key={userInfo.username}>
         <ListItemAvatar>
             <Avatar
-                className={this.props.isDrawerToggled && this.props.username === userInfo.username
+                className={userInfo.isDrawer
                 ? this.props.classes.avatarDrawer
                 : null}>
                 <Avatar
@@ -81,9 +99,7 @@ class SidebarGame extends React.Component {
                     Users
                 </Typography>
                 <div className={classes.root}>
-                    <List className={classes.list}>
-                        {this.listItems(this.props.userList)}
-                    </List>
+                    {this.getList()}
                 </div>
             </div>
         );
