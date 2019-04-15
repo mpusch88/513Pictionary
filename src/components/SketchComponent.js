@@ -23,6 +23,7 @@ class SketchComponent extends Component
     }
 
     componentDidMount() {
+
         rcvStrokes(item => {
             if (item)
                 this.setState({
@@ -35,6 +36,7 @@ class SketchComponent extends Component
         );
     }
 
+
     render() {
         const {
             tool,
@@ -45,7 +47,27 @@ class SketchComponent extends Component
             items
         } = this.state;
 
-        return (
+        if(this.props.clearFlg){
+            return (
+                <div
+                    style={{
+                        float: 'top',
+                        marginBottom: 20
+                    }}>
+                    <SketchPad
+                        width={400}
+                        height={300}
+                        animate={true}
+                        size={size}
+                        color={'rgba(255,255,255,0)'}
+                        fillColor={'rgba(255,255,255,0)'}
+                        items={items}
+                        tool={tool}
+                        onCompleteItem={(i) => sndStrokes({item: i, roomId: this.props.currentRoomId})}/>
+                </div>
+            );
+        }
+        else return (
             <div>
                 {this.props.drawFlg === true
                     ? <div>

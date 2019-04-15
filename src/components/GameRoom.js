@@ -25,7 +25,8 @@ class GameRoom extends React.Component {
             cdFlg: false,
             newRound: false,
             gameProgress: 'notReady', //ready, start
-            userList: []
+            userList: [],
+            clearFlg: false
         };
 
         this.gameReady = this
@@ -166,6 +167,8 @@ class GameRoom extends React.Component {
     }
 
     startCountdown() {
+        this.setState({clearFlg: true});
+
         this.setState({cdFlg: true});
 
         if (this.state.isDrawer === true) {
@@ -192,6 +195,8 @@ class GameRoom extends React.Component {
     }
 
     countdownFinish = () => {
+        this.setState({clearFlg: false});
+
         this.setState({cdFlg: false});
 
         if (this.state.wasDrawer === true) {
@@ -365,7 +370,11 @@ class GameRoom extends React.Component {
                             cdFlg={this.state.cdFlg}
                             ansFlg={this.state.wasDrawer || this.state.isDrawer}
                             ans={this.state.currentAnswer}/>
-                        <SketchComponent drawFlg={this.state.isDrawer}/> {gameProgress === 'notReady'
+                        <SketchComponent
+                            drawFlg={this.state.isDrawer}
+                            clearFlg={this.state.clearFlg}
+                        />
+                        {gameProgress === 'notReady'
                             ? <div className='buttons'>
                                     <button onClick={this.gameReady}>Ready</button>
                                     <button onClick={this.leaveRoom}>LEAVE GAME ROOM</button>
