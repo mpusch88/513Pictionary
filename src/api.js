@@ -1,5 +1,6 @@
 import openSocket from 'socket.io-client';
-export const socket = openSocket('http://10.13.129.81:8000');
+// export const socket = openSocket('http://10.13.129.81:8000');
+export const socket = openSocket('http://localhost:8000');
 
 //----------------- Example -----------------//
 function subscribeToTimer(cb) { // cb stands for callback function
@@ -84,7 +85,7 @@ export function update_userhistory(info, cb) {
 		cb(ans);
 	});
 }
-	
+
 //----------------- Sign Up -----------------//
 function send_signupinfo(info) {
     socket.emit('new_signupinfo', info);
