@@ -134,7 +134,7 @@ let storeCategoryAndWord = (data) => {
 
 		var obj = {
 			type: type,
-			answers: word
+			answers: [word]
 		};
 
 		collection.insertOne(obj, function(err, res) {
@@ -152,17 +152,20 @@ let addWordToExistingCategory = (data) => {
 		const collection = clientDriver
 			.db('pictionary')
 			.collection('categories');
+
 		let type = data.category;
 		let word = data.word;
 		var obj = {
 			type: type
 		};
 
+
+
 		collection.updateOne({
 			obj
 		}, {
 			$addToSet: {
-				answers: word
+				'answers': word
 			}
 		}, function(err, res) {
 			if (err)
