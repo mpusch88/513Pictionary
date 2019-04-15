@@ -40,7 +40,7 @@ class GameRoom extends React.Component {
                 .props
                 .updateUserList(this.state.userList);
 
-            if (!this.state.setUpFlg) {
+            if (!this.state.setUpFlg && userList.length > 0) {
                 this.setState({setUpFlg: true});
 
                 if (userList[0].username === this.props.username) {
@@ -334,6 +334,7 @@ class GameRoom extends React.Component {
     // https://stackoverflow.com/a/45582558
     triggerTimer = () => {};
     triggerCountdown = () => {};
+    triggerSideBarUpdate = () => {};
 
     render() {
         const {gameProgress} = this.state;
@@ -351,6 +352,7 @@ class GameRoom extends React.Component {
 
                     <div className='col-sm-3'>
                         <SidebarGame
+                            updateUserList={func => this.triggerSideBarUpdate = func}
                             isDrawerToggled={this.state.isDrawer || this.state.wasDrawer}/>
                     </div>
 

@@ -54,10 +54,20 @@ class SidebarGame extends React.Component {
 
 
     componentDidMount() {
-        console.log("Inside component did mount")
-        console.log(this.props.userList);
-        this.setState({userList: this.props.userList})
+
+        this.props.updateUserList(this.getList())
     }
+
+
+
+    getList = () => {
+        return (
+            <List className={this.props.classes.list}>
+                {this.listItems(this.props.userList)}
+            </List>
+        )
+    }
+
 
 
     listItems = (userList) => userList.map((userInfo) => <ListItem key={userInfo.username}>
@@ -89,9 +99,7 @@ class SidebarGame extends React.Component {
                     Users
                 </Typography>
                 <div className={classes.root}>
-                    <List className={classes.list}>
-                        {this.listItems(this.props.userList)}
-                    </List>
+                    {this.getList()}
                 </div>
             </div>
         );
