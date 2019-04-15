@@ -683,7 +683,7 @@ io.on('connection', (socket) => {
 				// let answer = document.answers[Math.random(rnd)];
 				console.log('List size: ' + answerList.length);
 				console.log('Generate random number: ' + rnd);
-				let answer = answerList[rnd -1];
+				let answer = answerList[rnd];
 				roomInfo[data.roomId].curAnswer = answer;
 				console.log('Picked answer: ' + answer);
 				socket.emit('receive-answer', answer);
