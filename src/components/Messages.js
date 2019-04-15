@@ -27,6 +27,7 @@ class Messages extends React.Component {
     componentDidUpdate () {
       this.scrollToBottom();
     }
+    
     scrollToBottom = () => {
       this.messagesEnd.current.scrollIntoView({ behavior: 'smooth' });
     }
