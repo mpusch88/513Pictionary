@@ -77,6 +77,14 @@ function send_loginfo(info) {
 	socket.emit('new_loginfo', info);
 }
 
+//--------USER HISTORY-------------------//
+export function update_userhistory(info, cb) {
+	socket.emit('update_userhistory', info);
+	socket.on('receive-answer', (ans) => {
+		cb(ans);
+	});
+}
+	
 //----------------- Sign Up -----------------//
 function send_signupinfo(info) {
     socket.emit('new_signupinfo', info);
@@ -149,8 +157,8 @@ function getAllExistingRooms(cb) {
 export function setAnswer(data, cb){
 	socket.emit('pick-answer', data);
 	socket.on('receive-answer', (ans) => {
-		cb(ans)
-	})
+		cb(ans);
+	});
 }
 
 /*--------------Cynthia updates--------------*/

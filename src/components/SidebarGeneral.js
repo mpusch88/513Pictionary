@@ -1,6 +1,7 @@
 import React from 'react';
 import Avatar from './Avatar';
 import {connect} from 'react-redux';
+import SidebarStats from './SidebarStats.js';
 import '../styles/sidebar.css';
 
 class SidebarGeneral extends React.Component {
@@ -15,7 +16,7 @@ class SidebarGeneral extends React.Component {
             <div className="sidebar-container text-center">
                 <div className='profile_title'>{this.props.username}</div>
                 <div className='avatar_area'><Avatar/></div>
-                <div className='stats_area'>Stats</div>
+                <div className='stats_area'><SidebarStats/></div>
             </div>
         );
     }
