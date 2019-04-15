@@ -435,19 +435,19 @@ io.on('connection', (socket) => {
 	// ------ USER UPDATE --------------- //
 
 	socket.on('update_userhistory', (info) => {
-		var client1 = new MongoClient(uri, { useNewUrlParser: true });
-		client1.connect(err => {
-			const collection = client1
-				.db('pictionary')
-				.collection('users');
-
-			var myobj = { username: info.username };
-			collection.find(myobj).toArray(function(err, res) {
-				if (err) throw err;
-				console.log(res[0].username);
-				socket.emit('signup_flag', { username: res[0].username });
-			});
-		});
+		// var client1 = new MongoClient(uri, { useNewUrlParser: true });
+		// client1.connect(err => {
+		// 	const collection = client1
+		// 		.db('pictionary')
+		// 		.collection('users');
+		//
+		// 	var myobj = { username: info.username };
+		// 	collection.find(myobj).toArray(function(err, res) {
+		// 		if (err) throw err;
+		// 		// console.log(res[0].username);
+		// 		socket.emit('signup_flag', { username: res[0].username });
+		// 	});
+		// });
 	});
 
 	// ------------------------- Login -------------------------//
@@ -678,11 +678,12 @@ io.on('connection', (socket) => {
 			catcollection.findOne({ type: data.category }).then(function(document) {
 				console.log(document.answers);
 				let answerList = document.answers;
-				let rnd = Math.floor(Math.random(answerList.length) * 10);
+				//let rnd = Math.floor(Math.random(answerList.length) * 10);
+				let rnd = Math.floor(Math.random()*(answerList.length));
 				// let answer = document.answers[Math.random(rnd)];
 				console.log('List size: ' + answerList.length);
 				console.log('Generate random number: ' + rnd);
-				let answer = answerList[rnd];
+				let answer = answerList[rnd -1];
 				roomInfo[data.roomId].curAnswer = answer;
 				console.log('Picked answer: ' + answer);
 				socket.emit('receive-answer', answer);

@@ -79,10 +79,10 @@ function send_loginfo(info) {
 
 //--------USER HISTORY-------------------//
 export function update_userhistory(info, cb) {
-	socket.emit('update_userhistory', info);
-	socket.on('receive-answer', (ans) => {
-		cb(ans);
-	});
+	//socket.emit('update_userhistory', info);
+	// socket.on('receive-answer', (ans) => {
+	// 	cb(ans);
+	// });
 }
 	
 //----------------- Sign Up -----------------//
