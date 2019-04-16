@@ -1,5 +1,5 @@
 import openSocket from 'socket.io-client';
-export const socket = openSocket('http://localhost:8000');
+export const socket = openSocket('http://10.13.177.154:8000');
 
 
 
